@@ -128,3 +128,10 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+collection-*
+default-cards-*
+csvToImport_*
+default-filtered*
+found.json
