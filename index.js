@@ -31,15 +31,14 @@
 "1"    ,"1"              ,"Sheoldred, Whispering One","nph",    "Near Mint", "English", "",    ""    ,"2023-06-30 08:04:15.087000","73",              "False","False",""
 */
 
-
 const fs = require('fs');
 const path = require('path');
-
-const mapBy = (arr, id) => arr.reduce((a, c) => { a[c[id]] = c; return a }, {});
 
 const loadFile = (startName, extension) => fs.readdirSync(__dirname)
     .reverse()
     .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension);
+
+const mapBy = (arr, id) => arr.reduce((a, c) => { a[c[id]] = c; return a }, {});
 
 const formatDate = (date) => {
     const year = date.getFullYear();
