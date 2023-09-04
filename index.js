@@ -107,6 +107,19 @@ const found = collectionData.cards
         c.found = keys.includes(c.grpId);
         return c;
     });
+fs.writeFile("arena_collection.json", JSON.stringify(Object.values(found.reduce((a, c) => {
+    const name = c.card?.name;
+    if(!!name){
+        a[name] = a[name] ?? {
+            name: name,
+            owned:0
+        }
+        a[name].owned += +c.owned ?? 0;
+    }
+    return a;
+}, {}))), function (err) {
+    if (err) return console.log(err);
+});
 fs.writeFile("found.json", `[${found.sort((a, b) => a.grpId - b.grpId).reduce((a, c) => `${a}${JSON.stringify(c)},\n`, "").slice(0, -2)}]`, function (err) {
     if (err) return console.log(err);
 });
