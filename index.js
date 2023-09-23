@@ -59,7 +59,7 @@ const formatYYYYMMDD = date => {
 }
 
 const now = formatDate(new Date());
-const getCsvLine = (o, c) => `${o.owned},"${c.name}",${c.set}`
+const getCsvLine = (o, c) => `"${c.name}",${c.set},${o.owned}`
 
 console.time("loading files");
 const filteredFile = "default-filtered.json";
@@ -109,10 +109,10 @@ const found = collectionData.cards
     });
 fs.writeFile("arena_collection.json", JSON.stringify(Object.values(found.reduce((a, c) => {
     const name = c.card?.name;
-    if(!!name){
+    if (!!name) {
         a[name] = a[name] ?? {
             name: name,
-            owned:0
+            owned: 0
         }
         a[name].owned += +c.owned ?? 0;
     }
@@ -124,15 +124,50 @@ fs.writeFile("found.json", `[${found.sort((a, b) => a.grpId - b.grpId).reduce((a
     if (err) return console.log(err);
 });
 
+const csvHeader = `"Name","Edition","Count"`;
+
 console.time("creating csv");
-let outCSV = `"Count","Name","Edition"`;
+let newCsvContent = csvHeader;
 collectionData.forCsv.forEach(c => {
-    outCSV += "\n" + getCsvLine(c, c.card);
+    newCsvContent += "\n" + getCsvLine(c, c.card);
 });
 console.timeEnd("creating csv");
 
+const lastCsv = loadFile("csvToImport_", "csv");
+console.log(`Creating diff from [${lastCsv}]`);
+const lastCsvContent = fs.readFileSync(lastCsv).toString();
+
+const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/
+const csvMap = (arr) => arr.split(/\n/g).map(r => r.split(csvRegex)).reduce((a, [name, edition, count]) => { a[`${name},${edition}`] = count; return a; }, {});
+
+const diff = csvHeader + "\n" + getDiff(lastCsvContent, newCsvContent);
+console.time("writing diff");
+fs.writeFile(`diff_${formatYYYYMMDD(new Date())}.csv`, diff, function (err) {
+    if (err) return console.log(err);
+    console.timeEnd("writing diff");
+});
+
 console.time("writing csv");
-fs.writeFile(`csvToImport_${formatYYYYMMDD(new Date())}.csv`, outCSV, function (err) {
+fs.writeFile(`csvToImport_${formatYYYYMMDD(new Date())}.csv`, newCsvContent, function (err) {
     if (err) return console.log(err);
     console.timeEnd("writing csv");
 });
+
+function getDiff(lastCsv, newCsv) {
+    const lastArr = csvMap(lastCsv);
+    const newArr = csvMap(newCsv);
+    const diff = [];
+
+    Object.entries(newArr).map(([k, v]) => {
+        const lastValue = lastArr[k];
+        if (!!lastValue) {
+            if (lastValue != v) {
+                diff.push(`${k},${v - lastValue}`);
+            }
+        } else {
+            diff.push(`${k},${v}`);
+        }
+    })
+
+    return diff.join("\n");
+}
