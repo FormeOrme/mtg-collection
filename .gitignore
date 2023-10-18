@@ -131,6 +131,7 @@ dist
 
 collection-*
 default-cards-*
+oracle-cards-*
 csvToImport_*
 default-filtered*
 found.json
