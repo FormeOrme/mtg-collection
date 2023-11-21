@@ -5,7 +5,7 @@ const loadFile = (startName, extension) => fs.readdirSync(__dirname)
     .reverse()
     .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension);
 
-const defaultData = JSON.parse(fs.readFileSync(loadFile("oracle-cards-", "json")));
+const defaultData = JSON.parse(fs.readFileSync(loadFile("default-cards-", "json")));
 
 const SORT_STRING = (s1, s2) => s1.localeCompare(s2);
 const SORT_BY_VALUE = (o1, o2, k) => SORT_STRING(o1[k], o2[k]);
