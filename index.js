@@ -59,7 +59,7 @@ const formatYYYYMMDD = date => {
 }
 
 const now = formatDate(new Date());
-const getCsvLine = (o, c) => `"${c.name}",${c.set},${o.owned}`
+const getCsvLine = (o, c) => `"${c.name}",${c.set},${o.owned}`;
 
 console.time("loading files");
 const filteredFile = "default-filtered.json";
@@ -124,6 +124,13 @@ fs.writeFile("found.json", `[${found.sort((a, b) => a.grpId - b.grpId).reduce((a
     if (err) return console.log(err);
 });
 
+const lastCsv = loadFile("csvToImport_", "csv");
+console.log(`Creating diff from [${lastCsv}]`);
+const lastCsvContent = fs.readFileSync(lastCsv).toString();
+
+const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/
+const csvMap = (arr) => arr.split(/\n/g).map(r => r.split(csvRegex)).reduce((a, [name, edition, count]) => { a[`${name},${edition}`] = count; return a; }, {});
+
 const csvHeader = `"Name","Edition","Count"`;
 
 console.time("creating csv");
@@ -132,13 +139,6 @@ collectionData.forCsv.forEach(c => {
     newCsvContent += "\n" + getCsvLine(c, c.card);
 });
 console.timeEnd("creating csv");
-
-const lastCsv = loadFile("csvToImport_", "csv");
-console.log(`Creating diff from [${lastCsv}]`);
-const lastCsvContent = fs.readFileSync(lastCsv).toString();
-
-const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/
-const csvMap = (arr) => arr.split(/\n/g).map(r => r.split(csvRegex)).reduce((a, [name, edition, count]) => { a[`${name},${edition}`] = count; return a; }, {});
 
 const diff = csvHeader + "\n" + getDiff(lastCsvContent, newCsvContent);
 console.time("writing diff");
