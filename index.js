@@ -34,6 +34,7 @@
 const fs = require('fs');
 const path = require('path');
 const common = require(path.join(__dirname, 'common'));
+const axios = require('axios');
 
 const mapBy = (arr, id) => arr.reduce((a, c) => { a[c[id]] = c; return a }, {});
 
@@ -68,73 +69,8 @@ if (fs.existsSync(filteredFile)) {
     });
 }
 
-const collectionRaw = fs.readFileSync(common.loadFile("collection", "json"));
-const collectionData = JSON.parse(collectionRaw);
-console.timeEnd("loading files");
-
-console.time("parsing files");
-const oracleDataMap = mapBy(oracleData, "arena_id");
-
-collectionData.forCsv = collectionData.cards
-    .map(c => {
-        c.card = oracleDataMap[c.grpId];
-        return c;
-    })
-    .filter(c => !!c.card);
-//console.table(collectionData.cards)
-console.timeEnd("parsing files");
-
-const keys = Object.keys(oracleDataMap).map(k => +k);
-const found = collectionData.cards
-    .map(c => {
-        c.found = keys.includes(c.grpId);
-        return c;
-    });
-fs.writeFile("arena_collection.json", JSON.stringify(Object.values(found.reduce((a, c) => {
-    const name = c.card?.name;
-    if (!!name) {
-        a[name] = a[name] ?? {
-            name: name,
-            owned: 0
-        }
-        a[name].owned += +c.owned ?? 0;
-    }
-    return a;
-}, {}))), function (err) {
-    if (err) return console.log(err);
-});
-fs.writeFile("found.json", `[${found.sort((a, b) => a.grpId - b.grpId).reduce((a, c) => `${a}${JSON.stringify(c)},\n`, "").slice(0, -2)}]`, function (err) {
-    if (err) return console.log(err);
-});
-
-const lastCsv = common.loadFile("csvToImport_", "csv");
-console.log(`Creating diff from [${lastCsv}]`);
-const lastCsvContent = fs.readFileSync(lastCsv).toString();
-
 const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/
 const csvMap = (arr) => arr.split(/\n/g).map(r => r.split(csvRegex)).reduce((a, [name, edition, count]) => { a[`${name},${edition}`] = count; return a; }, {});
-
-const csvHeader = `"Name","Edition","Count"`;
-
-console.time("creating csv");
-let newCsvContent = csvHeader;
-collectionData.forCsv.forEach(c => {
-    newCsvContent += "\n" + getCsvLine(c, c.card);
-});
-console.timeEnd("creating csv");
-
-const diff = csvHeader + "\n" + getDiff(lastCsvContent, newCsvContent);
-console.time("writing diff");
-fs.writeFile(`diff_${formatYYYYMMDD(new Date())}.csv`, diff, function (err) {
-    if (err) return console.log(err);
-    console.timeEnd("writing diff");
-});
-
-console.time("writing csv");
-fs.writeFile(`csvToImport_${formatYYYYMMDD(new Date())}.csv`, newCsvContent, function (err) {
-    if (err) return console.log(err);
-    console.timeEnd("writing csv");
-});
 
 function getDiff(lastCsv, newCsv) {
     const lastArr = csvMap(lastCsv);
@@ -150,7 +86,82 @@ function getDiff(lastCsv, newCsv) {
         } else {
             diff.push(`${k},${v}`);
         }
-    })
+    });
+
+    console.log(`[${diff.length}] rows diff`);
 
     return diff.join("\n");
 }
+
+
+const url = 'http://localhost:6842/cards';
+
+const response = new Promise((resolve) => {
+    axios.get(url)
+        .then(response => resolve(response))
+        .catch(error => resolve(null));
+});
+
+response.then(response => {
+
+    if (response?.data) {
+        const collection = JSON.stringify(response.data);
+        common.write(collection, `collection-${formatYYYYMMDD(new Date())}_.json`);
+    }
+
+    const collectionData = response?.data || JSON.parse(fs.readFileSync(common.loadFile("collection", "json")));
+    console.timeEnd("loading files");
+
+    console.time("parsing files");
+    const oracleDataMap = mapBy(oracleData, "arena_id");
+
+    collectionData.forCsv = collectionData.cards
+        .map(c => {
+            c.card = oracleDataMap[c.grpId];
+            return c;
+        })
+        .filter(c => !!c.card);
+    //console.table(collectionData.cards)
+    console.timeEnd("parsing files");
+
+    const keys = Object.keys(oracleDataMap).map(k => +k);
+    const found = collectionData.cards
+        .map(c => {
+            c.found = keys.includes(c.grpId);
+            return c;
+        });
+    common.write(JSON.stringify(Object.values(found.reduce((a, c) => {
+        const name = c.card?.name;
+        if (!!name) {
+            a[name] = a[name] ?? {
+                name: name,
+                owned: 0
+            }
+            a[name].owned += +c.owned ?? 0;
+        }
+        return a;
+    }, {}))), "arena_collection.json");
+    common.write(`[${found.sort((a, b) => a.grpId - b.grpId).reduce((a, c) => `${a}${JSON.stringify(c)},\n`, "").slice(0, -2)}]`, "found.json");
+
+    const lastCsv = common.loadFile("csvToImport_", "csv");
+    console.log(`Creating diff from [${lastCsv}]`);
+    const lastCsvContent = fs.readFileSync(lastCsv).toString();
+
+    const csvHeader = `"Name","Edition","Count"`;
+
+    console.time("creating csv");
+    let newCsvContent = csvHeader;
+    collectionData.forCsv.forEach(c => {
+        newCsvContent += "\n" + getCsvLine(c, c.card);
+    });
+    console.timeEnd("creating csv");
+
+    const diff = csvHeader + "\n" + getDiff(lastCsvContent, newCsvContent);
+    console.time("writing diff");
+    common.write(diff, `diff_${formatYYYYMMDD(new Date())}.csv`);
+    console.timeEnd("writing diff");
+
+    console.time("writing csv");
+    common.write(newCsvContent, `csvToImport_${formatYYYYMMDD(new Date())}.csv`);
+    console.timeEnd("writing csv");
+});

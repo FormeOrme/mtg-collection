@@ -11,6 +11,10 @@ const SLASHES = {
     "rna": 2,
 }
 
+function err(err) {
+    if (err) return console.log(err);
+}
+
 module.exports = ({
     loadFile: (startName, extension) => fs.readdirSync(__dirname)
         .reverse()
@@ -23,6 +27,7 @@ module.exports = ({
         .filter(c => c.games.includes("arena")),
     // .filter((v, i, a) => a.findIndex(v2 => (v2.name === v.name)) === i)
     // .sort((o1, o2) => SORT_BY_VALUE(o1, o2, "name"));
+    write: (file, name) => fs.writeFile(name, file, err),
     get defaultData() {
         return JSON.parse(fs.readFileSync(this.loadFile("default-cards-", "json")))
     }
