@@ -33,23 +33,9 @@
 
 const fs = require('fs');
 const path = require('path');
-
-const loadFile = (startName, extension) => fs.readdirSync(__dirname)
-    .reverse()
-    .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension);
+const common = require(path.join(__dirname, 'common'));
 
 const mapBy = (arr, id) => arr.reduce((a, c) => { a[c[id]] = c; return a }, {});
-
-const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
-}
 
 const formatYYYYMMDD = date => {
     const year = date.getFullYear();
@@ -58,7 +44,6 @@ const formatYYYYMMDD = date => {
     return `${year}${month}${day}`;
 }
 
-const now = formatDate(new Date());
 const getCsvLine = (o, c) => `"${c.name}",${c.set},${o.owned}`;
 
 console.time("loading files");
@@ -67,25 +52,23 @@ let oracleData;
 if (fs.existsSync(filteredFile)) {
     oracleData = JSON.parse(fs.readFileSync(filteredFile));
 } else {
-    const fileName = loadFile("default-cards-", "json");
+    const fileName = common.loadFile("default-cards-", "json");
     console.log(`[${filteredFile}] not found, creating from [${fileName}]`);
-    const defaultCards = JSON.parse(fs.readFileSync(fileName));
-    oracleData = defaultCards
-        .filter(c => !!c.arena_id)
-        .map(c => ({
-            arena_id: c.arena_id,
-            name: c.name,
-            set: c.set,
-            // collector_number: c.collector_number
-        }))
+    oracleData = common.shrink(common.defaultData).map(c => ({
+        arena_id: c.arena_id,
+        name: c.name,
+        set: c.set,
+        // collector_number: c.collector_number
+    }))
         // .sort((a, b) => a.arena_id - b.arena_id)
         .sort((a, b) => a.set.localeCompare(b.set));
+    console.log(`[${oracleData.length}] cards found`);
     fs.writeFile(filteredFile, JSON.stringify(oracleData), function (err) {
         if (err) return console.log(err);
     });
 }
 
-const collectionRaw = fs.readFileSync(loadFile("collection", "json"));
+const collectionRaw = fs.readFileSync(common.loadFile("collection", "json"));
 const collectionData = JSON.parse(collectionRaw);
 console.timeEnd("loading files");
 
@@ -124,7 +107,7 @@ fs.writeFile("found.json", `[${found.sort((a, b) => a.grpId - b.grpId).reduce((a
     if (err) return console.log(err);
 });
 
-const lastCsv = loadFile("csvToImport_", "csv");
+const lastCsv = common.loadFile("csvToImport_", "csv");
 console.log(`Creating diff from [${lastCsv}]`);
 const lastCsvContent = fs.readFileSync(lastCsv).toString();
 
