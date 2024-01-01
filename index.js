@@ -98,7 +98,10 @@ const url = 'http://localhost:6842/cards';
 
 const response = new Promise((resolve) => {
     axios.get(url)
-        .then(response => resolve(response))
+        .then(response => {
+            console.log(`[${url}] online`);
+            return resolve(response);
+        })
         .catch(error => resolve(null));
 });
 
@@ -106,7 +109,7 @@ response.then(response => {
 
     if (response?.data) {
         const collection = JSON.stringify(response.data);
-        common.write(collection, `collection-${formatYYYYMMDD(new Date())}_.json`);
+        common.write(collection, `collection-${formatYYYYMMDD(new Date())}.json`);
     }
 
     const collectionData = response?.data || JSON.parse(fs.readFileSync(common.loadFile("collection", "json")));
