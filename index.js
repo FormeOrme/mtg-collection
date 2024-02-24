@@ -35,6 +35,7 @@ const fs = require('fs');
 const path = require('path');
 const common = require(path.join(__dirname, 'common'));
 const axios = require('axios');
+const c2j = require('csvtojson');
 
 const mapBy = (arr, id) => arr.reduce((a, c) => { a[c[id]] = c; return a }, {});
 
@@ -47,124 +48,153 @@ const formatYYYYMMDD = date => {
 
 const getCsvLine = (o, c) => `"${c.name}",${c.set},${o.owned}`;
 
-console.time("loading files");
-const filteredFile = "default-filtered.json";
-let oracleData;
-if (fs.existsSync(filteredFile)) {
-    oracleData = JSON.parse(fs.readFileSync(filteredFile));
-} else {
-    const fileName = common.loadFile("default-cards-", "json");
-    console.log(`[${filteredFile}] not found, creating from [${fileName}]`);
-    oracleData = common.shrink(common.defaultData).map(c => ({
-        arena_id: c.arena_id,
-        name: c.name,
-        set: c.set,
-        // collector_number: c.collector_number
-    }))
-        // .sort((a, b) => a.arena_id - b.arena_id)
-        .sort((a, b) => a.set.localeCompare(b.set));
-    console.log(`[${oracleData.length}] cards found`);
-    fs.writeFile(filteredFile, JSON.stringify(oracleData), function (err) {
-        if (err) return console.log(err);
-    });
-}
+new Promise((resolve) => {
+    console.time("RETRIEVING ORACLEDATA");
+    const filteredFile = "default-filtered.json";;
+    if (fs.existsSync(filteredFile)) {
+        resolve(JSON.parse(fs.readFileSync(filteredFile)));
+    } else {
+        const fileName = common.loadFile("default-cards-", "json");
+        const cardDBfileName = common.loadFile("exported_cards_db", "csv");
+        console.log(`[${filteredFile}] not found, creating from [${fileName}][${cardDBfileName}]`);
+        console.time("READING CARD DB");
+        c2j().fromFile(cardDBfileName)
+            .then(cardDB => {
+                cardDB = cardDB.reduce((a, c) => {
+                    if (!a[c.enUS]?.length) {
+                        a[c.enUS] = [];
+                    }
+                    a[c.enUS].push(c);
+                    return a;
+                }, {});
+                console.timeEnd("READING CARD DB");
+                oracleData = common.shrink(common.defaultData)
+                    .filter(c => !c.type_line?.includes("Basic"))
+                    .map(c => {
+                        const db_id = [...new Set(cardDB[c.name]?.map(c => c.GrpId))];
+                        if (!db_id) {
+                            console.log("NO CARD FOUND IN DB FOR ", c.name);
+                        }
+                        return ({
+                            // arena_id: c.arena_id,
+                            name: c.name,
+                            set: c.set,
+                            db_id: db_id
+                            // collector_number: c.collector_number
+                        });
+                    })
+                    // .sort((a, b) => a.arena_id - b.arena_id)
+                    .sort((a, b) => a.set.localeCompare(b.set));
+                // console.log("oracleData", oracleData);
+                console.log(`[${oracleData.length}] cards found`);
+                fs.writeFile(filteredFile, JSON.stringify(oracleData), function (err) {
+                    if (err) return console.log(err);
+                });
+                resolve(oracleData);
+            });
+    }
+}).then(oracleData => {
+    console.timeEnd("RETRIEVING ORACLEDATA");
+    const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/
+    const csvMap = (arr) => arr.split(/\n/g).map(r => r.split(csvRegex)).reduce((a, [name, edition, count]) => { a[`${name},${edition}`] = count; return a; }, {});
 
-const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/
-const csvMap = (arr) => arr.split(/\n/g).map(r => r.split(csvRegex)).reduce((a, [name, edition, count]) => { a[`${name},${edition}`] = count; return a; }, {});
+    function getDiff(lastCsv, newCsv) {
+        const lastArr = csvMap(lastCsv);
+        const newArr = csvMap(newCsv);
+        const diff = [];
 
-function getDiff(lastCsv, newCsv) {
-    const lastArr = csvMap(lastCsv);
-    const newArr = csvMap(newCsv);
-    const diff = [];
-
-    Object.entries(newArr).map(([k, v]) => {
-        const lastValue = lastArr[k];
-        if (!!lastValue) {
-            if (lastValue != v) {
-                diff.push(`${k},${v - lastValue}`);
+        Object.entries(newArr).map(([k, v]) => {
+            const lastValue = lastArr[k];
+            if (!!lastValue) {
+                if (lastValue != v) {
+                    diff.push(`${k},${v - lastValue}`);
+                }
+            } else {
+                diff.push(`${k},${v}`);
             }
-        } else {
-            diff.push(`${k},${v}`);
-        }
-    });
+        });
 
-    console.log(`[${diff.length}] rows diff`);
+        console.log(`[${diff.length}] rows diff`);
 
-    return diff.join("\n");
-}
-
-
-const url = 'http://localhost:6842/cards';
-
-const response = new Promise((resolve) => {
-    axios.get(url)
-        .then(response => {
-            console.log(`[${url}] online`);
-            return resolve(response);
-        })
-        .catch(error => resolve(null));
-});
-
-response.then(response => {
-
-    if (response?.data) {
-        const collection = JSON.stringify(response.data);
-        common.write(collection, `collection-${formatYYYYMMDD(new Date())}.json`);
+        return diff.join("\n");
     }
 
-    const collectionData = response?.data || JSON.parse(fs.readFileSync(common.loadFile("collection", "json")));
-    console.timeEnd("loading files");
 
-    console.time("parsing files");
-    const oracleDataMap = mapBy(oracleData, "arena_id");
+    const url = 'http://localhost:6842/cards';
 
-    collectionData.forCsv = collectionData.cards
-        .map(c => {
-            c.card = oracleDataMap[c.grpId];
-            return c;
-        })
-        .filter(c => !!c.card);
-    //console.table(collectionData.cards)
-    console.timeEnd("parsing files");
-
-    const keys = Object.keys(oracleDataMap).map(k => +k);
-    const found = collectionData.cards
-        .map(c => {
-            c.found = keys.includes(c.grpId);
-            return c;
-        });
-    common.write(JSON.stringify(Object.values(found.reduce((a, c) => {
-        const name = c.card?.name;
-        if (!!name) {
-            a[name] = a[name] ?? {
-                name: name,
-                owned: 0
-            }
-            a[name].owned += +c.owned ?? 0;
-        }
-        return a;
-    }, {}))), "arena_collection.json");
-    common.write(`[${found.sort((a, b) => a.grpId - b.grpId).reduce((a, c) => `${a}${JSON.stringify(c)},\n`, "").slice(0, -2)}]`, "found.json");
-
-    const lastCsv = common.loadFile("csvToImport_", "csv");
-    console.log(`Creating diff from [${lastCsv}]`);
-    const lastCsvContent = fs.readFileSync(lastCsv).toString();
-
-    const csvHeader = `"Name","Edition","Count"`;
-
-    console.time("creating csv");
-    let newCsvContent = csvHeader;
-    collectionData.forCsv.forEach(c => {
-        newCsvContent += "\n" + getCsvLine(c, c.card);
+    const response = new Promise((resolve) => {
+        axios.get(url)
+            .then(response => {
+                console.log(`[${url}] online`);
+                return resolve(response);
+            })
+            .catch(error => resolve(null));
     });
-    console.timeEnd("creating csv");
 
-    const diff = csvHeader + "\n" + getDiff(lastCsvContent, newCsvContent);
-    console.time("writing diff");
-    common.write(diff, `diff_${formatYYYYMMDD(new Date())}.csv`);
-    console.timeEnd("writing diff");
+    response.then(response => {
+        const collectionData = response?.data || JSON.parse(fs.readFileSync(common.loadFile("collection", "json")));
+        console.time("parsing files");
+        const oracleDataMap = oracleData.reduce((a, c) => {
+            c.db_id.forEach(id => {
+                a[id] = c;
+            });
+            return a;
+        }, {});
+        // console.log("oracleDataMap", oracleDataMap);
 
-    console.time("writing csv");
-    common.write(newCsvContent, `csvToImport_${formatYYYYMMDD(new Date())}.csv`);
-    console.timeEnd("writing csv");
+        collectionData.forCsv = collectionData.cards
+            .map(c => {
+                c.card = oracleDataMap[c.grpId];
+                return c;
+            })
+            .filter(c => !!c.card);
+        //console.table(collectionData.cards)
+        console.timeEnd("parsing files");
+
+        if (response?.data) {
+            const collection = JSON.stringify(response.data);
+            common.write(collection, `collection-${formatYYYYMMDD(new Date())}.json`);
+        }
+
+        const keys = Object.keys(oracleDataMap).map(k => +k);
+        const found = collectionData.cards
+            .map(c => {
+                c.found = keys.includes(c.grpId);
+                return c;
+            });
+        common.write(JSON.stringify(Object.values(found.reduce((a, c) => {
+            const name = c.card?.name;
+            if (!!name) {
+                a[name] = a[name] ?? {
+                    name: name,
+                    owned: 0
+                }
+                a[name].owned += +c.owned ?? 0;
+            }
+            return a;
+        }, {}))), "arena_collection.json");
+        common.write(`[${found.sort((a, b) => a.grpId - b.grpId).reduce((a, c) => `${a}${JSON.stringify(c)},\n`, "").slice(0, -2)}]`, "found.json");
+
+        const lastCsv = common.loadFile("csvToImport_", "csv");
+        console.log(`Creating diff from [${lastCsv}]`);
+        const lastCsvContent = fs.readFileSync(lastCsv).toString();
+
+        const csvHeader = `"Name","Edition","Count"`;
+
+        console.time("creating csv");
+        let newCsvContent = csvHeader;
+        collectionData.forCsv.forEach(c => {
+            newCsvContent += "\n" + getCsvLine(c, c.card);
+        });
+        console.timeEnd("creating csv");
+
+        const diff = csvHeader + "\n" + getDiff(lastCsvContent, newCsvContent);
+        console.time("writing diff");
+        common.write(diff, `diff_${formatYYYYMMDD(new Date())}.csv`);
+        console.timeEnd("writing diff");
+
+        console.time("writing csv");
+        common.write(newCsvContent, `csvToImport_${formatYYYYMMDD(new Date())}.csv`);
+        console.timeEnd("writing csv");
+    });
 });
