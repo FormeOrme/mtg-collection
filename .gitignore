@@ -136,3 +136,4 @@ csvToImport_*
 default-filtered*
 found.json
 diff_*
+*.mtga

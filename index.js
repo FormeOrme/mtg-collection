@@ -35,9 +35,7 @@ const fs = require('fs');
 const path = require('path');
 const common = require(path.join(__dirname, 'common'));
 const axios = require('axios');
-const c2j = require('csvtojson');
-
-const mapBy = (arr, id) => arr.reduce((a, c) => { a[c[id]] = c; return a }, {});
+const sqlite3 = require('sqlite3').verbose();
 
 const formatYYYYMMDD = date => {
     const year = date.getFullYear();
@@ -46,147 +44,104 @@ const formatYYYYMMDD = date => {
     return `${year}${month}${day}`;
 }
 
-const getCsvLine = (o, c) => `"${c.name}",${c.set},${o.owned}`;
+const getCsvLine = c => `"${c.name}",${c.set},${c.owned}`;
+const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/
+const csvMap = (arr) => arr.split(/\n/g).map(r => r.split(csvRegex)).reduce((a, [name, edition, count]) => { a[`${name},${edition}`] = count; return a; }, {});
 
-new Promise((resolve) => {
-    console.time("RETRIEVING ORACLEDATA");
-    const filteredFile = "default-filtered.json";;
-    if (fs.existsSync(filteredFile)) {
-        resolve(JSON.parse(fs.readFileSync(filteredFile)));
-    } else {
-        const fileName = common.loadFile("default-cards-", "json");
-        const cardDBfileName = common.loadFile("exported_cards_db", "csv");
-        console.log(`[${filteredFile}] not found, creating from [${fileName}][${cardDBfileName}]`);
-        console.time("READING CARD DB");
-        c2j().fromFile(cardDBfileName)
-            .then(cardDB => {
-                cardDB = cardDB.reduce((a, c) => {
-                    if (!a[c.enUS]?.length) {
-                        a[c.enUS] = [];
-                    }
-                    a[c.enUS].push(c);
-                    return a;
-                }, {});
-                console.timeEnd("READING CARD DB");
-                oracleData = common.shrink(common.defaultData)
-                    .filter(c => !c.type_line?.includes("Basic"))
-                    .map(c => {
-                        const db_id = [...new Set(cardDB[c.name]?.map(c => c.GrpId))];
-                        if (!db_id) {
-                            console.log("NO CARD FOUND IN DB FOR ", c.name);
-                        }
-                        return ({
-                            // arena_id: c.arena_id,
-                            name: c.name,
-                            set: c.set,
-                            db_id: db_id
-                            // collector_number: c.collector_number
-                        });
-                    })
-                    // .sort((a, b) => a.arena_id - b.arena_id)
-                    .sort((a, b) => a.set.localeCompare(b.set));
-                // console.log("oracleData", oracleData);
-                console.log(`[${oracleData.length}] cards found`);
-                fs.writeFile(filteredFile, JSON.stringify(oracleData), function (err) {
-                    if (err) return console.log(err);
-                });
-                resolve(oracleData);
-            });
-    }
-}).then(oracleData => {
-    console.timeEnd("RETRIEVING ORACLEDATA");
-    const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/
-    const csvMap = (arr) => arr.split(/\n/g).map(r => r.split(csvRegex)).reduce((a, [name, edition, count]) => { a[`${name},${edition}`] = count; return a; }, {});
+function getDiff(lastCsv, newCsv) {
+    const lastArr = csvMap(lastCsv);
+    const newArr = csvMap(newCsv);
+    const diff = [];
 
-    function getDiff(lastCsv, newCsv) {
-        const lastArr = csvMap(lastCsv);
-        const newArr = csvMap(newCsv);
-        const diff = [];
-
-        Object.entries(newArr).map(([k, v]) => {
-            const lastValue = lastArr[k];
-            if (!!lastValue) {
-                if (lastValue != v) {
-                    diff.push(`${k},${v - lastValue}`);
-                }
-            } else {
-                diff.push(`${k},${v}`);
+    Object.entries(newArr).map(([k, v]) => {
+        const lastValue = lastArr[k];
+        if (!!lastValue) {
+            if (lastValue != v) {
+                diff.push(`${k},${v - lastValue}`);
             }
-        });
-
-        console.log(`[${diff.length}] rows diff`);
-
-        return diff.join("\n");
-    }
-
-
-    const url = 'http://localhost:6842/cards';
-
-    const response = new Promise((resolve) => {
-        axios.get(url)
-            .then(response => {
-                console.log(`[${url}] online`);
-                return resolve(response);
-            })
-            .catch(error => resolve(null));
+        } else {
+            diff.push(`${k},${v}`);
+        }
     });
 
-    response.then(response => {
-        const collectionData = response?.data || JSON.parse(fs.readFileSync(common.loadFile("collection", "json")));
-        console.time("parsing files");
-        const oracleDataMap = oracleData.reduce((a, c) => {
-            c.db_id.forEach(id => {
-                a[id] = c;
-            });
-            return a;
-        }, {});
-        // console.log("oracleDataMap", oracleDataMap);
+    console.log(`[${diff.length}] rows diff`);
 
-        collectionData.forCsv = collectionData.cards
-            .map(c => {
-                c.card = oracleDataMap[c.grpId];
-                return c;
-            })
-            .filter(c => !!c.card);
-        //console.table(collectionData.cards)
-        console.timeEnd("parsing files");
+    return diff.join("\n");
+}
 
-        if (response?.data) {
-            const collection = JSON.stringify(response.data);
-            common.write(collection, `collection-${formatYYYYMMDD(new Date())}.json`);
+const readCardDB = new Promise(resolve => {
+    const dbName = common.loadFile("Raw_CardDatabase", "mtga");
+    console.log("Using db", dbName);
+    const cardDB = new sqlite3.Database(dbName, sqlite3.OPEN_READONLY, (err) => {
+        if (err) {
+            console.error(err.message);
         }
+        console.log(`Connected to [${dbName}]`);
+    });
+    const out = {};
+    cardDB.each(common.read("cardDBQuery.sql"), (err, row) => {
+        if (!(out[row.grpId] && row.enUS?.match(/<|>/))) {
+            out[row.grpId] = row;
+        }
+    }, () => {
+        resolve(out);
+    });
+})
 
-        const keys = Object.keys(oracleDataMap).map(k => +k);
-        const found = collectionData.cards
+const loadCollectionData = new Promise((resolve) => {
+    const url = 'http://localhost:6842/cards';
+    new Promise(res => axios.get(url)
+        .then(response => {
+            console.log(`[${url}] online`);
+            return res(response?.data);
+        })
+        .catch(_ => res()))
+        .then(coll => {
+            if (coll) {
+                common.write(JSON.stringify(coll), `collection-${formatYYYYMMDD(new Date())}.json`);
+            }
+            resolve(coll || JSON.parse(fs.readFileSync(common.loadFile("collection", "json"))))
+        });
+});
+
+const SNOW = 'Snow-Covered ';
+const BASIC = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'].map(c => [c, SNOW + c]).flat();
+
+const csvHeader = `"Name","Edition","Count"`;
+
+readCardDB.then(cardDB => {
+    // console.log(cardDB);
+    const allGroupIds = Object.keys(cardDB).map(Number);
+    loadCollectionData.then(collectionData => {
+        console.warn("INVALID CARDS COUNT:", collectionData.cards.filter(c => !allGroupIds.includes(c.grpId)).length);
+
+        collectionData.cards = collectionData.cards
+            .map(c => ({
+                ...c,
+                ...cardDB[c.grpId]
+            }))
+            .filter(c => !BASIC.includes(c.name))
             .map(c => {
-                c.found = keys.includes(c.grpId);
+                c.name = c.name.replace("///", "//");
+                c.set = c.set.replace("ANA", "ANB");
+                /* TODO MANAGE SET LIKE AJMP */
                 return c;
             });
-        common.write(JSON.stringify(Object.values(found.reduce((a, c) => {
-            const name = c.card?.name;
-            if (!!name) {
-                a[name] = a[name] ?? {
-                    name: name,
-                    owned: 0
-                }
-                a[name].owned += +c.owned ?? 0;
-            }
-            return a;
-        }, {}))), "arena_collection.json");
-        common.write(`[${found.sort((a, b) => a.grpId - b.grpId).reduce((a, c) => `${a}${JSON.stringify(c)},\n`, "").slice(0, -2)}]`, "found.json");
+
+        // console.log(collectionData.cards.filter((c, i) => i < 10));
+        common.write(JSON.stringify(collectionData.cards), "arena_collection.json");
+
+        console.time("creating csv");
+        let newCsvContent = csvHeader;
+        collectionData.cards.forEach(c => {
+            newCsvContent += "\n" + getCsvLine(c);
+        });
+
+        console.timeEnd("creating csv");
 
         const lastCsv = common.loadFile("csvToImport_", "csv");
         console.log(`Creating diff from [${lastCsv}]`);
         const lastCsvContent = fs.readFileSync(lastCsv).toString();
-
-        const csvHeader = `"Name","Edition","Count"`;
-
-        console.time("creating csv");
-        let newCsvContent = csvHeader;
-        collectionData.forCsv.forEach(c => {
-            newCsvContent += "\n" + getCsvLine(c, c.card);
-        });
-        console.timeEnd("creating csv");
 
         const diff = csvHeader + "\n" + getDiff(lastCsvContent, newCsvContent);
         console.time("writing diff");
