@@ -13,10 +13,11 @@ const shrunkData = common.shrink(common.defaultData).map(c => ({
     r: c.rarity
 }));
 console.timeEnd("shrunkData");
-console.log(`shrunkData contains [${shrunkData.length}] cards`);
 
+const shrunkFileName = "scryfall_arena_data.json";
+console.log(`[${shrunkFileName}] contains [${shrunkData.length}] cards`);
 const shrunkString = JSON.stringify(shrunkData);
-fs.writeFile("scryfall_arena_data.json", shrunkString, function (err) {
+fs.writeFile(shrunkFileName, shrunkString, function (err) {
     if (err) return console.log(err);
     // console.log(shrunkData);
 });
