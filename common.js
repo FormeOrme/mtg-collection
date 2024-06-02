@@ -18,7 +18,7 @@ function err(err) {
 }
 
 module.exports = ({
-    loadFile: (startName, extension) => fs.readdirSync(__dirname)
+    loadFile: (startName, extension, dir) => fs.readdirSync(dir || __dirname)
         .reverse()
         .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension),
     shrink: (scryfallData) => scryfallData

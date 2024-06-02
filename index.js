@@ -69,6 +69,7 @@ function getDiff(lastCsv, newCsv) {
     return diff.join("\n");
 }
 
+const DB_PATH =  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\MTGA\\MTGA_Data\\Downloads\\Raw"
 const readCardDB = new Promise(resolve => {
     const dbName = common.loadFile("Raw_CardDatabase", "mtga");
     console.log("Using db", dbName);
@@ -112,6 +113,7 @@ const csvHeader = `"Name","Edition","Count"`;
 readCardDB.then(cardDB => {
     // console.log(cardDB);
     const allGroupIds = Object.keys(cardDB).map(Number);
+    console.log("LOADING COLLECTION");
     loadCollectionData.then(collectionData => {
         console.warn("INVALID CARDS COUNT:", collectionData.cards.filter(c => !allGroupIds.includes(c.grpId)).length);
 
@@ -129,7 +131,7 @@ readCardDB.then(cardDB => {
             });
 
         // console.log(collectionData.cards.filter((c, i) => i < 10));
-        common.write(JSON.stringify(collectionData.cards), "arena_collection.json");
+        common.write(JSON.stringify(collectionData.cards.map(c => ({ n: c.name, o: c.owned }))), "arena_collection.json");
 
         console.time("creating csv");
         let newCsvContent = csvHeader;
