@@ -69,7 +69,8 @@ function getDiff(lastCsv, newCsv) {
     return diff.join("\n");
 }
 
-const DB_PATH =  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\MTGA\\MTGA_Data\\Downloads\\Raw"
+/* New-Item -ItemType Junction -Name Raw -Value "C:\Program Files (x86)\Steam\steamapps\common\MTGA\MTGA_Data\Downloads\Raw" */
+
 const readCardDB = new Promise(resolve => {
     const dbName = common.loadFile("Raw_CardDatabase", "mtga");
     console.log("Using db", dbName);
