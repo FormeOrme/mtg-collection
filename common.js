@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { start } = require('repl');
 
 const SORT_STRING = (s1, s2) => s1.localeCompare(s2);
 const SORT_BY_VALUE = (o1, o2, k) => SORT_STRING(o1[k], o2[k]);
@@ -18,9 +19,9 @@ function err(err) {
 }
 
 module.exports = ({
-    loadFile: (startName, extension, dir) => fs.readdirSync(dir || __dirname)
+    loadFile: (startName, extension, dir="") => path.join(dir, fs.readdirSync(path.join(__dirname, dir))
         .reverse()
-        .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension),
+        .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension)),
     shrink: (scryfallData) => scryfallData
         // .filter(c => !!c.arena_id)
         // .filter(c => !c.type_line.toLowerCase().includes("basic"))

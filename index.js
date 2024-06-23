@@ -72,7 +72,7 @@ function getDiff(lastCsv, newCsv) {
 /* New-Item -ItemType Junction -Name Raw -Value "C:\Program Files (x86)\Steam\steamapps\common\MTGA\MTGA_Data\Downloads\Raw" */
 
 const readCardDB = new Promise(resolve => {
-    const dbName = common.loadFile("Raw_CardDatabase", "mtga");
+    const dbName = common.loadFile("Raw_CardDatabase", "mtga", "Raw");
     console.log("Using db", dbName);
     const cardDB = new sqlite3.Database(dbName, sqlite3.OPEN_READONLY, (err) => {
         if (err) {
