@@ -14,10 +14,8 @@ function img(image_uris, card_faces) {
     return uris?.art_crop.replace(base_art_url, "");
 }
 
-const barebone = common.defaultData
-    .filter(card => Object.values(card.legalities).some(value => value == "legal")
-        && !["token", "funny", "memorabilia", "promo", "masterpiece"].includes(card.set_type)
-        && !card.promo_types)
+const barebone = common.oracleData
+    .filter(card => Object.values(card.legalities).some(value => value == "legal"))
     .map(({ name, set, collector_number, color_identity, image_uris, card_faces }) => ({ name, set, cn: collector_number, ci: color_identity.join(""), img: img(image_uris, card_faces) }))
     .sort((c1, c2) => c1.name.localeCompare(c2.name))
 

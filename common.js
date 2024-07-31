@@ -19,7 +19,7 @@ function err(err) {
 }
 
 module.exports = ({
-    loadFile: (startName, extension, dir="") => path.join(dir, fs.readdirSync(path.join(__dirname, dir))
+    loadFile: (startName, extension, dir = "") => path.join(dir, fs.readdirSync(path.join(__dirname, dir))
         .reverse()
         .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension)),
     shrink: (scryfallData) => scryfallData
@@ -34,5 +34,8 @@ module.exports = ({
     read: (filePath) => fs.readFileSync(filePath, 'utf8'),
     get defaultData() {
         return JSON.parse(fs.readFileSync(this.loadFile("default-cards-", "json")))
+    },
+    get oracleData() {
+        return JSON.parse(fs.readFileSync(this.loadFile("oracle-cards-", "json")))
     }
 });
