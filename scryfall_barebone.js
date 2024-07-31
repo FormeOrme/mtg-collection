@@ -16,9 +16,9 @@ function img(image_uris, card_faces) {
 
 const barebone = common.defaultData
     .filter(card => Object.values(card.legalities).some(value => value == "legal")
-        && !["token", "funny", "memorabilia", "promo"].includes(card.set_type))
-    .map(({ name, set, collector_number, color_identity, image_uris, card_faces }) =>
-        ({ name, set, cn: collector_number, ci: color_identity.join(""), img: img(image_uris, card_faces) }))
+        && !["token", "funny", "memorabilia", "promo", "masterpiece"].includes(card.set_type)
+        && !card.promo_types)
+    .map(({ name, set, collector_number, color_identity, image_uris, card_faces }) => ({ name, set, cn: collector_number, ci: color_identity.join(""), img: img(image_uris, card_faces) }))
     .sort((c1, c2) => c1.name.localeCompare(c2.name))
 
 fs.writeFile(bareboneFilename + ".json", JSON.stringify(barebone), function (err) {
