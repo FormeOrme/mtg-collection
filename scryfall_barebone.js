@@ -15,7 +15,7 @@ function img(image_uris, card_faces) {
 }
 
 const barebone = common.oracleData
-    .filter(card => Object.values(card.legalities).some(value => value == "legal"))
+    .filter(common.legalCards)
     .map(({ name, set, collector_number, color_identity, image_uris, card_faces }) => ({ name, set, cn: collector_number, ci: color_identity.join(""), img: img(image_uris, card_faces) }))
     .sort((c1, c2) => c1.name.localeCompare(c2.name))
 

@@ -19,6 +19,8 @@ function err(err) {
 }
 
 module.exports = ({
+    legalCards: card => Object.values(card.legalities).some(value => value == "legal")
+        && card.set_type!="funny",
     loadFile: (startName, extension, dir = "") => path.join(dir, fs.readdirSync(path.join(__dirname, dir))
         .reverse()
         .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension)),
