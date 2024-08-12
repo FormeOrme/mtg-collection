@@ -12,7 +12,8 @@ const shrunkData = common.oracleData.filter(common.legalCards).map(c => ({
     // ),
     //set: c.set,
     // slashes: c.name.includes("/") ? SLASHES[c.set] : undefined,
-    r: c.rarity[0]
+    r: c.rarity[0],
+    a: c.games.includes("arena")?1:undefined
 })).sort((c1, c2) => c1.n.localeCompare(c2.n));
 console.timeEnd("shrunkData");
 
