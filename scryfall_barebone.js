@@ -1,4 +1,5 @@
 const fs = require('fs');
+const zlib = require('zlib');
 const path = require('path');
 const common = require(path.join(__dirname, 'common'));
 
@@ -19,7 +20,19 @@ const barebone = common.oracleData
     .map(({ name, set, collector_number, color_identity, image_uris, card_faces }) => ({ name, set, cn: collector_number, ci: color_identity.join(""), img: img(image_uris, card_faces) }))
     .sort((c1, c2) => c1.name.localeCompare(c2.name))
 
-fs.writeFile(bareboneFilename + ".json", JSON.stringify(barebone), function (err) {
+const bareboneString = JSON.stringify(barebone);
+
+fs.writeFile(bareboneFilename + ".json", bareboneString, function (err) {
     if (err) return console.log(err);
-    // console.log(shrunkData);
+});
+
+zlib.gzip(bareboneString, (err, buffer) => {
+    if (err) {
+        console.log('Error compressing the data:', err);
+        return;
+    }
+    fs.writeFile(bareboneFilename + '.json.gz', buffer, (err) => {
+        if (err) console.log('Error writing the file:', err)
+        else console.log('File successfully written and compressed.');
+    });
 });

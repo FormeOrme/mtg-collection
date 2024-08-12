@@ -1,7 +1,7 @@
 const fs = require('fs');
+const zlib = require('zlib');
 const path = require('path');
 const common = require(path.join(__dirname, 'common'));
-const zlib = require('zlib');
 
 const strip = (s) => s.split("/")[0]?.trim().replace(/\W+/g, "_").toLowerCase();
 
