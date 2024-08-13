@@ -5,6 +5,24 @@ const common = require(path.join(__dirname, 'common'));
 
 const strip = (s) => s.split("/")[0]?.trim().replace(/\W+/g, "_").toLowerCase();
 
+const arenaFormats = [
+    "standard",
+    "historic",
+    "timeless",
+    "explorer",
+    "standardbrawl",
+    "brawl",
+    "alchemy"
+];
+
+const onArena = (c) => Object.entries(c.legalities)
+    .filter(([format, legality]) => arenaFormats.includes(format))
+    .some(([format, legality]) => legality == "legal")
+
+const rarities = {
+    c: 0, u: 1, r: 2, m: 3
+}
+
 console.time("shrunkData")
 const shrunkData = common.oracleData.filter(common.legalCards).map(c => ({
     n: strip(c.name),
@@ -13,13 +31,13 @@ const shrunkData = common.oracleData.filter(common.legalCards).map(c => ({
     // ),
     //set: c.set,
     // slashes: c.name.includes("/") ? SLASHES[c.set] : undefined,
-    r: c.rarity[0],
-    a: c.games.includes("arena") ? 1 : undefined
+    r: rarities[c.rarity[0]],
+    a: onArena(c) ? 1 : undefined
 })).sort((c1, c2) => c1.n.localeCompare(c2.n));
 console.timeEnd("shrunkData");
 
 const shrunkFileName = "scryfall_arena_data.json";
-console.log(`[${shrunkFileName}] contains [${shrunkData.length}] cards`);
+console.log(`[${shrunkFileName}] contains [${shrunkData.length}] cards ([${shrunkData.filter(c => c.a).length}] on arena)`);
 const shrunkString = JSON.stringify(shrunkData);
 
 fs.writeFile(shrunkFileName, shrunkString, function (err) {
