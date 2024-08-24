@@ -18,7 +18,10 @@ function err(err) {
     if (err) return console.log(err);
 }
 
+const strip = (s) => s.split("/")[0]?.trim().replace(/\W+/g, "_").toLowerCase();
+
 module.exports = ({
+    strip,
     legalCards: card => Object.values(card.legalities).some(value => value == "legal")
         && card.set_type!="funny",
     loadFile: (startName, extension, dir = "") => path.join(dir, fs.readdirSync(path.join(__dirname, dir))

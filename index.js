@@ -106,8 +106,9 @@ const loadCollectionData = new Promise((resolve) => {
         });
 });
 
-const SNOW = 'Snow-Covered ';
-const BASIC = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'].map(c => [c, SNOW + c]).flat();
+const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
+    .split(",")
+    .flatMap(c => [c, `Snow-Covered ${c}`]);
 
 const csvHeader = `"Name","Edition","Count"`;
 
@@ -132,7 +133,22 @@ readCardDB.then(cardDB => {
             });
 
         // console.log(collectionData.cards.filter((c, i) => i < 10));
-        common.write(JSON.stringify(collectionData.cards.map(c => ({ n: c.name, o: c.owned }))), "arena_collection.json");
+
+        const arenaCollection = Object.values([
+            ...collectionData.cards,
+            ...BASIC.map(c => ({
+                name: c,
+                owned: 4
+            }))]
+            .reduce((map, card) => {
+                map[card.name] = map[card.name] ?? { n: common.strip(card.name), o: 0 }
+                map[card.name].o += card.owned
+                map[card.name].o = Math.min(map[card.name].o, 4)
+                return map;
+            }, {}))
+            .sort((a, b) => a.n.localeCompare(b.n))
+
+        common.write(JSON.stringify(arenaCollection), "arena_collection.json");
 
         console.time("creating csv");
         let newCsvContent = csvHeader;
