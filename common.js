@@ -18,12 +18,18 @@ function err(err) {
     if (err) return console.log(err);
 }
 
-const strip = (s) => s.split("/")[0]?.trim().replace(/\W+/g, "_").toLowerCase();
+const strip = (s) => normalize(s)?.split("/")[0]?.trim().replace(/\W+/g, "_").toLowerCase();
+const normalize = (s) => s?.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
 module.exports = ({
     strip,
-    legalCards: card => Object.values(card.legalities).some(value => value == "legal")
-        && card.set_type!="funny",
+    legalCards: card => Object.entries(card.legalities)
+        .some(([format, value]) =>
+            format != "commander" &&
+            format != "paupercommander" &&
+            format != "oathbreaker" &&
+            format != "duel" &&
+            value == "legal"),
     loadFile: (startName, extension, dir = "") => path.join(dir, fs.readdirSync(path.join(__dirname, dir))
         .reverse()
         .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension)),

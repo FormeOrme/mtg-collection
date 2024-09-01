@@ -137,3 +137,4 @@ default-filtered*
 found.json
 diff_*
 *.mtga
+/.idea
