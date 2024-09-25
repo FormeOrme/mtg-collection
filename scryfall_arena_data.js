@@ -14,12 +14,13 @@ const arenaFormats = [
 ];
 
 const onArena = (c) => Object.entries(c.legalities)
-    .filter(([format, legality]) => arenaFormats.includes(format))
-    .some(([format, legality]) => legality == "legal")
+    .some(([format, legality]) => arenaFormats.includes(format) && legality == "legal")
 
 const rarities = {
     c: 0, u: 1, r: 2, m: 3
 }
+
+const colors = "WUBGR".split("");
 
 console.time("shrunkData")
 const shrunkData = common.oracleData.filter(common.legalCards).map(c => ({
@@ -30,7 +31,8 @@ const shrunkData = common.oracleData.filter(common.legalCards).map(c => ({
     //set: c.set,
     // slashes: c.name.includes("/") ? SLASHES[c.set] : undefined,
     r: rarities[c.rarity[0]],
-    a: onArena(c) ? 1 : undefined
+    a: onArena(c) ? 1 : undefined,
+    ci: c.color_identity.sort((a, b) => colors.indexOf(a) - colors.indexOf(b)).join("").trim() || undefined
 })).sort((c1, c2) => c1.n.localeCompare(c2.n));
 console.timeEnd("shrunkData");
 
