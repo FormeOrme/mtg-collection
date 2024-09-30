@@ -13,7 +13,7 @@ const arenaFormats = [
     "alchemy"
 ];
 
-const onArena = (c) => Object.entries(c.legalities)
+const onArena = (legalities) => Object.entries(legalities)
     .some(([format, legality]) => arenaFormats.includes(format) && legality == "legal")
 
 const rarities = {
@@ -23,17 +23,20 @@ const rarities = {
 const colors = "WUBGR".split("");
 
 console.time("shrunkData")
-const shrunkData = common.oracleData.filter(common.legalCards).map(c => ({
-    n: common.strip(c.name),
-    // simple_name: [c.name.toLowerCase(), c.name.includes("/") ? c.name.toLowerCase()?.split("/")[0] : null].filter(e => !!e).map(
-    //     e => e?.trim().replace(/'/g, "")?.replace(/[\W]+/g, "-")
-    // ),
-    //set: c.set,
-    // slashes: c.name.includes("/") ? SLASHES[c.set] : undefined,
-    r: rarities[c.rarity[0]],
-    a: onArena(c) ? 1 : undefined,
-    ci: c.color_identity.sort((a, b) => colors.indexOf(a) - colors.indexOf(b)).join("").trim() || undefined
-})).sort((c1, c2) => c1.n.localeCompare(c2.n));
+const shrunkData = common.oracleData.filter(common.legalCards)
+    .sort((c1, c2) => c1.released_at.localeCompare(c2.released_at))
+    .reverse()
+    .map(({ name, rarity, color_identity, legalities, released_at }) => ({
+        n: common.strip(name),
+        // simple_name: [c.name.toLowerCase(), c.name.includes("/") ? c.name.toLowerCase()?.split("/")[0] : null].filter(e => !!e).map(
+        //     e => e?.trim().replace(/'/g, "")?.replace(/[\W]+/g, "-")
+        // ),
+        //set: c.set,
+        // slashes: c.name.includes("/") ? SLASHES[c.set] : undefined,
+        r: rarities[rarity[0]],
+        a: onArena(legalities) ? 1 : undefined,
+        ci: color_identity.sort((a, b) => colors.indexOf(a) - colors.indexOf(b)).join("").trim() || undefined,
+    }));
 console.timeEnd("shrunkData");
 
 const shrunkFileName = "scryfall_arena_data.json";
