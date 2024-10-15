@@ -21,15 +21,23 @@ function err(err) {
 const strip = (s) => normalize(s)?.split("/")[0]?.trim().replace(/\W+/g, "_").toLowerCase();
 const normalize = (s) => s?.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
+const colors = "WUBGR".split("");
+const colorIdentity = (color_identity) => color_identity.sort((a, b) => colors.indexOf(a) - colors.indexOf(b)).join("").trim() || undefined
+
+const formats = {
+    arena: ["standard", "historic", "timeless", "explorer", "standardbrawl", "brawl", "alchemy"],
+    illegal: ["commander", "paupercommander", "oathbreaker", "duel",]
+}
+
+const onArena = (legalities) => Object.entries(legalities)
+    .some(([format, legality]) => formats.arena.includes(format) && legality == "legal")
+
 module.exports = ({
+    onArena,
+    colorIdentity,
     strip,
     legalCards: card => Object.entries(card.legalities)
-        .some(([format, value]) =>
-            format != "commander" &&
-            format != "paupercommander" &&
-            format != "oathbreaker" &&
-            format != "duel" &&
-            value == "legal"),
+        .some(([format, legality]) => !formats.illegal.includes(format) && legality == "legal"),
     loadFile: (startName, extension, dir = "") => path.join(dir, fs.readdirSync(path.join(__dirname, dir))
         .reverse()
         .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension)),

@@ -3,24 +3,10 @@ const zlib = require('zlib');
 const path = require('path');
 const common = require(path.join(__dirname, 'common'));
 
-const arenaFormats = [
-    "standard",
-    "historic",
-    "timeless",
-    "explorer",
-    "standardbrawl",
-    "brawl",
-    "alchemy"
-];
-
-const onArena = (legalities) => Object.entries(legalities)
-    .some(([format, legality]) => arenaFormats.includes(format) && legality == "legal")
-
 const rarities = {
     c: 0, u: 1, r: 2, m: 3
 }
 
-const colors = "WUBGR".split("");
 
 console.time("shrunkData")
 const shrunkData = common.oracleData.filter(common.legalCards)
@@ -34,8 +20,8 @@ const shrunkData = common.oracleData.filter(common.legalCards)
         //set: c.set,
         // slashes: c.name.includes("/") ? SLASHES[c.set] : undefined,
         r: rarities[rarity[0]],
-        a: onArena(legalities) ? 1 : undefined,
-        ci: color_identity.sort((a, b) => colors.indexOf(a) - colors.indexOf(b)).join("").trim() || undefined,
+        a: common.onArena(legalities) ? 1 : undefined,
+        ci: common.colorIdentity(color_identity),
     }));
 console.timeEnd("shrunkData");
 
@@ -47,6 +33,7 @@ fs.writeFile(shrunkFileName, shrunkString, function (err) {
     if (err) console.log(err);
 });
 
+/*
 zlib.gzip(shrunkString, (err, buffer) => {
     if (err) {
         console.log('Error compressing the data:', err);
@@ -57,3 +44,4 @@ zlib.gzip(shrunkString, (err, buffer) => {
         else console.log('File successfully written and compressed.');
     });
 });
+*/

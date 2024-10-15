@@ -17,9 +17,17 @@ function img(image_uris, card_faces) {
 
 const barebone = common.oracleData
     .filter(common.legalCards)
-    .map(({ name, set, collector_number, color_identity, image_uris, card_faces }) =>
-     ({ name, n:common.strip(name), set, cn: collector_number, ci: color_identity.join(""), img: img(image_uris, card_faces) }))
-    .sort((c1, c2) => c1.name.localeCompare(c2.name))
+    .sort((c1, c2) => c1.released_at.localeCompare(c2.released_at))
+    .reverse()
+    .map(({ name, color_identity, rarity, image_uris, card_faces, legalities }) =>
+    ({
+        name,
+        n: common.strip(name),
+        r: rarity,
+        ci: common.colorIdentity(color_identity),
+        a: common.onArena(legalities) ? 1 : undefined,
+        img: img(image_uris, card_faces)
+    }))
 
 const bareboneString = JSON.stringify(barebone);
 
@@ -27,7 +35,7 @@ fs.writeFile(bareboneFilename + ".json", bareboneString, function (err) {
     if (err) return console.log(err);
 });
 
-/* COMPRESS */
+/* COMPRESS
 zlib.gzip(bareboneString, (err, buffer) => {
     if (err) {
         console.log('Error compressing the data:', err);
@@ -38,3 +46,4 @@ zlib.gzip(bareboneString, (err, buffer) => {
         else console.log('File successfully written and compressed.');
     });
 });
+ */
