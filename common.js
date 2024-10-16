@@ -30,14 +30,14 @@ const formats = {
 }
 
 const onArena = (legalities) => Object.entries(legalities)
-    .some(([format, legality]) => formats.arena.includes(format) && legality == "legal")
+    .some(([format, legality]) => formats.arena.includes(format) && legality != "not_legal")
 
 module.exports = ({
     onArena,
     colorIdentity,
     strip,
     legalCards: card => Object.entries(card.legalities)
-        .some(([format, legality]) => !formats.illegal.includes(format) && legality == "legal"),
+        .some(([format, legality]) => !formats.illegal.includes(format) && legality != "not_legal"),
     loadFile: (startName, extension, dir = "") => path.join(dir, fs.readdirSync(path.join(__dirname, dir))
         .reverse()
         .find(file => path.parse(file).name.startsWith(startName) && path.parse(file).ext.slice(1) === extension)),
