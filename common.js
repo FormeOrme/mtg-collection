@@ -29,10 +29,15 @@ const formats = {
     illegal: ["commander", "paupercommander", "oathbreaker", "duel",]
 }
 
+const sets = {
+    straightToModern: "mh1,mh2,ltr,mh3,acr".split(",")
+}
+
 const onArena = (legalities) => Object.entries(legalities)
     .some(([format, legality]) => formats.arena.includes(format) && legality != "not_legal")
 
 module.exports = ({
+    sets,
     onArena,
     colorIdentity,
     strip,

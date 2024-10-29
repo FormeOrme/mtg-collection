@@ -12,7 +12,7 @@ console.time("shrunkData")
 const shrunkData = common.oracleData.filter(common.legalCards)
     .sort((c1, c2) => c1.released_at.localeCompare(c2.released_at))
     .reverse()
-    .map(({ name, rarity, color_identity, legalities, released_at }) => ({
+    .map(({ name, set, rarity, color_identity, legalities, released_at }) => ({
         n: common.strip(name),
         // simple_name: [c.name.toLowerCase(), c.name.includes("/") ? c.name.toLowerCase()?.split("/")[0] : null].filter(e => !!e).map(
         //     e => e?.trim().replace(/'/g, "")?.replace(/[\W]+/g, "-")
@@ -20,8 +20,9 @@ const shrunkData = common.oracleData.filter(common.legalCards)
         //set: c.set,
         // slashes: c.name.includes("/") ? SLASHES[c.set] : undefined,
         r: rarities[rarity[0]],
-        a: common.onArena(legalities) ? 1 : undefined,
+        a: common.onArena(legalities) || undefined,
         ci: common.colorIdentity(color_identity),
+        stm: common.sets.straightToModern.includes(set) || undefined
     }));
 console.timeEnd("shrunkData");
 
