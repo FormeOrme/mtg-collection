@@ -36,7 +36,70 @@ const sets = {
 const onArena = (legalities) => Object.entries(legalities)
     .some(([format, legality]) => formats.arena.includes(format) && legality != "not_legal")
 
+
+const normalizeWeights = weights => {
+    const totalWeight = Object.values(weights).reduce((sum, { weight }) => sum + weight, 0);
+    return Object.fromEntries(
+        Object.entries(weights).map(([key, { max, weight }]) => [
+            key,
+            { max, normalizedWeight: weight / totalWeight } // Store the normalized weight
+        ])
+    );
+};
+
+
+const complexityWeights = normalizeWeights({
+    oracle: { max: 700, weight: 0 },
+    dot: { max: 9, weight: 5 },
+    rpt: { max: 70, weight: 5 },
+    ability: { max: 5, weight: 1 },
+    keyword: { max: 10, weight: 2 },
+    type: { max: 6, weight: 0 },
+    color_identity: { max: 5, weight: 0 },
+});
+
+function removeTextBetweenParentheses(input) {
+    return input.replace(/\(.*?\)/g, '').replace(/\s{2,}/g, ' ').trim();
+}
+
+function calculateComplexity({
+    oracle_text = "",
+    keywords = [],
+    color_identity = [],
+    type_line = "",
+    card_faces
+}) {
+    if (card_faces) {
+        oracle_text = card_faces.reduce((a, c) => a + c.oracle_text, "");
+        type_line = card_faces.reduce((a, c) => a + " " + c.type_line, "");
+    }
+
+    oracle_text = removeTextBetweenParentheses(oracle_text);
+
+    const complexity = {
+        oracle: oracle_text.length,
+        keyword: keywords.length,
+        // type: new Set(type_line.split(/\W+/).filter(Boolean)).size,
+        ability: (oracle_text.match(/[\d}]:/g) || []).length,
+        dot: dot = (oracle_text.match(/\./g) || []).length,
+        rpt: dot == 0 ? 0 : Math.floor(oracle_text.length / dot)
+        // color_identity: Math.max(color_identity.join("").length, 1),
+    }
+
+    // Math.min(oracle_text.length / complexityWeights.text.max, 1) * complexityWeights.text.normalizedWeight,
+
+    const sum = +Object.entries(complexity).reduce((a, [k, v]) => {
+        const weight = complexityWeights[k];
+        return a + Math.min(v / weight.max, 1) * weight.normalizedWeight;
+    }, 0).toFixed(2)
+
+    complexity.sum = sum;
+
+    return complexity;
+}
+
 module.exports = ({
+    calculateComplexity,
     sets,
     onArena,
     colorIdentity,
