@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAD</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/gh/FormeOrme/projects@latest/util.js" charset="utf-8"></script>
+    <style>
+        body {
+            margin: 0
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container" style="height: 100vh;"></div>
+    <script>
+
+        const container = document.getElementById('container');
+
+        Utils.fetchJson({ url: "scryfall_arena_data.json" })
+            .then(({ json }) => {
+                const coms = json.map(c => c.com);
+                const labels = json.map(c => c.n)
+
+                const coms2 = {
+                    oracle: coms.map(c => c.oracle),
+                    keyword: coms.map(c => c.keyword),
+                    ability: coms.map(c => c.ability),
+                    dot: coms.map(c => c.dot),
+                    rpt: coms.map(c => c.rpt),
+                    sum: coms.map(c => c.sum)
+                }
+
+                var data = [
+                    { x: coms2.oracle, y: coms2.keyword, text: labels, mode: 'markers', type: 'scatter', },
+                    { x: coms2.oracle, y: coms2.ability, text: labels, mode: 'markers', type: 'scatter', },
+                    { x: coms2.oracle, y: coms2.dot, text: labels, mode: 'markers', type: 'scatter', },
+                    { x: coms2.oracle, y: coms2.rpt, text: labels, mode: 'markers', type: 'scatter', },
+                ];
+
+                var layout = {
+                    grid: { rows: 2, columns: 2, pattern: 'independent' },
+                };
+
+                Plotly.newPlot(container, data, layout);
+
+            })
+
+    </script>
+</body>
+
+</html>

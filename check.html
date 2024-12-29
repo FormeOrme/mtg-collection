@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/FormeOrme/projects@latest/util.js" charset="utf-8"></script>
+    <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/FormeOrme/projects@latest/favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collection Check</title>
+</head>
+
+<body spellcheck="false">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>Collection Check</h1>
+                <div contenteditable="true" id="deckList" class="form-control lh-1">Paste Decklist</div>
+                <script>
+                    const deckList = document.getElementById("deckList");
+                    deckList.addEventListener("input", function () {
+                        fetch("https://cdn.jsdelivr.net/gh/FormeOrme/mtg-collection@latest/arena_collection.json")
+                            .then(r => r.json())
+                            .then(a => new Map(a.map(({ n, o }) => ([n, o]))))
+                            .then(collection => {
+                                const content = deckList.textContent;
+                                deckList.innerText = "";
+                                content.split(/\n/)
+                                    .forEach((line) => {
+                                        if (line.match(/^\d/)) {
+                                            /* split the line by the first space */
+                                            const [count, name] = line.split(/\s(.+)/);
+                                            const max = Math.min(count, 4);
+                                            const id = SUtils.strip(name);
+                                            const owned = collection.get(id) || 0;
+                                            deckList.appendChild(Div.with({
+                                                attribute: {
+                                                    "data-count": count,
+                                                    "data-name": id,
+                                                    "data-owned": owned
+                                                },
+                                                children: [
+                                                    Span.with({
+                                                        class: ["badge", "rounded-pill", owned < max ? "bg-danger" : "bg-light text-dark"],
+                                                        innerText: count
+                                                    }),
+                                                    Span.with({
+                                                        class: ["ms-2", owned < max ? "text-danger" : "text-success"],
+                                                        innerText: name
+                                                    })]
+                                            }).create())
+                                        } else {
+                                            deckList.appendChild(Div.with({
+                                                innerText: line + "\n"
+                                            }).create())
+                                        }
+                                    });
+                            })
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
