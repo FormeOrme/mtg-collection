@@ -26,19 +26,19 @@ const shrunkData = common.oracleData.filter(common.legalCards)
         // ),
         //set: c.set,
         // slashes: c.name.includes("/") ? SLASHES[c.set] : undefined,
-        com: common.calculateComplexity({
-            oracle_text,
-            keywords,
-            color_identity,
-            type_line,
-            card_faces
-        }),
+        // com: common.calculateComplexity({
+        //     oracle_text,
+        //     keywords,
+        //     color_identity,
+        //     type_line,
+        //     card_faces
+        // }),
         r: rarities[rarity[0]],
         a: common.onArena(legalities) || undefined,
         ci: common.colorIdentity(color_identity),
         stm: common.sets.straightToModern.includes(set) || undefined
     }))
-    .sort(Sort.asc(c => c.com.sum))
+    // .sort(Sort.asc(c => c.com.sum))
 // .reverse()
 
 console.timeEnd("shrunkData");
@@ -52,11 +52,11 @@ fs.writeFile(shrunkFileName, shrunkString, function (err) {
 });
 
 /* write CSV file */
-const csvValue = shrunkData.reduce((a, c) => `${a}\n${c.n},${Object.values(c.com).join(",")}`,
-    `name,${Object.keys(shrunkData[0].com).join(",")}`);
-fs.writeFile(shrunkFileName + ".csv", csvValue, function (err) {
-    if (err) console.log(err);
-});
+// const csvValue = shrunkData.reduce((a, c) => `${a}\n${c.n},${Object.values(c.com).join(",")}`,
+//     `name,${Object.keys(shrunkData[0].com).join(",")}`);
+// fs.writeFile(shrunkFileName + ".csv", csvValue, function (err) {
+//     if (err) console.log(err);
+// });
 
 
 
