@@ -36,6 +36,8 @@ const sets = {
 const onArena = (legalities) => Object.entries(legalities)
     .some(([format, legality]) => formats.arena.includes(format) && legality != "not_legal")
 
+const modernLegal = (legalities) => Object.entries(legalities)
+    .some(([format, legality]) => legality == "legal" && format == "modern")
 
 const normalizeWeights = weights => {
     const totalWeight = Object.values(weights).reduce((sum, { weight }) => sum + weight, 0);
@@ -102,6 +104,7 @@ module.exports = ({
     calculateComplexity,
     sets,
     onArena,
+    modernLegal,
     colorIdentity,
     strip,
     legalCards: card => Object.entries(card.legalities)

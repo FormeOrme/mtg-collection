@@ -34,11 +34,12 @@ const shrunkData = common.oracleData.filter(common.legalCards)
         //     card_faces
         // }),
         r: rarities[rarity[0]],
-        a: common.onArena(legalities) || undefined,
+        a: common.onArena(legalities) ? 1 : undefined,
+        m: common.modernLegal(legalities) ? 1 : undefined,
         ci: common.colorIdentity(color_identity),
         stm: common.sets.straightToModern.includes(set) || undefined
     }))
-    // .sort(Sort.asc(c => c.com.sum))
+// .sort(Sort.asc(c => c.com.sum))
 // .reverse()
 
 console.timeEnd("shrunkData");
