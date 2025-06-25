@@ -1,10 +1,8 @@
-const path = require('path');
-const common = require(path.join(__dirname, 'common'));
+import { defaultData } from "./common.js";
 
-const filtered = common.defaultData
+const filtered = defaultData
     .filter(o => !o.oracle_text || !o.type_line.includes("Token"))
-    // .filter(o => Object.values(o.legalities).includes("legal"))
-    .filter(o => o.legalities.modern == 'legal'||o.legalities.timeless == 'legal')
+    .filter(o => o.legalities.modern == 'legal' || o.legalities.timeless == 'legal');
 
 const keyWords = filtered
     .filter(o => o.keywords.length)
@@ -17,8 +15,7 @@ const keyWords = filtered
             a.miss.add(...kw);
         }
         return a;
-    }, { arena: new Set(), miss: new Set() })
-
+    }, { arena: new Set(), miss: new Set() });
 
 keyWords.arena.forEach(value => keyWords.miss.delete(value));
 console.log(keyWords);

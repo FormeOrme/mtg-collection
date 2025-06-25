@@ -1,13 +1,9 @@
-const fs = require('fs');
+import { readDataFile } from "./common.js";
 
-let oracleData = JSON.parse(fs.readFileSync("default-filtered.json"));
-const found = oracleData
-    .filter(c =>
-        c.name.includes("Combat Th")
-    )
+const oracleData = readDataFile("default-filtered.json");
+const found = oracleData.filter(c => c.name.includes("Combat Th"));
 console.log(`[${found.length}] Cards found`);
 console.log(found);
-
 
 const sets = oracleData
     .filter(c => Number.isInteger(+c.collector_number))
@@ -27,14 +23,11 @@ oracleData.filter(c => !!mins[c.set]).forEach(c => {
     if (c.arena_id != c.arena_id_ex) {
         c.wrong = true;
     }
-})
+});
 const SET = "bro";
 const filtered = oracleData
     .filter(c => c.set == SET)
-    // .filter(c => c.collector_number == 35)
-    // .filter(c => c.arena_id != c.arena_id_ex)
-    .sort((c1, c2) => c1.arena_id - c2.arena_id)
-// .map(c => JSON.stringify(c));
+    .sort((c1, c2) => c1.arena_id - c2.arena_id);
 console.table(filtered);
 console.log(mins[SET]);
 console.log(oracleData.length, filtered.length);
