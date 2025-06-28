@@ -1,9 +1,0 @@
-SELECT
-    DISTINCT C.GRPID as 'grpId',
-    L.ENUS as 'name',
-    C.EXPANSIONCODE as 'set'
-FROM
-    'CARDS' AS C
-    LEFT JOIN 'LOCALIZATIONS' AS L ON C.TITLEID == L.LOCID
-WHERE
-    L.ENUS NOT LIKE '%<%'

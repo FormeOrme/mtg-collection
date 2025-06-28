@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
 const SORT_STRING = (s1, s2) => s1.localeCompare(s2);
 const SORT_BY_VALUE = (o1, o2, k) => SORT_STRING(o1[k], o2[k]);
@@ -67,7 +68,10 @@ const complexityWeights = normalizeWeights({
 });
 
 const removeTextBetweenParentheses = (input) =>
-    input.replace(/\(.*?\)/g, "").replace(/\s{2,}/g, " ").trim();
+    input
+        .replace(/\(.*?\)/g, "")
+        .replace(/\s{2,}/g, " ")
+        .trim();
 
 export function calculateComplexity({
     oracle_text = "",
@@ -130,25 +134,35 @@ export const legalCards = (card) =>
         ([format, legality]) => !formats.illegal.includes(format) && legality != "not_legal",
     );
 
-export const loadFile = (startName, extension, dir = "") =>
-    path.join(
-        dir,
-        fs
-            .readdirSync(path.join(path.dirname(new URL(import.meta.url).pathname), dir))
-            .reverse()
-            .find(
-                (file) =>
-                    path.parse(file).name.startsWith(startName) &&
-                    path.parse(file).ext.slice(1) === extension,
-            ),
+export const loadFile = (startName, extension, dir = "") => {
+    // Use ../data as default, ../Raw if dir === 'Raw'
+    const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+    let targetDir;
+    if (dir === "Raw") {
+        targetDir = path.join(scriptDir, "../Raw");
+    } else if (dir) {
+        targetDir = path.join(scriptDir, "../data", dir);
+    } else {
+        targetDir = path.join(scriptDir, "../data");
+    }
+    const files = fs.readdirSync(targetDir).reverse();
+    const found = files.find(
+        (file) =>
+            path.parse(file).name.startsWith(startName) &&
+            path.parse(file).ext.slice(1) === extension,
     );
+    if (!found) {
+        throw new Error(
+            `No file found for startName='${startName}', extension='${extension}' in '${targetDir}'`,
+        );
+    }
+    return path.join(targetDir, found);
+};
 
 export const shrink = (scryfallData) => scryfallData.filter((c) => c.games.includes("arena"));
 
-export const defaultData = JSON.parse(
-    fs.readFileSync(loadFile("default-cards-", "json")),
-);
+export const defaultData = () => JSON.parse(fs.readFileSync(loadFile("default-cards-", "json")));
+export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-cards-", "json")));
 
-export const oracleData = JSON.parse(
-    fs.readFileSync(loadFile("oracle-cards-", "json")),
-);
+export const read = (filePath) => fs.readFileSync(filePath);
+export const write = (data, filePath) => fs.writeFileSync(filePath, data);
