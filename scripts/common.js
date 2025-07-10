@@ -37,10 +37,8 @@ export const sets = {
     straightToModern: "mh1,mh2,ltr,mh3,acr".split(","),
 };
 
-export const onArena = (legalities) =>
-    Object.entries(legalities).some(
-        ([format, legality]) => formats.arena.includes(format) && legality != "not_legal",
-    );
+export const onArena = ({ legalities }) =>
+    Object.entries(legalities).some(([format, legality]) => formats.arena.includes(format));
 
 export const modernLegal = (legalities) =>
     Object.entries(legalities).some(
@@ -164,5 +162,27 @@ export const shrink = (scryfallData) => scryfallData.filter((c) => c.games.inclu
 export const defaultData = () => JSON.parse(fs.readFileSync(loadFile("default-cards-", "json")));
 export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-cards-", "json")));
 
+export const oracleDataMap = () => {
+    const data = oracleData();
+    if (!data || !Array.isArray(data)) {
+        throw new Error("Invalid oracle data format");
+    }
+    return data.filter(onArena).reduce((map, card) => {
+        map.set(strip(card.name), card);
+        return map;
+    }, new Map());
+};
+
 export const read = (filePath) => fs.readFileSync(filePath);
 export const write = (data, filePath) => fs.writeFileSync(filePath, data);
+
+export const getDataDir = () => {
+    const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+    return path.join(scriptDir, "../data");
+};
+
+export const writeToData = (data, filename) => {
+    const filePath = path.join(getDataDir(), filename);
+    write(data, filePath);
+    return filePath;
+};

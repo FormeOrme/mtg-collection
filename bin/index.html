@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>FileLoader Example</title>
+        <script type="module">
+            import FileLoader from "./fileLoader.js";
+            const normalize = (s) => s?.normalize("NFC");
+
+            const strip = (s) =>
+                normalize(s)?.split("/")[0]?.trim().replace(/\W+/g, "_").toLowerCase();
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const input = document.getElementById("keyInput");
+                const resultDiv = document.getElementById("result");
+                const folderUrl = "./output"; // Replace with your server URL
+
+                const loader = new FileLoader(folderUrl);
+
+                input.addEventListener("input", async () => {
+                    const key = strip(input.value);
+
+                    if (!key) {
+                        resultDiv.textContent = "";
+                        return;
+                    }
+
+                    try {
+                        const data = await loader.getData(key);
+                        resultDiv.textContent = `Data for key '${key}': ${JSON.stringify(
+                            data,
+                            null,
+                            2,
+                        )}`;
+                    } catch (error) {
+                        resultDiv.textContent = `Error: ${error.message}`;
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <h1>FileLoader Example</h1>
+        <form id="keyForm">
+            <label for="keyInput">Enter Key:</label>
+            <input type="text" id="keyInput" required />
+        </form>
+        <div id="result" style="margin-top: 20px; white-space: pre-wrap"></div>
+    </body>
+</html>
