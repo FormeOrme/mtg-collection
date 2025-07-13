@@ -1,45 +1,30 @@
-import zlib from "zlib";
-import { ensureDataDir, getDataFilePath, oracleData, legalCards, strip, onArena, colorIdentity } from "./common.js";
-import fs from "fs";
+import {
+    ensureDataDir,
+    getDataFilePath,
+    oracleData,
+    legalCards,
+    strip,
+    onArena,
+    colorIdentity,
+    sets,
+    writeToData,
+} from "./common.js";
 
-ensureDataDir();
-const bareboneFilename = getDataFilePath("scryfall_barebone");
+const rarities = { c: 0, u: 1, r: 2, m: 3 };
 
-const base_art_url = "https://cards.scryfall.io/art_crop";
-
-function img(image_uris, card_faces) {
-    let uris = image_uris;
-    if (!uris && card_faces) {
-        uris = card_faces[0].image_uris;
-    }
-    return uris?.art_crop.replace(base_art_url, "");
-}
-
-const barebone = oracleData
+console.time("bareboneData");
+const bareboneData = oracleData()
     .filter(legalCards)
-    .sort((c1, c2) => c1.released_at.localeCompare(c2.released_at))
-    .reverse()
-    .map(({ name, color_identity, rarity, image_uris, card_faces, legalities }) =>
-    ({
-        name,
+    .map(({ name, set, rarity, color_identity, legalities, image_uris, card_faces }) => ({
         n: strip(name),
-        r: rarity,
+        r: rarities[rarity[0]],
+        a: onArena({ legalities }) ? 1 : undefined,
         ci: colorIdentity(color_identity),
-        a: onArena(legalities) ? 1 : undefined,
-        img: img(image_uris, card_faces)
+        stm: sets.straightToModern.includes(set) || undefined,
+        img: image_uris?.art_crop || card_faces?.[0]?.image_uris?.art_crop || undefined,
     }));
+console.timeEnd("bareboneData");
 
-const bareboneString = JSON.stringify(barebone);
+const bareboneString = JSON.stringify(bareboneData);
 
-fs.writeFileSync(bareboneFilename + ".json", bareboneString);
-
-/* COMPRESS
-zlib.gzip(bareboneString, (err, buffer) => {
-    if (err) {
-        console.log('Error compressing the data:', err);
-        return;
-    }
-    fs.writeFileSync(bareboneFilename + '.json.gz', buffer);
-    console.log('File successfully written and compressed.');
-});
-*/
+writeToData(bareboneString, "scryfall_barebone.json");
