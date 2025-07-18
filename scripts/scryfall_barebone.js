@@ -1,6 +1,4 @@
 import {
-    ensureDataDir,
-    getDataFilePath,
     oracleData,
     legalCards,
     strip,
@@ -21,7 +19,7 @@ const bareboneData = oracleData()
         a: onArena({ legalities }) ? 1 : undefined,
         ci: colorIdentity(color_identity),
         stm: sets.straightToModern.includes(set) || undefined,
-        img: image_uris?.art_crop || card_faces?.[0]?.image_uris?.art_crop || undefined,
+        img: image_uris?.border_crop || card_faces?.[0]?.image_uris?.border_crop || undefined,
     }));
 console.timeEnd("bareboneData");
 

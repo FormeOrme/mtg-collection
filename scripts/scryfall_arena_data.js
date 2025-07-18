@@ -1,6 +1,4 @@
 import {
-    ensureDataDir,
-    getDataFilePath,
     oracleData,
     legalCards,
     strip,
@@ -23,11 +21,6 @@ const shrunkData = oracleData()
             rarity,
             color_identity,
             legalities,
-            oracle_text,
-            keywords,
-            type_line,
-            card_faces,
-            all_parts,
         }) => ({
             n: strip(name),
             r: rarities[rarity[0]],
