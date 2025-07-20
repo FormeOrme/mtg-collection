@@ -139,3 +139,5 @@ diff_*
 *.mtga
 /.idea
 util.js
+data/bin-oracle-cards.bin
+data/exampleCard.json

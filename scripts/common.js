@@ -37,15 +37,19 @@ export const sets = {
     straightToModern: "mh1,mh2,ltr,mh3,acr".split(","),
 };
 
-export const onArena = ({ legalities }) =>
-    Object.entries(legalities).some(([format, legality]) => formats.arena.includes(format));
+export function onArena(legalities) {
+    return Object.entries(legalities)
+        .filter(([format, legality]) => legality != "not_legal")
+        .some(([format, legality]) => formats.arena.includes(format));
+}
 
-export const modernLegal = (legalities) =>
-    Object.entries(legalities).some(
+export function modernLegal(legalities) {
+    return Object.entries(legalities).some(
         ([format, legality]) => legality == "legal" && format == "modern",
     );
+}
 
-const normalizeWeights = (weights) => {
+function normalizeWeights(weights) {
     const totalWeight = Object.values(weights).reduce((sum, { weight }) => sum + weight, 0);
     return Object.fromEntries(
         Object.entries(weights).map(([key, { max, weight }]) => [
@@ -53,7 +57,7 @@ const normalizeWeights = (weights) => {
             { max, normalizedWeight: weight / totalWeight },
         ]),
     );
-};
+}
 
 const complexityWeights = normalizeWeights({
     oracle: { max: 700, weight: 0 },
