@@ -28,15 +28,13 @@ export const colorIdentity = (color_identity) =>
         .join("")
         .trim() || undefined;
 
-const formats = {
-    arena: ["standard", "historic", "timeless", "explorer", "standardbrawl", "brawl", "alchemy"],
-    illegal: ["commander", "paupercommander", "oathbreaker", "duel"],
-};
-
 export const sets = {
     straightToModern: "mh1,mh2,ltr,mh3,acr".split(","),
 };
 
+const formats = {
+    arena: ["standard", "historic", "timeless", "explorer", "standardbrawl", "brawl", "alchemy"],
+};
 export function onArena(legalities) {
     return Object.entries(legalities)
         .filter(([format, legality]) => legality != "not_legal")
@@ -131,10 +129,35 @@ export function writeDataFile(filename, data, cb) {
     fs.writeFile(getDataFilePath(filename), data, cb);
 }
 
-export const legalCards = (card) =>
-    Object.entries(card.legalities).some(
-        ([format, legality]) => !formats.illegal.includes(format) && legality != "not_legal",
-    );
+const excludeSetType = [
+    "memorabilia",
+    "token",
+    "double-faced",
+    "planechase",
+    "vanguard",
+    "archenemy",
+];
+
+export function legalCards(card) {
+    // Check if set is valid
+    if (!card.set || excludeSetType.includes(card.set_type)) {
+        return false;
+    }
+    // Exclude cards from UN-sets
+    if (card.set_type === "funny" || card.set_type === "un") {
+        return false;
+    }
+    // Exclude schemes and conspiracies
+    if (card.type_line.includes("Scheme") || card.type_line.includes("Conspiracy")) {
+        return false;
+    }
+    // Exclude tokens
+    if (card.type_line.includes("Token")) {
+        return false;
+    }
+
+    return true;
+}
 
 export const loadFile = (startName, extension, dir = "") => {
     // Use ../data as default, ../Raw if dir === 'Raw'
