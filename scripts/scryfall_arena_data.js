@@ -32,30 +32,51 @@ function mapCardData(card, additionalData = false) {
     if (additionalData) {
         return {
             ...baseData,
-            id: card.id
+            id: card.id,
         };
     }
 
     return baseData;
 }
 
-console.time("shrunkData");
-const shrunkData = filtered.map((card) => mapCardData(card));
-console.timeEnd("shrunkData");
-
-const shrunkString = JSON.stringify(shrunkData);
+function extractCardDetails(card) {
+    const hasFaces = card.card_faces?.length;
+    return {
+        oracle: hasFaces
+            ? card.card_faces.map((face) => face.oracle_text).join(" // ")
+            : card.oracle_text,
+    };
+}
 
 const OUTPUT_FILES = {
-    SHRUNK: "scryfall_arena_data.json",
-    BAREBONE: "scryfall_barebone.json",
+    SHRUNK: { fileName: "scryfall_arena_data.json", mapFunction: (card) => mapCardData(card) },
+    BAREBONE: {
+        fileName: "scryfall_barebone.json",
+        mapFunction: (card) => mapCardData(card, true),
+    },
+    ORACLE: {
+        fileName: "scryfall_oracle.json",
+        mapFunction: (card) => {
+            const { oracle } = extractCardDetails(card);
+            return {
+                id: card.id,
+                // name: card.name,
+                // stripId: strip(card.name),
+                manaCost: card.mana_cost,
+                type: card.type_line,
+                oracle,
+            };
+        },
+    },
 };
 
-writeToData(shrunkString, OUTPUT_FILES.SHRUNK);
+Object.entries(OUTPUT_FILES).forEach(([key, config]) => {
+    const timeId = `${key}_data`;
+    console.time(timeId);
+    const mappedData = filtered.map(config.mapFunction);
 
-console.time("bareboneData");
-const bareboneData = filtered.map((card) => mapCardData(card, true));
-console.timeEnd("bareboneData");
-
-const bareboneString = JSON.stringify(bareboneData);
-
-writeToData(bareboneString, OUTPUT_FILES.BAREBONE);
+    // Convert to JSONL (NDJSON) format
+    const dataString = mappedData.map((item) => JSON.stringify(item)).join(",\n");
+    writeToData(`[\n${dataString}\n]`, config.fileName);
+    console.timeEnd(timeId);
+});

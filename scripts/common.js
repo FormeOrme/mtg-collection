@@ -129,33 +129,24 @@ export function writeDataFile(filename, data, cb) {
     fs.writeFile(getDataFilePath(filename), data, cb);
 }
 
-const excludeSetType = [
-    "memorabilia",
-    "token",
-    "double-faced",
-    "planechase",
-    "vanguard",
-    "archenemy",
-];
-
+const excludeSetType = ["memorabilia", "token", "double-faced", "vanguard"];
 export function legalCards(card) {
-    // Check if set is valid
-    if (!card.set || excludeSetType.includes(card.set_type)) {
-        return false;
-    }
-    // Exclude cards from UN-sets
-    if (card.set_type === "funny" || card.set_type === "un") {
+    if (excludeSetType.includes(card.set_type)) {
         return false;
     }
     // Exclude schemes and conspiracies
-    if (card.type_line.includes("Scheme") || card.type_line.includes("Conspiracy")) {
+    if (
+        card.type_line.includes("Scheme") ||
+        card.type_line.includes("Conspiracy") ||
+        card.type_line.includes("Attraction") ||
+        card.type_line.includes("Token")
+    ) {
         return false;
     }
-    // Exclude tokens
-    if (card.type_line.includes("Token")) {
+    // Exclude cards illegal in all formats
+    if (Object.values(card.legalities).every((value) => value === "not_legal")) {
         return false;
     }
-
     return true;
 }
 
