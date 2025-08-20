@@ -1,6 +1,10 @@
 {
   "type": "module",
   "dependencies": {
-    "msgpack-lite": "^0.1.26"
+    "@google/genai": "^1.13.0",
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1",
+    "msgpack-lite": "^0.1.26",
+    "sqlite3": "^5.1.7"
   }
 }

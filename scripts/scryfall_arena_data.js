@@ -48,25 +48,58 @@ function extractCardDetails(card) {
     };
 }
 
+function oracleMapper({ keep = [], map = [] }) {
+    return (card) => {
+        if (!card) return null; // Early exit if card is null or undefined
+
+        const out = {};
+
+        for (const prop of keep) {
+            if (!card[prop]) continue; // Skip if property is missing
+            out[prop] = card[prop];
+        }
+
+        for (const [prop, mapper] of Object.entries(map)) {
+            if (!card[prop] || !mapper.with) continue; // Skip if property or mapper is invalid
+            const mapped = mapper.with(card[prop]);
+            if (!mapped) continue; // Skip if mapping result is falsy
+            out[mapper.as] = mapped;
+        }
+
+        const { oracle } = extractCardDetails(card);
+        return { ...out, oracle }; // Add oracle as the last property
+    };
+}
+
+const FILTERS = {
+    ALL: (c) => c,
+    MODERN: (c) => modernLegal(c.legalities),
+    ARENA: (c) => onArena(c.legalities),
+};
+
 const OUTPUT_FILES = {
-    SHRUNK: { fileName: "scryfall_arena_data.json", mapFunction: (card) => mapCardData(card) },
+    SHRUNK: {
+        fileName: "scryfall_arena_data.json",
+        filter: FILTERS.ALL,
+        mapFunction: (card) => mapCardData(card),
+    },
     BAREBONE: {
         fileName: "scryfall_barebone.json",
+        filter: FILTERS.ALL,
         mapFunction: (card) => mapCardData(card, true),
     },
     ORACLE: {
         fileName: "scryfall_oracle.json",
-        mapFunction: (card) => {
-            const { oracle } = extractCardDetails(card);
-            return {
-                id: card.id,
-                // name: card.name,
-                // stripId: strip(card.name),
-                manaCost: card.mana_cost,
-                type: card.type_line,
-                oracle,
-            };
-        },
+        filter: FILTERS.ALL,
+        mapFunction: oracleMapper({ keep: ["id", "mana_cost", "type_line"] }),
+    },
+    ORACLE_ARENA: {
+        fileName: "scryfall_oracle_arena.json",
+        filter: FILTERS.ARENA,
+        mapFunction: oracleMapper({
+            keep: ["id", "mana_cost", "type_line"],
+            map: { name: { as: "strip", with: (name) => strip(name) } },
+        }),
     },
 };
 
