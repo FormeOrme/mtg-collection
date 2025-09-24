@@ -45,7 +45,11 @@ const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
     const oracleMap = common.oracleDataMap();
     collectionData.cards.forEach((card) => {
         const strip = common.strip(card.name);
-        const oracle = oracleMap.get(strip);
+        let oracle = oracleMap.get(strip);
+        if (!oracle) {
+            // try without `a_` prefix
+            oracle = oracleMap.get(strip.replace(/^a_/, ""));
+        }
         if (oracle) {
             card.oracle = oracle;
         } else {
