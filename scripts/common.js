@@ -179,6 +179,23 @@ export const shrink = (scryfallData) => scryfallData.filter((c) => c.games.inclu
 
 export const defaultData = () => JSON.parse(fs.readFileSync(loadFile("default-cards-", "json")));
 export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-cards-", "json")));
+const omenpathMapping = () => JSON.parse(fs.readFileSync(loadFile("omenpath_mapping", "json")));
+
+export const OMENPATH_MAP = omenpathMapping().reduce((map, obj) => {
+    const strip_pn = strip(obj.printed_name);
+    const strip_n = strip(obj.name);
+    map.set(strip_n, {
+        ...obj,
+        strip_pn,
+        strip_n,
+    });
+    return map;
+}, new Map());
+
+const cardName = (name) => {
+    const strippedName = strip(name);
+    return OMENPATH_MAP.get(strippedName)?.strip_pn ?? strippedName;
+};
 
 export const oracleDataMap = () => {
     const data = oracleData();
@@ -188,7 +205,7 @@ export const oracleDataMap = () => {
     return data
         .filter(({ legalities }) => onArena(legalities))
         .reduce((map, card) => {
-            map.set(strip(card.name), card);
+            map.set(cardName(card.name), card);
             return map;
         }, new Map());
 };

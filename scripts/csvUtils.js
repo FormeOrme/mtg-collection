@@ -60,26 +60,32 @@ export function writeCsvFiles(cards) {
     const newCsvContent = generateCsvContent(cards);
     const today = formatYYYYMMDD(new Date());
 
-    // Get the last CSV file for diff comparison
-    const lastCsv = common.loadFile("csvToImport_", "csv");
-    console.log(`Creating diff from [${lastCsv}]`);
-    const lastCsvContent = common.read(lastCsv).toString();
-
-    // Generate diff and check if there are actual differences
-    const diffContent = getDiff(lastCsvContent, newCsvContent);
     const result = {
         csvPath: `csvToImport_${today}.csv`,
     };
 
-    // Only write diff if there are actual changes
-    if (diffContent.trim()) {
-        const diff = CSV_HEADER + "\n" + diffContent;
-        console.time("writing diff");
-        common.writeToData(diff, `diff_${today}.csv`);
-        console.timeEnd("writing diff");
-        result.diffPath = `diff_${today}.csv`;
-    } else {
-        console.log("No differences found, skipping diff file creation");
+    try {
+        // Get the last CSV file for diff comparison
+        const lastCsv = common.loadFile("csvToImport_", "csv");
+        console.log(`Creating diff from [${lastCsv}]`);
+        const lastCsvContent = common.read(lastCsv).toString();
+
+        // Generate diff and check if there are actual differences
+        const diffContent = getDiff(lastCsvContent, newCsvContent);
+
+        // Only write diff if there are actual changes
+        if (diffContent.trim()) {
+            const diff = CSV_HEADER + "\n" + diffContent;
+            console.time("writing diff");
+            common.writeToData(diff, `diff_${today}.csv`);
+            console.timeEnd("writing diff");
+            result.diffPath = `diff_${today}.csv`;
+        } else {
+            console.log("No differences found, skipping diff file creation");
+        }
+    } catch (error) {
+        console.warn("Could not load previous CSV file for diff comparison:", error.message);
+        console.log("Skipping diff file creation");
     }
 
     // Write new CSV

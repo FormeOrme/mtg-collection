@@ -4,13 +4,13 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Scryfall Data Processing",
+            "name": "scryfall_arena_data.js",
             "program": "${workspaceFolder}/scripts/scryfall_arena_data.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Index",
+            "name": "index.js",
             "program": "${workspaceFolder}/scripts/index.js"
         }
     ]
