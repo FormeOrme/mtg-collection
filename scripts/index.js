@@ -75,5 +75,8 @@ const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
         }, {}),
     ).sort((a, b) => a.n.localeCompare(b.n));
 
-    common.writeToData(JSON.stringify(arenaCollection), "arena_collection.json");
+    common.writeToData(
+        `[\n${arenaCollection.map((card) => JSON.stringify(card)).join(",\n")}\n]`,
+        "arena_collection.json",
+    );
 })();
