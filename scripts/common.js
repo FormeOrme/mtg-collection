@@ -202,12 +202,14 @@ export const oracleDataMap = () => {
     if (!data || !Array.isArray(data)) {
         throw new Error("Invalid oracle data format");
     }
-    return data
-        .filter(({ legalities }) => onArena(legalities))
-        .reduce((map, card) => {
-            map.set(cardName(card.name), card);
-            return map;
-        }, new Map());
+    return (
+        data
+            // .filter(({ legalities }) => onArena(legalities))
+            .reduce((map, card) => {
+                map.set(cardName(card.name), card);
+                return map;
+            }, new Map())
+    );
 };
 
 export const read = (filePath) => fs.readFileSync(filePath);
