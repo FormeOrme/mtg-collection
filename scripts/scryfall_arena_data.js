@@ -23,7 +23,7 @@ function mapCardData(card, additionalData = false) {
     const baseData = {
         n: strip(card.name),
         r: rarities[card.rarity[0]],
-        ...(onArena(card.legalities) && { a: 1 }),
+        ...(onArena(card) && { a: 1 }),
         ...(modernLegal(card.legalities) && { m: 1 }),
         ci: colorIdentity(card.color_identity),
         ...(sets.straightToModern.includes(card.set) && { stm: true }),
@@ -74,7 +74,7 @@ function oracleMapper({ keep = [], map = [] }) {
 const FILTERS = {
     ALL: (c) => c,
     MODERN: (c) => modernLegal(c.legalities),
-    ARENA: (c) => onArena(c.legalities),
+    ARENA: (c) => onArena(c),
 };
 
 const OUTPUT_FILES = {

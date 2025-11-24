@@ -12,6 +12,12 @@
             "request": "launch",
             "name": "index.js",
             "program": "${workspaceFolder}/scripts/index.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "generate_omenpath_mapping.js",
+            "program": "${workspaceFolder}/scripts/generate_omenpath_mapping.js"
         }
     ]
 }

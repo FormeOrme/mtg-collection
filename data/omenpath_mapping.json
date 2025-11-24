@@ -1,877 +1,767 @@
 [
-  {
-    "printed_name": "Fizik, Etherium Mechanic",
-    "name": "Iron Spider, Stark Upgrade",
-    "oracle_id": "e123fd7d-ace9-48a4-9510-eedcc837d8e8"
-  },
-  {
-    "printed_name": "Hide in Mundanity",
-    "name": "Spider-Man No More",
-    "oracle_id": "163f1fce-70c8-44e3-a679-f97d52cd1e9a"
-  },
-  {
-    "printed_name": "Nill, Vessel of Valgavoth",
-    "name": "Tombstone, Career Criminal",
-    "oracle_id": "6ad2cbb6-2291-420c-bfc8-ed3f079b59bf"
-  },
-  {
-    "printed_name": "Remorseless Coup",
-    "name": "The Spot's Portal",
-    "oracle_id": "3ceac6ce-acde-42ab-b79d-ff153074d2d8"
-  },
-  {
-    "printed_name": "Rick, Steadfast Leader",
-    "name": "Greymond, Avacyn's Stalwart",
-    "oracle_id": "739a5220-50cd-4148-be58-1bbdeef2954e"
-  },
-  {
-    "printed_name": "Scorvus Ames, Crimelord",
-    "name": "Scorpion, Seething Striker",
-    "oracle_id": "c357230a-afde-4c2a-b390-9f6928599236"
-  },
-  {
-    "printed_name": "Daryl, Hunter of Walkers",
-    "name": "Hansk, Slayer Zealot",
-    "oracle_id": "d818f863-17ee-4387-94bf-d7e6e8ab590c"
-  },
-  {
-    "printed_name": "Kavaero, Mind-Bitten",
-    "name": "Superior Spider-Man",
-    "oracle_id": "636cc915-9d1b-4ffe-9e74-795b78663911"
-  },
-  {
-    "printed_name": "Leyline Weaver",
-    "name": "Spider Manifestation",
-    "oracle_id": "8281f2b9-e81b-48da-812a-8713b2adf8ab"
-  },
-  {
-    "printed_name": "Mind Flayer, the Shadow",
-    "name": "Arvinox, the Mind Flail",
-    "oracle_id": "9abecd23-a2d9-43c7-8d01-f8afdc53026e"
-  },
-  {
-    "printed_name": "Remarkable Readings",
-    "name": "Friendly Neighborhood",
-    "oracle_id": "10fe402e-8d6f-4058-9f42-86f229055359"
-  },
-  {
-    "printed_name": "Vazin, Two-Faced Trickster",
-    "name": "Chameleon, Master of Disguise",
-    "oracle_id": "1ce239f2-79ad-4a30-8e8f-f985045f78dc"
-  },
-  {
-    "printed_name": "Through the Omenpath",
-    "name": "Web of Life and Destiny",
-    "oracle_id": "33d556c5-1bb4-49bb-88c2-627311eb8c9b"
-  },
-  {
-    "printed_name": "Chosen by Valgavoth",
-    "name": "With Great Power...",
-    "oracle_id": "dfedb968-f27c-4117-aff6-da707dd43e82"
-  },
-  {
-    "printed_name": "Rishei, Getaway Accomplice",
-    "name": "Vulture, Scheming Scavenger",
-    "oracle_id": "0409765a-bbb4-465e-99b3-3687bffc3cf9"
-  },
-  {
-    "printed_name": "Mike, the Dungeon Master",
-    "name": "Othelm, Sigardian Outcast",
-    "oracle_id": "4ee401bf-dc86-41a9-84f9-57aa0a314d08"
-  },
-  {
-    "printed_name": "Ozor, Chronicler of Collapse",
-    "name": "Doc Ock, Sinister Scientist",
-    "oracle_id": "dbaa70e6-26de-4ce9-9543-e652cbe387c1"
-  },
-  {
-    "printed_name": "Basil, Cabaretti Loudmouth",
-    "name": "Flash Thompson, Spider-Fan",
-    "oracle_id": "f536a518-160e-4267-89da-3d34accc6d2c"
-  },
-  {
-    "printed_name": "Spectral Restitching",
-    "name": "Hide on the Ceiling",
-    "oracle_id": "376fa374-ead1-4728-ab8b-aca230b72031"
-  },
-  {
-    "printed_name": "Perilous Lunge",
-    "name": "Kapow!",
-    "oracle_id": "d6eabbff-cc0c-4000-8feb-4826e1b6bc66"
-  },
-  {
-    "printed_name": "Luis, Pompous Pillager",
-    "name": "Morlun, Devourer of Spiders",
-    "oracle_id": "273ad15c-366a-4691-978b-d6028b57005a"
-  },
-  {
-    "printed_name": "Wekhdu, Midnight Hunter",
-    "name": "Swarm, Being of Bees",
-    "oracle_id": "10c8cf3b-2530-49e7-b38e-95cdaae8a6e7"
-  },
-  {
-    "printed_name": "Withar, Cocoon Keeper",
-    "name": "Mister Negative",
-    "oracle_id": "c8da3262-826d-4ea8-bb22-06374bebefe5"
-  },
-  {
-    "printed_name": "Darval, Whose Web Protects",
-    "name": "Spider-Man, Web-Slinger",
-    "oracle_id": "505231d8-714f-4c5b-a635-d1662bd18a78"
-  },
-  {
-    "printed_name": "Margot, On the Case",
-    "name": "Wraith, Vicious Vigilante",
-    "oracle_id": "38684c31-e8c6-4825-8740-1a3d34b58b39"
-  },
-  {
-    "printed_name": "A Most Helpful Weaver",
-    "name": "Origin of Spider-Man",
-    "oracle_id": "7fbe9056-190f-40a1-bee9-59ebd6f981f5"
-  },
-  {
-    "printed_name": "Crash, Reckless Endrider",
-    "name": "Shriek, Treblemaker",
-    "oracle_id": "5773ae05-44bc-423c-846c-f323dd8a5079"
-  },
-  {
-    "printed_name": "Kroble, Envoy of the Bog",
-    "name": "Spider-Man Noir",
-    "oracle_id": "2efd6494-c5e1-41de-bc6e-8490ff046cd1"
-  },
-  {
-    "printed_name": "Forge, Neverwinter Charlatan",
-    "name": "Evin, Waterdeep Opportunist",
-    "oracle_id": "f688f839-c7c2-45a9-8c60-9fdb030803e6"
-  },
-  {
-    "printed_name": "Will the Wise",
-    "name": "Wernog, Rider's Chaplain",
-    "oracle_id": "6cd03270-54cc-43e1-9b86-70c76960c841"
-  },
-  {
-    "printed_name": "Blanka, Ferocious Friend",
-    "name": "The Howling Abomination",
-    "oracle_id": "4a67946e-8903-4994-9641-d31fbb62082c"
-  },
-  {
-    "printed_name": "Dustin, Gadget Genius",
-    "name": "Hargilde, Kindly Runechanter",
-    "oracle_id": "747009e7-da07-48c7-b838-687f19b884ea"
-  },
-  {
-    "printed_name": "Temple Trap",
-    "name": "Steel Wrecking Ball",
-    "oracle_id": "3a07e22c-71cd-4723-b07e-0ff02009a878"
-  },
-  {
-    "printed_name": "Drix Interception",
-    "name": "Amazing Acrobatics",
-    "oracle_id": "0466f23c-d07c-4015-82d5-eab4b226f1ff"
-  },
-  {
-    "printed_name": "The Clutter Cluster",
-    "name": "Spiders-Man, Heroic Horde",
-    "oracle_id": "d21d7557-9702-46c1-8277-42a3442084c2"
-  },
-  {
-    "printed_name": "Hex of Undeath",
-    "name": "Behold the Sinister Six!",
-    "oracle_id": "6fa27f8a-bade-460f-853a-abc1c05c946a"
-  },
-  {
-    "printed_name": "Duskmourn's Claim",
-    "name": "Parker Luck",
-    "oracle_id": "03d1a4e9-3ebc-491f-8741-5d933b500abf"
-  },
-  {
-    "printed_name": "Rizna, the Spider-Crowned",
-    "name": "Spinneret and Spiderling",
-    "oracle_id": "daca1d5e-349d-4e8a-abc7-427dab43fb0c"
-  },
-  {
-    "printed_name": "Eleven, the Mage",
-    "name": "Cecily, Haunted Mage",
-    "oracle_id": "a726c27d-2955-4d41-b8a6-fca654c020a2"
-  },
-  {
-    "printed_name": "Negan, the Cold-Blooded",
-    "name": "Malik, Grim Manipulator",
-    "oracle_id": "416608a1-89a4-44ce-8fd0-fab6b023d3d4"
-  },
-  {
-    "printed_name": "Chizak, Apex Arachnosaur",
-    "name": "Spider-Rex, Daring Dino",
-    "oracle_id": "58b771d4-dfaf-4189-a5f6-4bc0fb4c0fa3"
-  },
-  {
-    "printed_name": "Lazlo, Enthusiastic Accuser",
-    "name": "J. Jonah Jameson",
-    "oracle_id": "de861715-fd0b-493e-9a7c-c470a23044c0"
-  },
-  {
-    "printed_name": "Treat Trolley",
-    "name": "Hot Dog Cart",
-    "oracle_id": "cf27f1f8-2d95-4a00-97f8-72a244837f08"
-  },
-  {
-    "printed_name": "Selesnya Archivist",
-    "name": "Damage Control Crew",
-    "oracle_id": "c0f9e604-a8bf-4c7d-8480-487e8076e1d8"
-  },
-  {
-    "printed_name": "Lucas, the Sharpshooter",
-    "name": "Bjorna, Nightfall Alchemist",
-    "oracle_id": "c880fbdc-bdd9-4f80-81d4-e3e1124f76ca"
-  },
-  {
-    "printed_name": "Pinnacle Research Team",
-    "name": "Oscorp Research Team",
-    "oracle_id": "4d2e233c-0173-417f-82a0-1e692a400ae1"
-  },
-  {
-    "printed_name": "Ancestral Carvings",
-    "name": "Pictures of Spider-Man",
-    "oracle_id": "4fd74a8c-a4e7-4988-ae02-9a73ab6ec89e"
-  },
-  {
-    "printed_name": "Phantasmal Vision",
-    "name": "Mysterio's Phantasm",
-    "oracle_id": "99419378-8a23-44f3-aebe-e62d6e20e877"
-  },
-  {
-    "printed_name": "Alenni, Brood Recruiter",
-    "name": "Silk, Web Weaver",
-    "oracle_id": "50477dc8-9a2a-41eb-984d-c9e1e78e08a2"
-  },
-  {
-    "printed_name": "Eztli of the Thousand Moons",
-    "name": "Starling, Aerial Ally",
-    "oracle_id": "13fd7ca6-c278-409f-a9c4-57f16051ffce"
-  },
-  {
-    "printed_name": "Cirina Bargainspinner",
-    "name": "Sun-Spider, Nimble Webber",
-    "oracle_id": "2d961997-4f5f-4ce2-b062-11411147e2f7"
-  },
-  {
-    "printed_name": "Sarn of the Silken Throne",
-    "name": "Spider-UK",
-    "oracle_id": "ebf8d006-2997-431b-b4cb-9692741b45ca"
-  },
-  {
-    "printed_name": "Scuttling Spidercoach",
-    "name": "Spider-Mobile",
-    "oracle_id": "3c322d99-2bc4-4618-aeb3-5583fce54f1b"
-  },
-  {
-    "printed_name": "Chief Jim Hopper",
-    "name": "Sophina, Spearsage Deserter",
-    "oracle_id": "095dabda-4570-4764-8d62-4a29eb19d3e6"
-  },
-  {
-    "printed_name": "Crime-Scene Instructor",
-    "name": "Selfless Police Captain",
-    "oracle_id": "ece77a64-8d99-430e-8407-bdb321828d63"
-  },
-  {
-    "printed_name": "Cactarantula Saddle",
-    "name": "Spider-Suit",
-    "oracle_id": "ba08b4cf-9a13-40fd-8522-9504d2ff1a19"
-  },
-  {
-    "printed_name": "Nu and Sumi, Career Criminals",
-    "name": "Green Goblin, Revenant",
-    "oracle_id": "67175889-02f9-4ad8-a9ab-11db44328b67"
-  },
-  {
-    "printed_name": "Data Scrubber",
-    "name": "Mechanical Mobster",
-    "oracle_id": "b0672aa3-3207-4ff8-af8f-bdabacbb4d04"
-  },
-  {
-    "printed_name": "E. Honda, Sumo Champion",
-    "name": "Baldin, Century Herdmaster",
-    "oracle_id": "14493624-fdc7-4630-9b1e-f35668651108"
-  },
-  {
-    "printed_name": "Demera, Soul of a Spider",
-    "name": "Mary Jane Watson",
-    "oracle_id": "6d44c87b-8945-4c39-b034-7690cf483992"
-  },
-  {
-    "printed_name": "Wonderweave Aerialist",
-    "name": "Skyward Spider",
-    "oracle_id": "d6ba76fa-441c-4a74-bfea-8ae2a2c9e391"
-  },
-  {
-    "printed_name": "Lively Leap",
-    "name": "Thwip!",
-    "oracle_id": "f7d11254-b48a-4016-a035-c0d6642fdfae"
-  },
-  {
-    "printed_name": "Lavaborn Goblins",
-    "name": "Raging Goblinoids",
-    "oracle_id": "c807b53f-2917-41a0-812c-57240b623365"
-  },
-  {
-    "printed_name": "Bayo, Irritable Instructor",
-    "name": "Electro, Assaulting Battery",
-    "oracle_id": "3db16fb8-5650-4568-b975-42ad3d44ebcd"
-  },
-  {
-    "printed_name": "Michonne, Ruthless Survivor",
-    "name": "Enkira, Hostile Scavenger",
-    "oracle_id": "558fd7a9-9b39-4c82-b909-5febf55dc010"
-  },
-  {
-    "printed_name": "Favored Fighter",
-    "name": "Professional Wrestler",
-    "oracle_id": "3dd92eea-02ca-4e55-8f69-8c8059dd7ee6"
-  },
-  {
-    "printed_name": "Detect Intrusion",
-    "name": "Spider-Sense",
-    "oracle_id": "c4485bf9-e7ff-48b5-a983-02900939ee9d"
-  },
-  {
-    "printed_name": "Kivni, Orb Weaver",
-    "name": "Scarlet Spider, Kaine",
-    "oracle_id": "4ec8a5ea-b750-4711-8843-2bc98f4ce060"
-  },
-  {
-    "printed_name": "The Scouring Stormsoul",
-    "name": "Sandman, Shifting Scoundrel",
-    "oracle_id": "8b205480-b1fb-490c-b1c9-cf5cc3c5acdb"
-  },
-  {
-    "printed_name": "Outsmart the Amateur",
-    "name": "School Daze",
-    "oracle_id": "af2275ea-1085-4145-aa6b-36924d53d88a"
-  },
-  {
-    "printed_name": "King of the Coldblood Curse",
-    "name": "Lizard, Connors's Curse",
-    "oracle_id": "48d1b217-b068-468c-bc6c-4bef9e44cc6e"
-  },
-  {
-    "printed_name": "Tearle, Entropic Hunger",
-    "name": "Morbius the Living Vampire",
-    "oracle_id": "1a947e4d-8a14-45f1-bb80-760a317b1ed0"
-  },
-  {
-    "printed_name": "Yera and Oski, Weaver and Guide",
-    "name": "Arachne, Psionic Weaver",
-    "oracle_id": "28d500ea-720f-4332-891e-404fb03acb5c"
-  },
-  {
-    "printed_name": "Ken, Burning Brawler",
-    "name": "Aisha of Sparks and Smoke",
-    "oracle_id": "eae3e762-dacd-4bd2-923c-3abb5ceb729a"
-  },
-  {
-    "printed_name": "Dreadfang, Loathed by Fans",
-    "name": "Kraven, Proud Predator",
-    "oracle_id": "12b8b4bf-ba85-419c-8005-1ec34b2b1deb"
-  },
-  {
-    "printed_name": "Skittering Kitten",
-    "name": "Masked Meower",
-    "oracle_id": "a0037ff8-64db-45dd-bba1-db5c49095083"
-  },
-  {
-    "printed_name": "The House Grows Hungry",
-    "name": "The Death of Gwen Stacy",
-    "oracle_id": "2624b5c5-ba59-4e20-8e66-e463268366e4"
-  },
-  {
-    "printed_name": "Glenn, the Voice of Calm",
-    "name": "Gregor, Shrewd Magistrate",
-    "oracle_id": "0b64da77-ca1c-427b-b48b-b919f0fe08e9"
-  },
-  {
-    "printed_name": "The Infernus",
-    "name": "Molten Man, Inferno Incarnate",
-    "oracle_id": "c6fcf3c1-0626-4d53-92c0-caa22fa61e9a"
-  },
-  {
-    "printed_name": "Sadistic String-Puller",
-    "name": "Spider-Islanders",
-    "oracle_id": "2d1a15dc-3123-4425-b036-a3b5a83fcdf8"
-  },
-  {
-    "printed_name": "Error-9, Viral Node",
-    "name": "Living Brain, Mechanical Marvel",
-    "oracle_id": "b255e13d-01b2-4348-80bd-8d9a8f29be91"
-  },
-  {
-    "printed_name": "Kraza, the Swarm as One",
-    "name": "Spider-Punk",
-    "oracle_id": "03bf7a90-78c1-4e83-8553-e22d85e49876"
-  },
-  {
-    "printed_name": "Neach, Pinnacle Pariah",
-    "name": "Doctor Octopus, Master Planner",
-    "oracle_id": "2fecfbef-e521-4025-94ea-451c9abde3de"
-  },
-  {
-    "printed_name": "Giantcraft Helm",
-    "name": "Doc Ock's Tentacles",
-    "oracle_id": "a5a18764-eb29-4bd8-a2e9-0ce55f4f6c88"
-  },
-  {
-    "printed_name": "Lost in Littjara",
-    "name": "The Clone Saga",
-    "oracle_id": "0f0282c6-aceb-4879-8ec8-482d0501204a"
-  },
-  {
-    "printed_name": "Archangler's Skyrod",
-    "name": "Web-Shooters",
-    "oracle_id": "ec528198-a38a-4ef7-9804-78a25c94ecc1"
-  },
-  {
-    "printed_name": "Restless Razorkin",
-    "name": "Superior Foes of Spider-Man",
-    "oracle_id": "a6a7af21-e52c-4f7f-a57f-bd365d075966"
-  },
-  {
-    "printed_name": "Xecau, Predation's Shadow",
-    "name": "Rhino, Barreling Brute",
-    "oracle_id": "9a6bf8a3-7640-4890-ac62-d5028f41978b"
-  },
-  {
-    "printed_name": "Knife Trick",
-    "name": "Pumpkin Bombardment",
-    "oracle_id": "37827e84-9f5f-49ed-b939-0cf80dac82e7"
-  },
-  {
-    "printed_name": "Brako, Heartless Hunter",
-    "name": "Kraven the Hunter",
-    "oracle_id": "3e2bfa3a-ae83-453a-8e3f-ca6205a9af12"
-  },
-  {
-    "printed_name": "Galvanized Workforce",
-    "name": "Angry Rabble",
-    "oracle_id": "cf6dc79e-840c-4d47-8f94-c8623528acd2"
-  },
-  {
-    "printed_name": "Fateweaver",
-    "name": "Radioactive Spider",
-    "oracle_id": "f15bd5c0-99ff-42c6-8eed-48de6df81b61"
-  },
-  {
-    "printed_name": "Zora, Spider Fancier",
-    "name": "Aunt May",
-    "oracle_id": "bdb769b5-c861-4ec1-ad6b-e2a56ca05fd1"
-  },
-  {
-    "printed_name": "Verilax the Havenskin",
-    "name": "Anti-Venom, Horrifying Healer",
-    "oracle_id": "3c7bafe9-80cd-48d0-bcae-e7910c9fb83b"
-  },
-  {
-    "printed_name": "Olx, Mouth to Many Eyes",
-    "name": "Madame Web, Clairvoyant",
-    "oracle_id": "b1e0841d-b004-40f9-a644-aecb422f6ad5"
-  },
-  {
-    "printed_name": "Arala, Hedron Scaler",
-    "name": "Beetle, Legacy Criminal",
-    "oracle_id": "87972de1-c1d7-408e-8d56-995590f639b8"
-  },
-  {
-    "printed_name": "Miasmic Mist",
-    "name": "Sandman's Quicksand",
-    "oracle_id": "f2b376d2-a2f4-4d23-a1fb-eb7b6ebd0b7a"
-  },
-  {
-    "printed_name": "Vexed Bots",
-    "name": "Flying Octobot",
-    "oracle_id": "5ef8925c-5f43-49ca-83f0-e2ca8e655600"
-  },
-  {
-    "printed_name": "A Trail of Teacups",
-    "name": "Kraven's Last Hunt",
-    "oracle_id": "e74efcf2-d77f-4fb5-9027-77e462ec829e"
-  },
-  {
-    "printed_name": "Ademi of the Silkchutes",
-    "name": "Spectacular Spider-Man",
-    "oracle_id": "eed5e0cc-8f88-4779-bf10-6a823c72df7f"
-  },
-  {
-    "printed_name": "Carriage of Dreams",
-    "name": "Passenger Ferry",
-    "oracle_id": "e9832d58-0ee6-4641-a9fd-d34d54b3b11c"
-  },
-  {
-    "printed_name": "Freestrider Aces",
-    "name": "Wild Pack Squad",
-    "oracle_id": "294b2aa7-cb46-46bd-8241-69b26d73aa2d"
-  },
-  {
-    "printed_name": "Ruzic, Booed but Victorious",
-    "name": "Ultimate Green Goblin",
-    "oracle_id": "b5b43d01-fce6-4a00-9c19-7a7e2a09d833"
-  },
-  {
-    "printed_name": "Zangief, the Red Cyclone",
-    "name": "Maarika, Brutal Gladiator",
-    "oracle_id": "a46f9f5c-775c-470d-8935-9556e1bbb23d"
-  },
-  {
-    "printed_name": "Bane-Marked Leonin",
-    "name": "Venomized Cat",
-    "oracle_id": "eb54d807-624b-471e-8c44-07322003903e"
-  },
-  {
-    "printed_name": "Cruel Caracals",
-    "name": "Kraven's Cats",
-    "oracle_id": "976db753-9887-448a-8e67-ec7937b6505c"
-  },
-  {
-    "printed_name": "Fire-Brained Scheme",
-    "name": "Heroes' Hangout",
-    "oracle_id": "43306a78-85b5-4df4-a018-75dd75aa8997"
-  },
-  {
-    "printed_name": "Reality Fulcrum",
-    "name": "Interdimensional Web Watch",
-    "oracle_id": "456dbec4-1b0e-48c4-abae-5c8205651872"
-  },
-  {
-    "printed_name": "Cam and Farrik, Havoc Duo",
-    "name": "Hobgoblin, Mantled Marauder",
-    "oracle_id": "1d453331-6b8e-4d3d-b658-683eab2760da"
-  },
-  {
-    "printed_name": "The Terminus of Return",
-    "name": "The Soul Stone",
-    "oracle_id": "92cfba68-12f6-4f97-9187-0f6a39656a0f"
-  },
-  {
-    "printed_name": "Generous Betty Wray",
-    "name": "Silver Sable, Mercenary Leader",
-    "oracle_id": "40b82dee-98c7-4b86-88b8-28388cd0331f"
-  },
-  {
-    "printed_name": "Borys, the Spider Rider",
-    "name": "Scarlet Spider, Ben Reilly",
-    "oracle_id": "13ab2f3f-f65e-42b5-b743-39b30a4c4751"
-  },
-  {
-    "printed_name": "Goro Rel, Scourge to Spiders",
-    "name": "Spider-Slayer, Hatred Honed",
-    "oracle_id": "ca68f436-2522-4007-87bf-2669c7743db0"
-  },
-  {
-    "printed_name": "Argyr, Tidal Spinner",
-    "name": "Spider-Byte, Web Warden",
-    "oracle_id": "845472ca-3fcb-4bcd-953c-96eb8d914af9"
-  },
-  {
-    "printed_name": "Skv'x the Augmenter",
-    "name": "Symbiote Spider-Man",
-    "oracle_id": "bc681ecf-2a52-4782-9a47-90f5a9f435d8"
-  },
-  {
-    "printed_name": "Max, the Daredevil",
-    "name": "Elmar, Ulvenwald Informant",
-    "oracle_id": "5a35201d-e9b1-433a-bb70-3280ceedbcd6"
-  },
-  {
-    "printed_name": "Simon, Wild Magic Sorcerer",
-    "name": "Mathise, Surge Channeler",
-    "oracle_id": "61be7df8-cc78-4822-9e70-f226a8a96c9d"
-  },
-  {
-    "printed_name": "Tethex, Gift of Malice",
-    "name": "Venom, Evil Unleashed",
-    "oracle_id": "6731d861-cc52-4a2e-8c33-154681fd50e4"
-  },
-  {
-    "printed_name": "Clandestine Work",
-    "name": "Risky Research",
-    "oracle_id": "47d52cd7-d72f-455f-aad3-70f08d54691f"
-  },
-  {
-    "printed_name": "Phenomena Recorder",
-    "name": "Peter Parker's Camera",
-    "oracle_id": "10777360-c046-43e3-ab44-9d0b926fbbf8"
-  },
-  {
-    "printed_name": "Dhalsim, Pliable Pacifist",
-    "name": "Tadeas, Juniper Ascendant",
-    "oracle_id": "b4b5b928-8b98-4f65-9f15-212859874fe4"
-  },
-  {
-    "printed_name": "Tarantusk, Unwisely Awoken",
-    "name": "Spider-Ham, Peter Porker",
-    "oracle_id": "00b50215-e832-417f-9c80-2bc3050b6ebb"
-  },
-  {
-    "printed_name": "Scions of the Ur-Spider",
-    "name": "Cosmic Spider-Man",
-    "oracle_id": "0334a2f8-a74a-44c9-ba64-d9b7fabe160c"
-  },
-  {
-    "printed_name": "Mothwing Shroud",
-    "name": "Web Up",
-    "oracle_id": "9b9b086c-d201-4574-a1e9-0d6f8de53d7d"
-  },
-  {
-    "printed_name": "Alessos and Pras, Acrobats",
-    "name": "Spider-Man India",
-    "oracle_id": "8933297c-62f1-4df9-91b8-2d3481db77e5"
-  },
-  {
-    "printed_name": "Caldaia Brawlers",
-    "name": "Inner Demons Gangsters",
-    "oracle_id": "40b43763-3fbf-4ecd-8187-5d2c2c9cda82"
-  },
-  {
-    "printed_name": "Orris, Last of the Web Lords",
-    "name": "Ezekiel Sims, Spider-Totem",
-    "oracle_id": "4074e897-82a4-4f57-86c2-4aab3f29ef9b"
-  },
-  {
-    "printed_name": "Snatch Back",
-    "name": "Whoosh!",
-    "oracle_id": "855353e2-b686-482a-b987-c6ae456f088c"
-  },
-  {
-    "printed_name": "Eccentric Arachnologist",
-    "name": "Guy in the Chair",
-    "oracle_id": "83eb74df-1c77-48b0-83be-55d7aa4d3618"
-  },
-  {
-    "printed_name": "Kumonosu, the Watchful",
-    "name": "SP//dr, Piloted by Peni",
-    "oracle_id": "722ab6e4-a2e0-4aaa-a050-7b6436e22b40"
-  },
-  {
-    "printed_name": "Xenk, Paladin Unbroken",
-    "name": "Rashel, Fist of Torm",
-    "oracle_id": "c0c39f80-cf12-482e-a7c4-757db85125b0"
-  },
-  {
-    "printed_name": "Chun-Li, Countless Kicks",
-    "name": "Zethi, Arcane Blademaster",
-    "oracle_id": "ac136d46-32b7-4222-a840-b8be011c1872"
-  },
-  {
-    "printed_name": "Aggressive Symbiosis",
-    "name": "Alien Symbiosis",
-    "oracle_id": "19504e19-2886-4d28-a813-b798a9a446a2"
-  },
-  {
-    "printed_name": "Rouse the Swarm",
-    "name": "Wall Crawl",
-    "oracle_id": "4a09536e-dfc1-4b15-adc1-07ef866ebda0"
-  },
-  {
-    "printed_name": "Arachnomania",
-    "name": "Spider-Verse",
-    "oracle_id": "7ef7d902-1f05-40b3-8997-dec197b0b678"
-  },
-  {
-    "printed_name": "Deathflame Burst",
-    "name": "Electro's Bolt",
-    "oracle_id": "e9222f89-e495-4502-bb0c-f5e802686b01"
-  },
-  {
-    "printed_name": "Druneth, Reviver of the Hive",
-    "name": "Jackal, Genius Geneticist",
-    "oracle_id": "5998f07e-01f9-4d02-94dd-867c7166463f"
-  },
-  {
-    "printed_name": "Edgin, Larcenous Lutenist",
-    "name": "Bohn, Beguiling Balladeer",
-    "oracle_id": "ab31b652-ddf2-480f-a955-e8b5c87728f9"
-  },
-  {
-    "printed_name": "Exclusive Nightclub",
-    "name": "Oscorp Industries",
-    "oracle_id": "f432eb6a-f1bf-4ce7-b915-1488dccb4bb9"
-  },
-  {
-    "printed_name": "Principled Referee",
-    "name": "Daily Bugle Reporters",
-    "oracle_id": "2e677ded-7af3-4af0-81df-b70d6ee616ec"
-  },
-  {
-    "printed_name": "Stitcher's Wings",
-    "name": "Rocket-Powered Goblin Glider",
-    "oracle_id": "5db9121d-934a-44f1-b178-b389c6595af7"
-  },
-  {
-    "printed_name": "Quint's Insight",
-    "name": "Shadow of the Goblin",
-    "oracle_id": "f343b6f9-41c3-419b-a57c-a7b08603ef5c"
-  },
-  {
-    "printed_name": "Opulent Valet",
-    "name": "News Helicopter",
-    "oracle_id": "192dd1e2-b6c2-432a-a1b4-e52ff39b3db2"
-  },
-  {
-    "printed_name": "Kephon, Rage Incubator",
-    "name": "Stegron the Dinosaur Man",
-    "oracle_id": "5c94b616-8edf-465c-b316-4599df95c52a"
-  },
-  {
-    "printed_name": "Merata, Neuron Hacker",
-    "name": "Lady Octopus, Inspired Inventor",
-    "oracle_id": "8e51fdb8-4f83-4e94-b36c-40a501075ecb"
-  },
-  {
-    "printed_name": "Rhilex the Accursed",
-    "name": "Agent Venom",
-    "oracle_id": "14c356aa-178d-4c14-a88e-fbe92ee6d89f"
-  },
-  {
-    "printed_name": "Wardens of Silverweb Summit",
-    "name": "Spider-Gwen, Free Spirit",
-    "oracle_id": "2648559d-1d96-47d2-a769-cfa2cbca2be5"
-  },
-  {
-    "printed_name": "Ryu, World Warrior",
-    "name": "Vikya, Scorching Stalwart",
-    "oracle_id": "ad43ccce-3052-4817-8c46-f5c23cb49300"
-  },
-  {
-    "printed_name": "Confessor's Bindings",
-    "name": "Rent Is Due",
-    "oracle_id": "3fe1530d-bcf2-440b-a905-5a2216daa7eb"
-  },
-  {
-    "printed_name": "Lavabrink Repels the Magmaloth",
-    "name": "Maximum Carnage",
-    "oracle_id": "7351fca5-8672-4ba3-a015-bd4b6b289efc"
-  },
-  {
-    "printed_name": "Lucille",
-    "name": "Gisa's Favorite Shovel",
-    "oracle_id": "9c298c7b-9c63-4a66-a0fc-977491b623c7"
-  },
-  {
-    "printed_name": "Uharis, the Stormspinner",
-    "name": "Spider-Man 2099",
-    "oracle_id": "19845456-3d96-48a4-89fa-9b8e583774c9"
-  },
-  {
-    "printed_name": "Qoneus, Horizon Splicer",
-    "name": "The Spot, Living Portal",
-    "oracle_id": "a5dfa7ad-9637-4da8-9ed2-0ac863617d9a"
-  },
-  {
-    "printed_name": "Belion, the Parched",
-    "name": "Hydro-Man, Fluid Felon",
-    "oracle_id": "a93a8edf-2879-4cae-b3b9-b46298270823"
-  },
-  {
-    "printed_name": "Steelweb Surveyor",
-    "name": "Spider-Bot",
-    "oracle_id": "e4bb33b2-adde-4176-9274-7598b559aa6a"
-  },
-  {
-    "printed_name": "Angler's Shield",
-    "name": "Biorganic Carapace",
-    "oracle_id": "7d27c583-469c-42d7-a547-8c65654e9d95"
-  },
-  {
-    "printed_name": "Desecrex, Gift of Servitude",
-    "name": "Carnage, Crimson Chaos",
-    "oracle_id": "c0efafc6-8ffb-4908-ae64-3f391722370a"
-  },
-  {
-    "printed_name": "Guile, Sonic Soldier",
-    "name": "Immard, the Stormcleaver",
-    "oracle_id": "104f65d3-bedb-4dc5-a5dd-8ab9fe796af4"
-  },
-  {
-    "printed_name": "Full-Throttle Fanatic",
-    "name": "Taxi Driver",
-    "oracle_id": "a17a92f7-e95c-4d0e-a43e-7e6b41a59139"
-  },
-  {
-    "printed_name": "Wrench, Speedway Saboteur",
-    "name": "Black Cat, Cunning Thief",
-    "oracle_id": "f5cdb413-2b72-4dc6-b93d-2532ac2ae568"
-  },
-  {
-    "printed_name": "Zan, Tunnelweb Explorer",
-    "name": "Spider-Man, Brooklyn Visionary",
-    "oracle_id": "2ca85872-9436-4515-af50-c13e59605627"
-  },
-  {
-    "printed_name": "Kazuo, Ruthless Rival",
-    "name": "Shocker, Unshakable",
-    "oracle_id": "564dac59-97f7-4988-9f30-d82a891e29ef"
-  },
-  {
-    "printed_name": "Fearsome Ridgeline",
-    "name": "Daily Bugle Building",
-    "oracle_id": "483e0c6c-8131-486c-b482-cc3396c9786b"
-  },
-  {
-    "printed_name": "Janai and Hoppy, Roofskippers",
-    "name": "Spider-Girl, Legacy Hero",
-    "oracle_id": "d459b3f5-a18c-4c17-a855-dc147f7c2161"
-  },
-  {
-    "printed_name": "Damning Caress",
-    "name": "Venom's Hunger",
-    "oracle_id": "8388faa0-f64e-4b01-836e-617f99b808a4"
-  },
-  {
-    "printed_name": "Obscura Alleylurkers",
-    "name": "Doc Ock's Henchmen",
-    "oracle_id": "ae91c16c-5267-4957-b36c-5aa787fa6b5e"
-  },
-  {
-    "printed_name": "Gloria, the Great Armorer",
-    "name": "Araña, Heart of the Spider",
-    "oracle_id": "a16037f2-a0f6-465d-8d6e-cec34b4a6320"
-  },
-  {
-    "printed_name": "Vinewoven Chariot",
-    "name": "Subway Train",
-    "oracle_id": "6d4472ad-3fbf-4a5d-94de-dfee04fda9c3"
-  },
-  {
-    "printed_name": "Carlo, Suave Schemer",
-    "name": "Prowler, Clawed Thief",
-    "oracle_id": "76742bfc-ae99-4b06-b29d-e0e41d92ae14"
-  },
-  {
-    "printed_name": "Holga, Relentless Rager",
-    "name": "Jurin, Leading the Charge",
-    "oracle_id": "de384867-8bb4-4edf-b542-970538718fdd"
-  },
-  {
-    "printed_name": "Diligent Webkeepers",
-    "name": "Web-Warriors",
-    "oracle_id": "3b23e4f8-882d-4cce-9b61-171ae2cc3a18"
-  },
-  {
-    "printed_name": "Makdee and Itla, Skysnarers",
-    "name": "Spider-Woman, Stunning Savior",
-    "oracle_id": "be2b9c6d-4ecb-49ec-b276-4aa93c5dfc00"
-  },
-  {
-    "printed_name": "Egrix the Bile Bulwark",
-    "name": "Gwenom, Remorseless",
-    "oracle_id": "c48cf135-b280-4e9f-a9d9-225104870741"
-  },
-  {
-    "printed_name": "Perfected Pastry",
-    "name": "Bagel and Schmear",
-    "oracle_id": "1389c9fa-fec2-4212-a7aa-6dfb318dc202"
-  },
-  {
-    "printed_name": "The Watcher on the Road",
-    "name": "Mysterio, Master of Illusion",
-    "oracle_id": "40f664d8-4c73-44aa-8fb1-d38771a42520"
-  }
+    {
+        "printed_name": "A Most Helpful Weaver",
+        "name": "Origin of Spider-Man",
+        "oracle_id": "7fbe9056-190f-40a1-bee9-59ebd6f981f5"
+    },
+    {
+        "printed_name": "A Trail of Teacups",
+        "name": "Kraven's Last Hunt",
+        "oracle_id": "e74efcf2-d77f-4fb5-9027-77e462ec829e"
+    },
+    {
+        "printed_name": "Ademi of the Silkchutes",
+        "name": "Spectacular Spider-Man",
+        "oracle_id": "eed5e0cc-8f88-4779-bf10-6a823c72df7f"
+    },
+    {
+        "printed_name": "Aggressive Symbiosis",
+        "name": "Alien Symbiosis",
+        "oracle_id": "19504e19-2886-4d28-a813-b798a9a446a2"
+    },
+    {
+        "printed_name": "Alenni, Brood Recruiter",
+        "name": "Silk, Web Weaver",
+        "oracle_id": "50477dc8-9a2a-41eb-984d-c9e1e78e08a2"
+    },
+    {
+        "printed_name": "Alessos and Pras, Acrobats",
+        "name": "Spider-Man India",
+        "oracle_id": "8933297c-62f1-4df9-91b8-2d3481db77e5"
+    },
+    {
+        "printed_name": "Ancestral Carvings",
+        "name": "Pictures of Spider-Man",
+        "oracle_id": "4fd74a8c-a4e7-4988-ae02-9a73ab6ec89e"
+    },
+    {
+        "printed_name": "Angler's Shield",
+        "name": "Biorganic Carapace",
+        "oracle_id": "7d27c583-469c-42d7-a547-8c65654e9d95"
+    },
+    {
+        "printed_name": "Arachnomania",
+        "name": "Spider-Verse",
+        "oracle_id": "7ef7d902-1f05-40b3-8997-dec197b0b678"
+    },
+    {
+        "printed_name": "Arala, Hedron Scaler",
+        "name": "Beetle, Legacy Criminal",
+        "oracle_id": "87972de1-c1d7-408e-8d56-995590f639b8"
+    },
+    {
+        "printed_name": "Archangler's Skyrod",
+        "name": "Web-Shooters",
+        "oracle_id": "ec528198-a38a-4ef7-9804-78a25c94ecc1"
+    },
+    {
+        "printed_name": "Argyr, Tidal Spinner",
+        "name": "Spider-Byte, Web Warden",
+        "oracle_id": "845472ca-3fcb-4bcd-953c-96eb8d914af9"
+    },
+    {
+        "printed_name": "Bane-Marked Leonin",
+        "name": "Venomized Cat",
+        "oracle_id": "eb54d807-624b-471e-8c44-07322003903e"
+    },
+    {
+        "printed_name": "Basil, Cabaretti Loudmouth",
+        "name": "Flash Thompson, Spider-Fan",
+        "oracle_id": "f536a518-160e-4267-89da-3d34accc6d2c"
+    },
+    {
+        "printed_name": "Bayo, Irritable Instructor",
+        "name": "Electro, Assaulting Battery",
+        "oracle_id": "3db16fb8-5650-4568-b975-42ad3d44ebcd"
+    },
+    {
+        "printed_name": "Belion, the Parched",
+        "name": "Hydro-Man, Fluid Felon",
+        "oracle_id": "a93a8edf-2879-4cae-b3b9-b46298270823"
+    },
+    {
+        "printed_name": "Borys, the Spider Rider",
+        "name": "Scarlet Spider, Ben Reilly",
+        "oracle_id": "13ab2f3f-f65e-42b5-b743-39b30a4c4751"
+    },
+    {
+        "printed_name": "Brako, Heartless Hunter",
+        "name": "Kraven the Hunter",
+        "oracle_id": "3e2bfa3a-ae83-453a-8e3f-ca6205a9af12"
+    },
+    {
+        "printed_name": "Cactarantula Saddle",
+        "name": "Spider-Suit",
+        "oracle_id": "ba08b4cf-9a13-40fd-8522-9504d2ff1a19"
+    },
+    {
+        "printed_name": "Caldaia Brawlers",
+        "name": "Inner Demons Gangsters",
+        "oracle_id": "40b43763-3fbf-4ecd-8187-5d2c2c9cda82"
+    },
+    {
+        "printed_name": "Cam and Farrik, Havoc Duo",
+        "name": "Hobgoblin, Mantled Marauder",
+        "oracle_id": "1d453331-6b8e-4d3d-b658-683eab2760da"
+    },
+    {
+        "printed_name": "Carlo, Suave Schemer",
+        "name": "Prowler, Clawed Thief",
+        "oracle_id": "76742bfc-ae99-4b06-b29d-e0e41d92ae14"
+    },
+    {
+        "printed_name": "Carriage of Dreams",
+        "name": "Passenger Ferry",
+        "oracle_id": "e9832d58-0ee6-4641-a9fd-d34d54b3b11c"
+    },
+    {
+        "printed_name": "Chizak, Apex Arachnosaur",
+        "name": "Spider-Rex, Daring Dino",
+        "oracle_id": "58b771d4-dfaf-4189-a5f6-4bc0fb4c0fa3"
+    },
+    {
+        "printed_name": "Chosen by Valgavoth",
+        "name": "With Great Power...",
+        "oracle_id": "dfedb968-f27c-4117-aff6-da707dd43e82"
+    },
+    {
+        "printed_name": "Cirina Bargainspinner",
+        "name": "Sun-Spider, Nimble Webber",
+        "oracle_id": "2d961997-4f5f-4ce2-b062-11411147e2f7"
+    },
+    {
+        "printed_name": "Clandestine Work",
+        "name": "Risky Research",
+        "oracle_id": "47d52cd7-d72f-455f-aad3-70f08d54691f"
+    },
+    {
+        "printed_name": "Confessor's Bindings",
+        "name": "Rent Is Due",
+        "oracle_id": "3fe1530d-bcf2-440b-a905-5a2216daa7eb"
+    },
+    {
+        "printed_name": "Crash, Reckless Endrider",
+        "name": "Shriek, Treblemaker",
+        "oracle_id": "5773ae05-44bc-423c-846c-f323dd8a5079"
+    },
+    {
+        "printed_name": "Cren, Undercity Dreamer",
+        "name": "Miles Morales",
+        "oracle_id": "be48c721-bdc6-4f2c-96d6-82d934b31615"
+    },
+    {
+        "printed_name": "Crime-Scene Instructor",
+        "name": "Selfless Police Captain",
+        "oracle_id": "ece77a64-8d99-430e-8407-bdb321828d63"
+    },
+    {
+        "printed_name": "Cruel Caracals",
+        "name": "Kraven's Cats",
+        "oracle_id": "976db753-9887-448a-8e67-ec7937b6505c"
+    },
+    {
+        "printed_name": "Damning Caress",
+        "name": "Venom's Hunger",
+        "oracle_id": "8388faa0-f64e-4b01-836e-617f99b808a4"
+    },
+    {
+        "printed_name": "Darval, Whose Web Protects",
+        "name": "Spider-Man, Web-Slinger",
+        "oracle_id": "505231d8-714f-4c5b-a635-d1662bd18a78"
+    },
+    {
+        "printed_name": "Data Scrubber",
+        "name": "Mechanical Mobster",
+        "oracle_id": "b0672aa3-3207-4ff8-af8f-bdabacbb4d04"
+    },
+    {
+        "printed_name": "Deathflame Burst",
+        "name": "Electro's Bolt",
+        "oracle_id": "e9222f89-e495-4502-bb0c-f5e802686b01"
+    },
+    {
+        "printed_name": "Demera, Soul of a Spider",
+        "name": "Mary Jane Watson",
+        "oracle_id": "6d44c87b-8945-4c39-b034-7690cf483992"
+    },
+    {
+        "printed_name": "Desecrex, Gift of Servitude",
+        "name": "Carnage, Crimson Chaos",
+        "oracle_id": "c0efafc6-8ffb-4908-ae64-3f391722370a"
+    },
+    {
+        "printed_name": "Detect Intrusion",
+        "name": "Spider-Sense",
+        "oracle_id": "c4485bf9-e7ff-48b5-a983-02900939ee9d"
+    },
+    {
+        "printed_name": "Diligent Webkeepers",
+        "name": "Web-Warriors",
+        "oracle_id": "3b23e4f8-882d-4cce-9b61-171ae2cc3a18"
+    },
+    {
+        "printed_name": "Dreadfang, Loathed by Fans",
+        "name": "Kraven, Proud Predator",
+        "oracle_id": "12b8b4bf-ba85-419c-8005-1ec34b2b1deb"
+    },
+    {
+        "printed_name": "Drix Interception",
+        "name": "Amazing Acrobatics",
+        "oracle_id": "0466f23c-d07c-4015-82d5-eab4b226f1ff"
+    },
+    {
+        "printed_name": "Druneth, Reviver of the Hive",
+        "name": "Jackal, Genius Geneticist",
+        "oracle_id": "5998f07e-01f9-4d02-94dd-867c7166463f"
+    },
+    {
+        "printed_name": "Duskmourn's Claim",
+        "name": "Parker Luck",
+        "oracle_id": "03d1a4e9-3ebc-491f-8741-5d933b500abf"
+    },
+    {
+        "printed_name": "Eccentric Arachnologist",
+        "name": "Guy in the Chair",
+        "oracle_id": "83eb74df-1c77-48b0-83be-55d7aa4d3618"
+    },
+    {
+        "printed_name": "Egrix the Bile Bulwark",
+        "name": "Gwenom, Remorseless",
+        "oracle_id": "c48cf135-b280-4e9f-a9d9-225104870741"
+    },
+    {
+        "printed_name": "Error-9, Viral Node",
+        "name": "Living Brain, Mechanical Marvel",
+        "oracle_id": "b255e13d-01b2-4348-80bd-8d9a8f29be91"
+    },
+    {
+        "printed_name": "Exclusive Nightclub",
+        "name": "Oscorp Industries",
+        "oracle_id": "f432eb6a-f1bf-4ce7-b915-1488dccb4bb9"
+    },
+    {
+        "printed_name": "Eztli of the Thousand Moons",
+        "name": "Starling, Aerial Ally",
+        "oracle_id": "13fd7ca6-c278-409f-a9c4-57f16051ffce"
+    },
+    {
+        "printed_name": "Fateweaver",
+        "name": "Radioactive Spider",
+        "oracle_id": "f15bd5c0-99ff-42c6-8eed-48de6df81b61"
+    },
+    {
+        "printed_name": "Favored Fighter",
+        "name": "Professional Wrestler",
+        "oracle_id": "3dd92eea-02ca-4e55-8f69-8c8059dd7ee6"
+    },
+    {
+        "printed_name": "Fearsome Ridgeline",
+        "name": "Daily Bugle Building",
+        "oracle_id": "483e0c6c-8131-486c-b482-cc3396c9786b"
+    },
+    {
+        "printed_name": "Fire-Brained Scheme",
+        "name": "Heroes' Hangout",
+        "oracle_id": "43306a78-85b5-4df4-a018-75dd75aa8997"
+    },
+    {
+        "printed_name": "Fizik, Etherium Mechanic",
+        "name": "Iron Spider, Stark Upgrade",
+        "oracle_id": "e123fd7d-ace9-48a4-9510-eedcc837d8e8"
+    },
+    {
+        "printed_name": "Freestrider Aces",
+        "name": "Wild Pack Squad",
+        "oracle_id": "294b2aa7-cb46-46bd-8241-69b26d73aa2d"
+    },
+    {
+        "printed_name": "Full-Throttle Fanatic",
+        "name": "Taxi Driver",
+        "oracle_id": "a17a92f7-e95c-4d0e-a43e-7e6b41a59139"
+    },
+    {
+        "printed_name": "Galvanized Workforce",
+        "name": "Angry Rabble",
+        "oracle_id": "cf6dc79e-840c-4d47-8f94-c8623528acd2"
+    },
+    {
+        "printed_name": "Generous Betty Wray",
+        "name": "Silver Sable, Mercenary Leader",
+        "oracle_id": "40b82dee-98c7-4b86-88b8-28388cd0331f"
+    },
+    {
+        "printed_name": "Giantcraft Helm",
+        "name": "Doc Ock's Tentacles",
+        "oracle_id": "a5a18764-eb29-4bd8-a2e9-0ce55f4f6c88"
+    },
+    {
+        "printed_name": "Gloria, the Great Armorer",
+        "name": "Araña, Heart of the Spider",
+        "oracle_id": "a16037f2-a0f6-465d-8d6e-cec34b4a6320"
+    },
+    {
+        "printed_name": "Goben, Gene-Splice Savant",
+        "name": "Norman Osborn",
+        "oracle_id": "aa5b06a4-90c3-45e7-ab83-cb5c96ded21d"
+    },
+    {
+        "printed_name": "Goro Rel, Scourge to Spiders",
+        "name": "Spider-Slayer, Hatred Honed",
+        "oracle_id": "ca68f436-2522-4007-87bf-2669c7743db0"
+    },
+    {
+        "printed_name": "Hex of Undeath",
+        "name": "Behold the Sinister Six!",
+        "oracle_id": "6fa27f8a-bade-460f-853a-abc1c05c946a"
+    },
+    {
+        "printed_name": "Hide in Mundanity",
+        "name": "Spider-Man No More",
+        "oracle_id": "163f1fce-70c8-44e3-a679-f97d52cd1e9a"
+    },
+    {
+        "printed_name": "Janai and Hoppy, Roofskippers",
+        "name": "Spider-Girl, Legacy Hero",
+        "oracle_id": "d459b3f5-a18c-4c17-a855-dc147f7c2161"
+    },
+    {
+        "printed_name": "Kavaero, Mind-Bitten",
+        "name": "Superior Spider-Man",
+        "oracle_id": "636cc915-9d1b-4ffe-9e74-795b78663911"
+    },
+    {
+        "printed_name": "Kazuo, Ruthless Rival",
+        "name": "Shocker, Unshakable",
+        "oracle_id": "564dac59-97f7-4988-9f30-d82a891e29ef"
+    },
+    {
+        "printed_name": "Kephon, Rage Incubator",
+        "name": "Stegron the Dinosaur Man",
+        "oracle_id": "5c94b616-8edf-465c-b316-4599df95c52a"
+    },
+    {
+        "printed_name": "King of the Coldblood Curse",
+        "name": "Lizard, Connors's Curse",
+        "oracle_id": "48d1b217-b068-468c-bc6c-4bef9e44cc6e"
+    },
+    {
+        "printed_name": "Kivni, Orb Weaver",
+        "name": "Scarlet Spider, Kaine",
+        "oracle_id": "4ec8a5ea-b750-4711-8843-2bc98f4ce060"
+    },
+    {
+        "printed_name": "Knife Trick",
+        "name": "Pumpkin Bombardment",
+        "oracle_id": "37827e84-9f5f-49ed-b939-0cf80dac82e7"
+    },
+    {
+        "printed_name": "Kraza, the Swarm as One",
+        "name": "Spider-Punk",
+        "oracle_id": "03bf7a90-78c1-4e83-8553-e22d85e49876"
+    },
+    {
+        "printed_name": "Kroble, Envoy of the Bog",
+        "name": "Spider-Man Noir",
+        "oracle_id": "2efd6494-c5e1-41de-bc6e-8490ff046cd1"
+    },
+    {
+        "printed_name": "Kumonosu, the Watchful",
+        "name": "SP//dr, Piloted by Peni",
+        "oracle_id": "722ab6e4-a2e0-4aaa-a050-7b6436e22b40"
+    },
+    {
+        "printed_name": "Lavaborn Goblins",
+        "name": "Raging Goblinoids",
+        "oracle_id": "c807b53f-2917-41a0-812c-57240b623365"
+    },
+    {
+        "printed_name": "Lavabrink Repels the Magmaloth",
+        "name": "Maximum Carnage",
+        "oracle_id": "7351fca5-8672-4ba3-a015-bd4b6b289efc"
+    },
+    {
+        "printed_name": "Lazlo, Enthusiastic Accuser",
+        "name": "J. Jonah Jameson",
+        "oracle_id": "de861715-fd0b-493e-9a7c-c470a23044c0"
+    },
+    {
+        "printed_name": "Leyline Weaver",
+        "name": "Spider Manifestation",
+        "oracle_id": "8281f2b9-e81b-48da-812a-8713b2adf8ab"
+    },
+    {
+        "printed_name": "Lively Leap",
+        "name": "Thwip!",
+        "oracle_id": "f7d11254-b48a-4016-a035-c0d6642fdfae"
+    },
+    {
+        "printed_name": "Lost in Littjara",
+        "name": "The Clone Saga",
+        "oracle_id": "0f0282c6-aceb-4879-8ec8-482d0501204a"
+    },
+    {
+        "printed_name": "Luis, Pompous Pillager",
+        "name": "Morlun, Devourer of Spiders",
+        "oracle_id": "273ad15c-366a-4691-978b-d6028b57005a"
+    },
+    {
+        "printed_name": "Makdee and Itla, Skysnarers",
+        "name": "Spider-Woman, Stunning Savior",
+        "oracle_id": "be2b9c6d-4ecb-49ec-b276-4aa93c5dfc00"
+    },
+    {
+        "printed_name": "Margot, On the Case",
+        "name": "Wraith, Vicious Vigilante",
+        "oracle_id": "38684c31-e8c6-4825-8740-1a3d34b58b39"
+    },
+    {
+        "printed_name": "Merata, Neuron Hacker",
+        "name": "Lady Octopus, Inspired Inventor",
+        "oracle_id": "8e51fdb8-4f83-4e94-b36c-40a501075ecb"
+    },
+    {
+        "printed_name": "Miasmic Mist",
+        "name": "Sandman's Quicksand",
+        "oracle_id": "f2b376d2-a2f4-4d23-a1fb-eb7b6ebd0b7a"
+    },
+    {
+        "printed_name": "Mothwing Shroud",
+        "name": "Web Up",
+        "oracle_id": "9b9b086c-d201-4574-a1e9-0d6f8de53d7d"
+    },
+    {
+        "printed_name": "Neach, Pinnacle Pariah",
+        "name": "Doctor Octopus, Master Planner",
+        "oracle_id": "2fecfbef-e521-4025-94ea-451c9abde3de"
+    },
+    {
+        "printed_name": "Nia, Skysail Storyteller",
+        "name": "Gwen Stacy",
+        "oracle_id": "5f143d87-35fb-40e3-94ae-f85cfff9adb5"
+    },
+    {
+        "printed_name": "Nill, Vessel of Valgavoth",
+        "name": "Tombstone, Career Criminal",
+        "oracle_id": "6ad2cbb6-2291-420c-bfc8-ed3f079b59bf"
+    },
+    {
+        "printed_name": "Nu and Sumi, Career Criminals",
+        "name": "Green Goblin, Revenant",
+        "oracle_id": "67175889-02f9-4ad8-a9ab-11db44328b67"
+    },
+    {
+        "printed_name": "Obscura Alleylurkers",
+        "name": "Doc Ock's Henchmen",
+        "oracle_id": "ae91c16c-5267-4957-b36c-5aa787fa6b5e"
+    },
+    {
+        "printed_name": "Olx, Mouth to Many Eyes",
+        "name": "Madame Web, Clairvoyant",
+        "oracle_id": "b1e0841d-b004-40f9-a644-aecb422f6ad5"
+    },
+    {
+        "printed_name": "Opulent Valet",
+        "name": "News Helicopter",
+        "oracle_id": "192dd1e2-b6c2-432a-a1b4-e52ff39b3db2"
+    },
+    {
+        "printed_name": "Orris, Last of the Web Lords",
+        "name": "Ezekiel Sims, Spider-Totem",
+        "oracle_id": "4074e897-82a4-4f57-86c2-4aab3f29ef9b"
+    },
+    {
+        "printed_name": "Outsmart the Amateur",
+        "name": "School Daze",
+        "oracle_id": "af2275ea-1085-4145-aa6b-36924d53d88a"
+    },
+    {
+        "printed_name": "Ozor, Chronicler of Collapse",
+        "name": "Doc Ock, Sinister Scientist",
+        "oracle_id": "dbaa70e6-26de-4ce9-9543-e652cbe387c1"
+    },
+    {
+        "printed_name": "Perfected Pastry",
+        "name": "Bagel and Schmear",
+        "oracle_id": "1389c9fa-fec2-4212-a7aa-6dfb318dc202"
+    },
+    {
+        "printed_name": "Perilous Lunge",
+        "name": "Kapow!",
+        "oracle_id": "d6eabbff-cc0c-4000-8feb-4826e1b6bc66"
+    },
+    {
+        "printed_name": "Phantasmal Vision",
+        "name": "Mysterio's Phantasm",
+        "oracle_id": "99419378-8a23-44f3-aebe-e62d6e20e877"
+    },
+    {
+        "printed_name": "Phenomena Recorder",
+        "name": "Peter Parker's Camera",
+        "oracle_id": "10777360-c046-43e3-ab44-9d0b926fbbf8"
+    },
+    {
+        "printed_name": "Pinnacle Research Team",
+        "name": "Oscorp Research Team",
+        "oracle_id": "4d2e233c-0173-417f-82a0-1e692a400ae1"
+    },
+    {
+        "printed_name": "Principled Referee",
+        "name": "Daily Bugle Reporters",
+        "oracle_id": "2e677ded-7af3-4af0-81df-b70d6ee616ec"
+    },
+    {
+        "printed_name": "Qoneus, Horizon Splicer",
+        "name": "The Spot, Living Portal",
+        "oracle_id": "a5dfa7ad-9637-4da8-9ed2-0ac863617d9a"
+    },
+    {
+        "printed_name": "Quint's Insight",
+        "name": "Shadow of the Goblin",
+        "oracle_id": "f343b6f9-41c3-419b-a57c-a7b08603ef5c"
+    },
+    {
+        "printed_name": "Reality Fulcrum",
+        "name": "Interdimensional Web Watch",
+        "oracle_id": "456dbec4-1b0e-48c4-abae-5c8205651872"
+    },
+    {
+        "printed_name": "Remarkable Readings",
+        "name": "Friendly Neighborhood",
+        "oracle_id": "10fe402e-8d6f-4058-9f42-86f229055359"
+    },
+    {
+        "printed_name": "Remorseless Coup",
+        "name": "The Spot's Portal",
+        "oracle_id": "3ceac6ce-acde-42ab-b79d-ff153074d2d8"
+    },
+    {
+        "printed_name": "Restless Razorkin",
+        "name": "Superior Foes of Spider-Man",
+        "oracle_id": "a6a7af21-e52c-4f7f-a57f-bd365d075966"
+    },
+    {
+        "printed_name": "Rhilex the Accursed",
+        "name": "Agent Venom",
+        "oracle_id": "14c356aa-178d-4c14-a88e-fbe92ee6d89f"
+    },
+    {
+        "printed_name": "Rishei, Getaway Accomplice",
+        "name": "Vulture, Scheming Scavenger",
+        "oracle_id": "0409765a-bbb4-465e-99b3-3687bffc3cf9"
+    },
+    {
+        "printed_name": "Rizna, the Spider-Crowned",
+        "name": "Spinneret and Spiderling",
+        "oracle_id": "daca1d5e-349d-4e8a-abc7-427dab43fb0c"
+    },
+    {
+        "printed_name": "Rouse the Swarm",
+        "name": "Wall Crawl",
+        "oracle_id": "4a09536e-dfc1-4b15-adc1-07ef866ebda0"
+    },
+    {
+        "printed_name": "Ruzic, Booed but Victorious",
+        "name": "Ultimate Green Goblin",
+        "oracle_id": "b5b43d01-fce6-4a00-9c19-7a7e2a09d833"
+    },
+    {
+        "printed_name": "Sadistic String-Puller",
+        "name": "Spider-Islanders",
+        "oracle_id": "2d1a15dc-3123-4425-b036-a3b5a83fcdf8"
+    },
+    {
+        "printed_name": "Sarn of the Silken Throne",
+        "name": "Spider-UK",
+        "oracle_id": "ebf8d006-2997-431b-b4cb-9692741b45ca"
+    },
+    {
+        "printed_name": "Scions of the Ur-Spider",
+        "name": "Cosmic Spider-Man",
+        "oracle_id": "0334a2f8-a74a-44c9-ba64-d9b7fabe160c"
+    },
+    {
+        "printed_name": "Scorvus Ames, Crimelord",
+        "name": "Scorpion, Seething Striker",
+        "oracle_id": "c357230a-afde-4c2a-b390-9f6928599236"
+    },
+    {
+        "printed_name": "Scuttling Spidercoach",
+        "name": "Spider-Mobile",
+        "oracle_id": "3c322d99-2bc4-4618-aeb3-5583fce54f1b"
+    },
+    {
+        "printed_name": "Selesnya Archivist",
+        "name": "Damage Control Crew",
+        "oracle_id": "c0f9e604-a8bf-4c7d-8480-487e8076e1d8"
+    },
+    {
+        "printed_name": "Skittering Kitten",
+        "name": "Masked Meower",
+        "oracle_id": "a0037ff8-64db-45dd-bba1-db5c49095083"
+    },
+    {
+        "printed_name": "Skv'x the Augmenter",
+        "name": "Symbiote Spider-Man",
+        "oracle_id": "bc681ecf-2a52-4782-9a47-90f5a9f435d8"
+    },
+    {
+        "printed_name": "Snatch Back",
+        "name": "Whoosh!",
+        "oracle_id": "855353e2-b686-482a-b987-c6ae456f088c"
+    },
+    {
+        "printed_name": "Spectral Restitching",
+        "name": "Hide on the Ceiling",
+        "oracle_id": "376fa374-ead1-4728-ab8b-aca230b72031"
+    },
+    {
+        "printed_name": "Steelweb Surveyor",
+        "name": "Spider-Bot",
+        "oracle_id": "e4bb33b2-adde-4176-9274-7598b559aa6a"
+    },
+    {
+        "printed_name": "Stitcher's Wings",
+        "name": "Rocket-Powered Goblin Glider",
+        "oracle_id": "5db9121d-934a-44f1-b178-b389c6595af7"
+    },
+    {
+        "printed_name": "Surris, Spidersilk Innovator",
+        "name": "Peter Parker",
+        "oracle_id": "f1b7488c-c675-42e9-818a-24a50347ec2c"
+    },
+    {
+        "printed_name": "Tarantusk, Unwisely Awoken",
+        "name": "Spider-Ham, Peter Porker",
+        "oracle_id": "00b50215-e832-417f-9c80-2bc3050b6ebb"
+    },
+    {
+        "printed_name": "Tearle, Entropic Hunger",
+        "name": "Morbius the Living Vampire",
+        "oracle_id": "1a947e4d-8a14-45f1-bb80-760a317b1ed0"
+    },
+    {
+        "printed_name": "Temple Trap",
+        "name": "Steel Wrecking Ball",
+        "oracle_id": "3a07e22c-71cd-4723-b07e-0ff02009a878"
+    },
+    {
+        "printed_name": "Tethex, Gift of Malice",
+        "name": "Venom, Evil Unleashed",
+        "oracle_id": "6731d861-cc52-4a2e-8c33-154681fd50e4"
+    },
+    {
+        "printed_name": "The Clutter Cluster",
+        "name": "Spiders-Man, Heroic Horde",
+        "oracle_id": "d21d7557-9702-46c1-8277-42a3442084c2"
+    },
+    {
+        "printed_name": "The House Grows Hungry",
+        "name": "The Death of Gwen Stacy",
+        "oracle_id": "2624b5c5-ba59-4e20-8e66-e463268366e4"
+    },
+    {
+        "printed_name": "The Infernus",
+        "name": "Molten Man, Inferno Incarnate",
+        "oracle_id": "c6fcf3c1-0626-4d53-92c0-caa22fa61e9a"
+    },
+    {
+        "printed_name": "The Scouring Stormsoul",
+        "name": "Sandman, Shifting Scoundrel",
+        "oracle_id": "8b205480-b1fb-490c-b1c9-cf5cc3c5acdb"
+    },
+    {
+        "printed_name": "The Terminus of Return",
+        "name": "The Soul Stone",
+        "oracle_id": "92cfba68-12f6-4f97-9187-0f6a39656a0f"
+    },
+    {
+        "printed_name": "The Watcher on the Road",
+        "name": "Mysterio, Master of Illusion",
+        "oracle_id": "40f664d8-4c73-44aa-8fb1-d38771a42520"
+    },
+    {
+        "printed_name": "Through the Omenpath",
+        "name": "Web of Life and Destiny",
+        "oracle_id": "33d556c5-1bb4-49bb-88c2-627311eb8c9b"
+    },
+    {
+        "printed_name": "Treat Trolley",
+        "name": "Hot Dog Cart",
+        "oracle_id": "cf27f1f8-2d95-4a00-97f8-72a244837f08"
+    },
+    {
+        "printed_name": "Uharis, the Stormspinner",
+        "name": "Spider-Man 2099",
+        "oracle_id": "19845456-3d96-48a4-89fa-9b8e583774c9"
+    },
+    {
+        "printed_name": "Vazin, Two-Faced Trickster",
+        "name": "Chameleon, Master of Disguise",
+        "oracle_id": "1ce239f2-79ad-4a30-8e8f-f985045f78dc"
+    },
+    {
+        "printed_name": "Verilax the Havenskin",
+        "name": "Anti-Venom, Horrifying Healer",
+        "oracle_id": "3c7bafe9-80cd-48d0-bcae-e7910c9fb83b"
+    },
+    {
+        "printed_name": "Vexed Bots",
+        "name": "Flying Octobot",
+        "oracle_id": "5ef8925c-5f43-49ca-83f0-e2ca8e655600"
+    },
+    {
+        "printed_name": "Viggo, Enforcer of Ig's Crossing",
+        "name": "Eddie Brock",
+        "oracle_id": "fe01c96b-eb78-4477-bec2-944b2a28c778"
+    },
+    {
+        "printed_name": "Vinewoven Chariot",
+        "name": "Subway Train",
+        "oracle_id": "6d4472ad-3fbf-4a5d-94de-dfee04fda9c3"
+    },
+    {
+        "printed_name": "Wardens of Silverweb Summit",
+        "name": "Spider-Gwen, Free Spirit",
+        "oracle_id": "2648559d-1d96-47d2-a769-cfa2cbca2be5"
+    },
+    {
+        "printed_name": "Wekhdu, Midnight Hunter",
+        "name": "Swarm, Being of Bees",
+        "oracle_id": "10c8cf3b-2530-49e7-b38e-95cdaae8a6e7"
+    },
+    {
+        "printed_name": "Withar, Cocoon Keeper",
+        "name": "Mister Negative",
+        "oracle_id": "c8da3262-826d-4ea8-bb22-06374bebefe5"
+    },
+    {
+        "printed_name": "Wonderweave Aerialist",
+        "name": "Skyward Spider",
+        "oracle_id": "d6ba76fa-441c-4a74-bfea-8ae2a2c9e391"
+    },
+    {
+        "printed_name": "Wrench, Speedway Saboteur",
+        "name": "Black Cat, Cunning Thief",
+        "oracle_id": "f5cdb413-2b72-4dc6-b93d-2532ac2ae568"
+    },
+    {
+        "printed_name": "Xecau, Predation's Shadow",
+        "name": "Rhino, Barreling Brute",
+        "oracle_id": "9a6bf8a3-7640-4890-ac62-d5028f41978b"
+    },
+    {
+        "printed_name": "Yera and Oski, Weaver and Guide",
+        "name": "Arachne, Psionic Weaver",
+        "oracle_id": "28d500ea-720f-4332-891e-404fb03acb5c"
+    },
+    {
+        "printed_name": "Zan, Tunnelweb Explorer",
+        "name": "Spider-Man, Brooklyn Visionary",
+        "oracle_id": "2ca85872-9436-4515-af50-c13e59605627"
+    },
+    {
+        "printed_name": "Zora, Spider Fancier",
+        "name": "Aunt May",
+        "oracle_id": "bdb769b5-c861-4ec1-ad6b-e2a56ca05fd1"
+    }
 ]

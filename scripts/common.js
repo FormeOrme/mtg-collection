@@ -35,10 +35,16 @@ export const sets = {
 const formats = {
     arena: ["standard", "historic", "timeless", "explorer", "standardbrawl", "brawl", "alchemy"],
 };
-export function onArena(legalities) {
-    return Object.entries(legalities)
-        .filter(([format, legality]) => legality != "not_legal")
-        .some(([format, legality]) => formats.arena.includes(format));
+
+const forcedSets = new Set(["tle"]);
+
+export function onArena({ set, legalities }) {
+    return (
+        forcedSets.has(set) ||
+        Object.entries(legalities)
+            .filter(([format, legality]) => legality != "not_legal")
+            .some(([format, legality]) => formats.arena.includes(format))
+    );
 }
 
 export function modernLegal(legalities) {
