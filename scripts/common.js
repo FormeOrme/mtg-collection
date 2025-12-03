@@ -188,13 +188,15 @@ export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-card
 const omenpathMapping = () => JSON.parse(fs.readFileSync(loadFile("omenpath_mapping", "json")));
 
 export const OMENPATH_MAP = omenpathMapping().reduce((map, obj) => {
-    const strip_pn = strip(obj.printed_name);
-    const strip_n = strip(obj.name);
-    map.set(strip_n, {
+    const spiderman_name = strip(obj.printed_name);
+    const mtg_name = strip(obj.name);
+    const mapping = {
         ...obj,
-        strip_pn,
-        strip_n,
-    });
+        spiderman_name,
+        mtg_name,
+    };
+    map.set(mtg_name, mapping);
+    map.set(spiderman_name, mapping);
     return map;
 }, new Map());
 
@@ -233,7 +235,7 @@ export function cardDataMap() {
 
 const cardName = (name) => {
     const strippedName = strip(name);
-    return OMENPATH_MAP.get(strippedName)?.strip_pn ?? strippedName;
+    return OMENPATH_MAP.get(strippedName)?.spiderman_name ?? strippedName;
 };
 
 export const oracleDataMap = () => {
