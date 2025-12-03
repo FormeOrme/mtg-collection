@@ -35,16 +35,16 @@ function mapCardData(card, additionalData = false) {
         ...(sets.straightToModern.includes(card.set) && { stm: true }),
     };
 
+    const isArena = cardMap.get(n)?.isArena() ?? false;
+    if (isArena) {
+        baseData.a = 1;
+    }
+
     if (additionalData) {
         return {
             ...baseData,
             id: card.id,
         };
-    }
-
-    const isArena = cardMap.get(n)?.isArena() ?? false;
-    if (isArena) {
-        baseData.a = 1;
     }
 
     return baseData;
