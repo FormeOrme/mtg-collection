@@ -7,6 +7,7 @@ import {
     colorIdentity,
     sets,
     writeToData,
+    cardDataMap,
 } from "./common.js";
 
 const rarities = { c: 0, u: 1, r: 2, m: 3 };
@@ -17,13 +18,18 @@ console.log(`Found ${oracleCards.length} oracle cards.`);
 
 const filtered = oracleCards.filter(legalCards);
 console.log(`Filtered to ${filtered.length} legal cards.`);
+
+const cardMap = cardDataMap();
+console.log(`Mapped to ${cardMap.size} unique cards.`);
+
 console.timeEnd("Loading oracle cards");
 
 function mapCardData(card, additionalData = false) {
+    const n = strip(card.name);
+
     const baseData = {
-        n: strip(card.name),
+        n,
         r: rarities[card.rarity[0]],
-        ...(onArena(card) && { a: 1 }),
         ...(modernLegal(card.legalities) && { m: 1 }),
         ci: colorIdentity(card.color_identity),
         ...(sets.straightToModern.includes(card.set) && { stm: true }),
@@ -34,6 +40,11 @@ function mapCardData(card, additionalData = false) {
             ...baseData,
             id: card.id,
         };
+    }
+
+    const isArena = cardMap.get(n)?.isArena() ?? false;
+    if (isArena) {
+        baseData.a = 1;
     }
 
     return baseData;

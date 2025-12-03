@@ -198,6 +198,39 @@ export const OMENPATH_MAP = omenpathMapping().reduce((map, obj) => {
     return map;
 }, new Map());
 
+class DefaultCard {
+    constructor({ set, games }) {
+        Object.assign(this, {
+            sets: new Set([set]),
+            games: new Set(games),
+        });
+    }
+
+    merge({ set, games }) {
+        this.sets.add(set);
+        this.games = this.games.union(new Set(games));
+    }
+
+    isArena() {
+        return this.games.has("arena");
+    }
+}
+
+export function cardDataMap() {
+    const data = defaultData();
+    const cardMap = new Map();
+    for (const card of data) {
+        const id = strip(card.name);
+        const defaultCard = new DefaultCard(card);
+        if (cardMap.has(id)) {
+            cardMap.get(id).merge(card);
+        } else {
+            cardMap.set(id, defaultCard);
+        }
+    }
+    return cardMap;
+}
+
 const cardName = (name) => {
     const strippedName = strip(name);
     return OMENPATH_MAP.get(strippedName)?.strip_pn ?? strippedName;
