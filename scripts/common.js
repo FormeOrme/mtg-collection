@@ -38,6 +38,8 @@ const formats = {
 
 const forcedSets = new Set(["tle"]);
 
+const rarityOrder = ["common", "uncommon", "rare", "mythic"];
+
 export function onArena({ set, legalities }) {
     return (
         forcedSets.has(set) ||
@@ -201,23 +203,60 @@ export const OMENPATH_MAP = omenpathMapping().reduce((map, obj) => {
 }, new Map());
 
 class DefaultCard {
-    constructor({ set, games }) {
+    constructor({ name, set, games, rarity }) {
         Object.assign(this, {
+            name,
             sets: new Set([set]),
             games: new Set(games),
         });
+        this.rarity = new Set();
+        this.setRarity(games, rarity);
     }
 
-    merge({ set, games }) {
+    merge({ set, games, rarity }) {
         this.sets.add(set);
         this.games = this.games.union(new Set(games));
+        this.setRarity(games, rarity);
     }
 
     isArena() {
         return this.games.has("arena");
     }
+
+    lowestRarity() {
+        if (!this.rarity) {
+            return null;
+        }
+        return getLowestRarity([...this.rarity]);
+    }
+
+    setRarity(games, rarity) {
+        if (rarity == "special") {
+            return;
+        }
+        if (!games.includes("arena")) {
+            return;
+        }
+        this.rarity.add(rarity);
+        if (this.name == "Rending Volley") {
+            console.log(JSON.stringify({ games, rarity }));
+            console.log(JSON.stringify([...this.rarity]));
+        }
+    }
 }
 
+function getLowestRarity(rarities) {
+    if (rarities.length === 0) {
+        return null;
+    }
+    rarities.sort((a, b) => rarityOrder.indexOf(a) - rarityOrder.indexOf(b));
+    return rarities[0];
+}
+
+/**
+ * Creates a map of card names to DefaultCard instances.
+ * @returns {Map<string, DefaultCard>}
+ */
 export function cardDataMap() {
     const data = defaultData();
     const cardMap = new Map();

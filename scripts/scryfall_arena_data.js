@@ -35,9 +35,17 @@ function mapCardData(card, additionalData = false) {
         ...(sets.straightToModern.includes(card.set) && { stm: true }),
     };
 
-    const isArena = cardMap.get(n)?.isArena() ?? false;
-    if (isArena) {
+    const scryFallCard = cardMap.get(n);
+    if (scryFallCard?.isArena()) {
         baseData.a = 1;
+
+        const newRarity = scryFallCard.lowestRarity();
+        if (newRarity) {
+            if (card.rarity != newRarity) {
+                console.log(`Updating rarity for card ${n} from ${card.rarity} to ${newRarity}`);
+            }
+            baseData.r = rarities[newRarity[0]];
+        }
     }
 
     if (additionalData) {
