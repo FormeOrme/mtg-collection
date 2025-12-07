@@ -86,7 +86,7 @@ const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
     writeToData(
         `[\n${arenaCollection
             .sort((a, b) => a.n.localeCompare(b.n))
-            .map((card) => JSON.stringify(card))
+            .map(({ n, o }) => `["${n}", ${o}]`)
             .join(",\n")}\n]`,
         "arena_collection.json",
     );
