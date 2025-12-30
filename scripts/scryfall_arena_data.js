@@ -9,6 +9,7 @@ import {
     writeToData,
     cardDataMap,
 } from "./common.js";
+import { hashAndShortenUUID } from "./uuidUtils.js";
 
 const rarities = { c: 0, u: 1, r: 2, m: 3 };
 
@@ -24,7 +25,7 @@ console.log(`Mapped to ${cardMap.size} unique cards.`);
 
 console.timeEnd("Loading oracle cards");
 
-function mapCardData(card, additionalData = false) {
+async function mapCardData(card, additionalData = false) {
     const n = strip(card.name);
 
     const baseData = {
@@ -42,16 +43,18 @@ function mapCardData(card, additionalData = false) {
         const newRarity = scryFallCard.lowestRarity();
         if (newRarity) {
             if (card.rarity != newRarity) {
-                console.log(`Updating rarity for card ${n} from ${card.rarity} to ${newRarity}`);
+                // console.log(`Updating rarity for card ${n} from ${card.rarity} to ${newRarity}`);
             }
             baseData.r = rarities[newRarity[0]];
         }
     }
 
     if (additionalData) {
+        const { shortStr } = await hashAndShortenUUID(card.id);
         return {
             ...baseData,
             id: card.id,
+            hash: shortStr,
         };
     }
 
@@ -100,12 +103,12 @@ const OUTPUT_FILES = {
     SHRUNK: {
         fileName: "scryfall_arena_data.json",
         filter: FILTERS.ALL,
-        mapFunction: (card) => mapCardData(card),
+        mapFunction: async (card) => await mapCardData(card),
     },
     BAREBONE: {
         fileName: "scryfall_barebone.json",
         filter: FILTERS.ALL,
-        mapFunction: (card) => mapCardData(card, true),
+        mapFunction: async (card) => await mapCardData(card, true),
     },
     ORACLE: {
         fileName: "scryfall_oracle.json",
@@ -122,10 +125,10 @@ const OUTPUT_FILES = {
     },
 };
 
-Object.entries(OUTPUT_FILES).forEach(([key, config]) => {
+Object.entries(OUTPUT_FILES).forEach(async ([key, config]) => {
     const timeId = `${key}_data`;
     console.time(timeId);
-    const mappedData = filtered.map(config.mapFunction);
+    const mappedData = await Promise.all(filtered.map(config.mapFunction));
 
     // Convert to JSONL (NDJSON) format
     const dataString = mappedData.map((item) => JSON.stringify(item)).join(",\n");

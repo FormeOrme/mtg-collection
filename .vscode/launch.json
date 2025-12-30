@@ -16,6 +16,12 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "check collisions",
+            "program": "${workspaceFolder}/scripts/checkCollisions.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "generate_omenpath_mapping.js",
             "program": "${workspaceFolder}/scripts/generate_omenpath_mapping.js"
         }

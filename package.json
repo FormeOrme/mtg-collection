@@ -6,5 +6,8 @@
     "dotenv": "^17.2.1",
     "msgpack-lite": "^0.1.26",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2"
   }
 }

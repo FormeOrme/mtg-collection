@@ -17,5 +17,7 @@ const keyWords = filtered
         return a;
     }, { arena: new Set(), miss: new Set() });
 
-keyWords.arena.forEach(value => keyWords.miss.delete(value));
+for (const value of keyWords.arena) {
+    keyWords.miss.delete(value);
+}
 console.log(keyWords);

@@ -89,9 +89,9 @@ export function validateCards(cards, validGroupIds) {
     console.warn("INVALID CARDS COUNT:", invalidCards.length);
 
     // Show first few invalid cards for debugging
-    invalidCards.slice(0, MAX_INVALID_CARDS_TO_SHOW).forEach((card) => {
+    for (const card of invalidCards.slice(0, MAX_INVALID_CARDS_TO_SHOW)) {
         console.warn(`Invalid card: ${card.name} (${card.grpId})`);
-    });
+    }
 
     return invalidCards;
 }

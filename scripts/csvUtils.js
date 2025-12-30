@@ -27,7 +27,7 @@ export function getDiff(lastCsv, newCsv) {
     const lastArr = csvMap(lastCsv);
     const newArr = csvMap(newCsv);
     const diff = [];
-    Object.entries(newArr).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(newArr)) {
         const lastValue = lastArr[key];
         if (lastValue !== undefined) {
             if (lastValue != value) {
@@ -36,7 +36,7 @@ export function getDiff(lastCsv, newCsv) {
         } else {
             diff.push(`${key},${value}`);
         }
-    });
+    }
     console.log(`[${diff.length}] rows diff`);
     return diff.join("\n");
 }
@@ -44,9 +44,9 @@ export function getDiff(lastCsv, newCsv) {
 export function generateCsvContent(cards) {
     console.time("creating csv");
     let csvContent = CSV_HEADER;
-    cards.forEach((card) => {
+    for (const card of cards) {
         csvContent += "\n" + getCsvLine(card);
-    });
+    }
     console.timeEnd("creating csv");
     return csvContent;
 }

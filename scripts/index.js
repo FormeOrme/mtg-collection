@@ -40,7 +40,7 @@ const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
     collectionData.cards = enrichCardsWithDbData(collectionData.cards, cardDb);
     collectionData.cards = processCardData(collectionData.cards, BASIC);
     const oracleMap = oracleDataMap();
-    collectionData.cards.forEach((card) => {
+    for (const card of collectionData.cards) {
         const id = strip(card.name);
         let oracle = oracleMap.get(id);
         if (!oracle) {
@@ -52,7 +52,7 @@ const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
         } else {
             console.warn(`No oracle data found for card: ${card.name} (id: ${id})`);
         }
-    });
+    }
 
     // Generate and write CSV files
     writeCsvFiles(collectionData.cards);
