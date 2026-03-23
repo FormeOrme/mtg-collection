@@ -238,10 +238,6 @@ class DefaultCard {
             return;
         }
         this.rarity.add(rarity);
-        if (this.name == "Rending Volley") {
-            console.log(JSON.stringify({ games, rarity }));
-            console.log(JSON.stringify([...this.rarity]));
-        }
     }
 }
 
