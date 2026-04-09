@@ -50,15 +50,37 @@ async function mapCardData(card, additionalData = false) {
     }
 
     if (additionalData) {
-        const { shortStr } = await hashAndShortenUUID(card.id);
+        // const { shortStr } = await hashAndShortenUUID(card.id);
         return {
             ...baseData,
             id: card.id,
-            hash: shortStr,
+            // hash: shortStr,
+            t: mainType(card),
         };
     }
 
     return baseData;
+}
+
+const excludeTypes = new Set(["legendary", "basic", "snow", "world", "kindred"]);
+
+function mainType(card) {
+    const { main } = getTypes(card);
+    const filtered = main.filter((type) => !excludeTypes.has(type));
+    if (filtered.includes("creature")) return "creature";
+    return filtered[0];
+}
+
+function getTypes(card) {
+    const frontFaceTypeLine = card.type_line.split("/")[0].trim().toLowerCase();
+    const [mainTypePart, subTypePart] = frontFaceTypeLine
+        .split("—")
+        .map((part) => part?.trim().split(" "));
+
+    return {
+        main: mainTypePart,
+        sub: subTypePart ? subTypePart : [],
+    };
 }
 
 function extractCardDetails(card) {
@@ -125,7 +147,7 @@ const OUTPUT_FILES = {
     },
 };
 
-Object.entries(OUTPUT_FILES).forEach(async ([key, config]) => {
+for (const [key, config] of Object.entries(OUTPUT_FILES)) {
     const timeId = `${key}_data`;
     console.time(timeId);
     const mappedData = await Promise.all(filtered.map(config.mapFunction));
@@ -134,4 +156,4 @@ Object.entries(OUTPUT_FILES).forEach(async ([key, config]) => {
     const dataString = mappedData.map((item) => JSON.stringify(item)).join(",\n");
     writeToData(`[\n${dataString}\n]`, config.fileName);
     console.timeEnd(timeId);
-});
+}
