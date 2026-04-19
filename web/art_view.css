@@ -71,11 +71,24 @@ button.active {
     margin-bottom: 40px;
 }
 
+.sets-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
 .sets-title {
     font-size: 1.3em;
-    margin-bottom: 15px;
     color: #64b5f6;
     font-weight: 600;
+}
+
+.sets-toggle {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    line-height: 1;
 }
 
 .sets-container {
@@ -88,18 +101,24 @@ button.active {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.sets-section.sets-section--collapsed .sets-container {
+    display: none;
+}
+
 .set-badge {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
     background: rgba(66, 165, 245, 0.1);
     border: 2px solid rgba(66, 165, 245, 0.3);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-height: 50px;
-    flex-shrink: 0;
+    height: 52px;
+    width: 180px;
+    flex: 0 0 180px;
 }
 
 .set-badge:hover {
@@ -131,27 +150,28 @@ button.active {
 
 .set-info {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    flex: 1;
 }
 
 .set-code {
     font-weight: 600;
-    font-size: 0.95em;
+    font-size: 0.98em;
     color: #64b5f6;
     text-transform: uppercase;
 }
 
-.set-name {
-    font-size: 0.85em;
-    color: #999;
-}
-
 .set-count {
-    font-size: 0.8em;
-    color: #666;
-    margin-left: auto;
-    padding-left: 10px;
+    font-size: 0.82em;
+    color: #d6ecff;
+    background: rgba(66, 165, 245, 0.22);
+    border: 1px solid rgba(100, 181, 246, 0.45);
+    border-radius: 999px;
+    padding: 2px 8px;
+    min-width: 34px;
+    text-align: center;
 }
 
 .gallery-section {
@@ -194,6 +214,8 @@ button.active {
     transition: all 0.3s ease;
     border: 1px solid rgba(100, 181, 246, 0.2);
     aspect-ratio: 2.5 / 3.5;
+    text-decoration: none;
+    color: inherit;
 }
 
 .card-item:hover {
@@ -270,12 +292,10 @@ button.active {
     }
 
     .set-badge {
-        padding: 8px 12px;
-        min-height: 44px;
-    }
-
-    .set-count {
-        display: none;
+        height: 48px;
+        width: 170px;
+        flex: 0 0 170px;
+        padding: 8px 10px;
     }
 
     .gallery {
@@ -300,6 +320,7 @@ button.active {
     }
 
     .set-badge {
-        flex: 0 1 calc(50% - 6px);
+        width: calc(50% - 6px);
+        flex: 0 0 calc(50% - 6px);
     }
 }

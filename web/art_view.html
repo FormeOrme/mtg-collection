@@ -19,8 +19,14 @@
             <button id="clearBtn" style="display:none;">Clear Selection</button>
         </div>
 
-        <div class="sets-section">
-            <div class="sets-title">Sets</div>
+        <div class="sets-section" id="setsSection">
+            <div class="sets-header">
+                <div class="sets-title">Sets</div>
+                <button id="toggleSetsBtn" class="sets-toggle" type="button" aria-expanded="true"
+                    aria-controls="setsContainer">
+                    Collapse
+                </button>
+            </div>
             <div class="sets-container" id="setsContainer">
                 <div class="loading">Loading sets...</div>
             </div>
@@ -83,6 +89,8 @@
             for (const set of sets) {
                 const badge = document.createElement("div");
                 badge.className = "set-badge";
+                badge.title = set.name;
+                badge.setAttribute("aria-label", `${set.name} (${set.code})`);
                 if (selectedSet === set.code) {
                     badge.classList.add("active");
                 }
@@ -96,7 +104,6 @@
                     <div class="set-icon">${iconHtml}</div>
                     <div class="set-info">
                         <div class="set-code">${set.code}</div>
-                        <div class="set-name">${set.name}</div>
                     </div>
                     <div class="set-count">${set.card_count}</div>
                 `;
@@ -147,10 +154,17 @@
                 }
 
                 for (const card of cards) {
-                    const cardItem = document.createElement("div");
+                    const cardItem = card.scryfall_uri
+                        ? document.createElement("a")
+                        : document.createElement("div");
                     cardItem.className = "card-item";
                     cardItem.title = `${card.name} (${card.rarity})\nClick to view on Scryfall`;
-                    cardItem.style.cursor = "pointer";
+
+                    if (card.scryfall_uri) {
+                        cardItem.href = card.scryfall_uri;
+                        cardItem.target = "_blank";
+                        cardItem.rel = "noopener noreferrer";
+                    }
 
                     const img = document.createElement("img");
                     img.src = card.image_uri;
@@ -163,13 +177,6 @@
 
                     cardItem.appendChild(img);
                     cardItem.appendChild(nameOverlay);
-
-                    // Add click handler to open Scryfall page
-                    if (card.scryfall_uri) {
-                        cardItem.addEventListener("click", () => {
-                            window.open(card.scryfall_uri, "_blank");
-                        });
-                    }
 
                     gallery.appendChild(cardItem);
                 }
@@ -223,6 +230,18 @@
         }
 
         /**
+         * Toggles visibility of sets section.
+         */
+        function toggleSetsSection() {
+            const setsSection = document.getElementById("setsSection");
+            const toggleBtn = document.getElementById("toggleSetsBtn");
+            const isCollapsed = setsSection.classList.toggle("sets-section--collapsed");
+
+            toggleBtn.textContent = isCollapsed ? "Expand" : "Collapse";
+            toggleBtn.setAttribute("aria-expanded", String(!isCollapsed));
+        }
+
+        /**
          * Initializes the application
          */
         async function init() {
@@ -236,6 +255,7 @@
             }
 
             document.getElementById("clearBtn").addEventListener("click", clearSelection);
+            document.getElementById("toggleSetsBtn").addEventListener("click", toggleSetsSection);
         }
 
         // Start the app
