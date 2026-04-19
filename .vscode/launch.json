@@ -24,6 +24,13 @@
             "request": "launch",
             "name": "generate_omenpath_mapping.js",
             "program": "${workspaceFolder}/scripts/generate_omenpath_mapping.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Arena Card Art Server",
+            "program": "${workspaceFolder}/scripts/card_art_viewer.js",
+            "console": "integratedTerminal"
         }
     ]
 }

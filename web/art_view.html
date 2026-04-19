@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Arena Card Art Viewer</title>
+    <link rel="stylesheet" href="/art_view.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🎴 MTG Arena Card Art Viewer</h1>
+            <div class="subtitle">Browse all available card artworks by set</div>
+        </header>
+
+        <div class="controls">
+            <button id="clearBtn" style="display:none;">Clear Selection</button>
+        </div>
+
+        <div class="sets-section">
+            <div class="sets-title">Sets</div>
+            <div class="sets-container" id="setsContainer">
+                <div class="loading">Loading sets...</div>
+            </div>
+        </div>
+
+        <div class="gallery-section">
+            <div class="gallery-title">Card Gallery</div>
+            <div id="galleryInfo"></div>
+            <div class="gallery" id="gallery">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📷</div>
+                    <div class="empty-state-text">Select a set to view cards</div>
+                    <div class="empty-state-hint">Click on a set badge to browse its card artworks</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let arenaData = null;
+        let selectedSet = null;
+        let setsMetadata = {};
+
+        /**
+         * Loads the arena sets from the API
+         */
+        async function loadArenaSets() {
+            try {
+                const response = await fetch("/api/sets");
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const sets = await response.json();
+                console.log(`Loaded ${sets.length} sets`);
+                return sets;
+            } catch (error) {
+                console.error("Error loading sets:", error);
+                document.getElementById("setsContainer").innerHTML = `
+                    <div class="error">
+                        <strong>Error loading data:</strong> ${error.message}<br>
+                        Please ensure the server is running correctly.
+                    </div>
+                `;
+                return null;
+            }
+        }
+
+        /**
+         * Renders set badges in the sets container
+         */
+        function renderSetBadges(sets) {
+            const container = document.getElementById("setsContainer");
+            container.innerHTML = "";
+
+            if (!sets || sets.length === 0) {
+                container.innerHTML = "<div class='error'>No sets data available</div>";
+                return;
+            }
+
+            for (const set of sets) {
+                const badge = document.createElement("div");
+                badge.className = "set-badge";
+                if (selectedSet === set.code) {
+                    badge.classList.add("active");
+                }
+
+                let iconHtml = "";
+                if (set.icon_svg_uri) {
+                    iconHtml = `<img src="${set.icon_svg_uri}" alt="${set.code}" onerror="this.style.display='none'">`;
+                }
+
+                badge.innerHTML = `
+                    <div class="set-icon">${iconHtml}</div>
+                    <div class="set-info">
+                        <div class="set-code">${set.code}</div>
+                        <div class="set-name">${set.name}</div>
+                    </div>
+                    <div class="set-count">${set.card_count}</div>
+                `;
+
+                badge.addEventListener("click", () => selectSet(set.code));
+                container.appendChild(badge);
+            }
+        }
+
+        /**
+         * Renders the card gallery for a selected set
+         */
+        async function renderGallery(setCode) {
+            const gallery = document.getElementById("gallery");
+            const galleryInfo = document.getElementById("galleryInfo");
+
+            // Show loading state
+            gallery.innerHTML = '<div class="loading">Loading cards...</div>';
+
+            try {
+                // Fetch cards for this set from the API
+                const response = await fetch(`/api/sets/${setCode}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const cards = await response.json();
+
+                // Find set info
+                const setInfo = setsMetadata[setCode];
+                if (setInfo) {
+                    galleryInfo.innerHTML = `
+                        <div class="gallery-info">
+                            <strong>${setInfo.name}</strong> (${setInfo.code}) — ${cards.length} card${cards.length !== 1 ? 's' : ''}
+                        </div>
+                    `;
+                }
+
+                gallery.innerHTML = "";
+
+                if (cards.length === 0) {
+                    gallery.innerHTML = `
+                        <div class="empty-state" style="grid-column: 1/-1;">
+                            <div class="empty-state-icon">🔍</div>
+                            <div class="empty-state-text">No cards found</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                for (const card of cards) {
+                    const cardItem = document.createElement("div");
+                    cardItem.className = "card-item";
+                    cardItem.title = `${card.name} (${card.rarity})\nClick to view on Scryfall`;
+                    cardItem.style.cursor = "pointer";
+
+                    const img = document.createElement("img");
+                    img.src = card.image_uri;
+                    img.alt = card.name;
+                    img.className = "card-image";
+
+                    const nameOverlay = document.createElement("div");
+                    nameOverlay.className = "card-name";
+                    nameOverlay.textContent = card.name;
+
+                    cardItem.appendChild(img);
+                    cardItem.appendChild(nameOverlay);
+
+                    // Add click handler to open Scryfall page
+                    if (card.scryfall_uri) {
+                        cardItem.addEventListener("click", () => {
+                            window.open(card.scryfall_uri, "_blank");
+                        });
+                    }
+
+                    gallery.appendChild(cardItem);
+                }
+            } catch (error) {
+                console.error("Error loading cards:", error);
+                gallery.innerHTML = `
+                    <div class="error" style="grid-column: 1/-1;">
+                        Error loading cards: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * Handles set selection
+         */
+        function selectSet(setCode) {
+            selectedSet = setCode;
+            renderSetBadges(Object.values(setsMetadata).map(s => ({ ...s, code: s.code, card_count: s.card_count })));
+            renderGallery(setCode);
+            updateControls();
+        }
+
+        /**
+         * Clears the current selection
+         */
+        function clearSelection() {
+            selectedSet = null;
+            renderSetBadges(Object.values(setsMetadata).map(s => ({ ...s, code: s.code, card_count: s.card_count })));
+            document.getElementById("gallery").innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📷</div>
+                    <div class="empty-state-text">Select a set to view cards</div>
+                    <div class="empty-state-hint">Click on a set badge to browse its card artworks</div>
+                </div>
+            `;
+            document.getElementById("galleryInfo").innerHTML = "";
+            updateControls();
+        }
+
+        /**
+         * Updates control button visibility
+         */
+        function updateControls() {
+            const clearBtn = document.getElementById("clearBtn");
+            if (selectedSet) {
+                clearBtn.style.display = "inline-block";
+            } else {
+                clearBtn.style.display = "none";
+            }
+        }
+
+        /**
+         * Initializes the application
+         */
+        async function init() {
+            const sets = await loadArenaSets();
+            if (sets) {
+                // Store sets in metadata map
+                for (const set of sets) {
+                    setsMetadata[set.code] = set;
+                }
+                renderSetBadges(sets);
+            }
+
+            document.getElementById("clearBtn").addEventListener("click", clearSelection);
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+
+</html>
