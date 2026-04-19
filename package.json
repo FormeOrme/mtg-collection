@@ -1,13 +1,23 @@
 {
-  "type": "module",
-  "dependencies": {
-    "@google/genai": "^1.13.0",
-    "axios": "^1.11.0",
-    "dotenv": "^17.2.1",
-    "msgpack-lite": "^0.1.26",
-    "sqlite3": "^5.1.7"
-  },
-  "devDependencies": {
-    "eslint": "^9.39.2"
-  }
+    "type": "module",
+    "scripts": {
+        "process:collection": "node scripts/workflows/process-collection.js",
+        "build:scryfall-arena": "node scripts/workflows/build-scryfall-arena-data.js",
+        "download:oracle-cards": "node scripts/workflows/download-oracle-cards.js",
+        "convert:oracle-binary": "node scripts/workflows/convert-oracle-binary.js",
+        "serve:art-viewer": "node scripts/cli/serve-card-art-viewer.js",
+        "check:hash-collisions": "node scripts/cli/check-hash-collisions.js",
+        "generate:omenpath-mapping": "node scripts/tools/generate-omenpath-mapping.js"
+    },
+    "dependencies": {
+        "@google/genai": "^1.13.0",
+        "axios": "^1.11.0",
+        "dotenv": "^17.2.1",
+        "msgpack-lite": "^0.1.26",
+        "sqlite3": "^5.1.7"
+    },
+    "devDependencies": {
+        "eslint": "^9.39.2"
+    }
 }
+

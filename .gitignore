@@ -129,15 +129,15 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-collection-*
-default-cards-*
-oracle-cards-*
-csvToImport_*
-default-filtered*
-found.json
-diff_*
+data/sources/collection-*
+data/sources/default-cards-*
+data/sources/oracle-cards-*
+data/generated/csvToImport_*
+data/generated/default-filtered*
+data/generated/found.json
+data/generated/diff_*
 *.mtga
 /.idea
 util.js
-data/bin-oracle-cards.bin
+data/generated/bin-oracle-cards.bin
 data/exampleCard.json
