@@ -2,12 +2,23 @@ import http from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import { getCardsBySet, buildArenaSets } from "../lib/cardUtils.js";
+import { getCardsBySet, buildArenaSets, searchArenaCards } from "../lib/cardUtils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
+
+let setsCache = null;
+let setsByCode = null;
+
+async function getSets() {
+    if (!setsCache) {
+        setsCache = await buildArenaSets();
+        setsByCode = new Map(setsCache.map((s) => [s.code, s]));
+    }
+    return { sets: setsCache, byCode: setsByCode };
+}
 
 /**
  * Serves a file with appropriate MIME type
@@ -93,7 +104,7 @@ const server = http.createServer(async (req, res) => {
 
         // Route: GET /api/sets
         if (pathname === "/api/sets" && req.method === "GET") {
-            const sets = await buildArenaSets();
+            const { sets } = await getSets();
             sendJson(res, sets);
             return;
         }
@@ -104,6 +115,42 @@ const server = http.createServer(async (req, res) => {
             const setCode = setCodeMatch[1];
             const cards = await getCardsBySet(setCode);
             sendJson(res, cards);
+            return;
+        }
+
+        // Route: GET /api/search/cards?q=<query>
+        if (pathname === "/api/search/cards" && req.method === "GET") {
+            const query = url.searchParams.get("q") || "";
+            const searchResult = await searchArenaCards({ query });
+            sendJson(res, searchResult);
+            return;
+        }
+
+        // Route: GET /api/set-icon/:setCode — proxies SVG from Scryfall to avoid CORS
+        const setIconMatch = pathname.match(/^\/api\/set-icon\/([a-z0-9]+)$/);
+        if (setIconMatch && req.method === "GET") {
+            const setCode = setIconMatch[1];
+            const { byCode } = await getSets();
+            const svgUrl = byCode.get(setCode)?.icon_svg_uri;
+            if (!svgUrl) {
+                sendError(res, "Icon not found", 404);
+                return;
+            }
+            try {
+                const upstream = await fetch(svgUrl);
+                if (!upstream.ok) {
+                    sendError(res, "Icon not found", 404);
+                    return;
+                }
+                const svgText = await upstream.text();
+                res.writeHead(200, {
+                    "Content-Type": "image/svg+xml",
+                    "Cache-Control": "public, max-age=86400",
+                });
+                res.end(svgText);
+            } catch {
+                sendError(res, "Failed to fetch icon", 502);
+            }
             return;
         }
 
@@ -122,6 +169,7 @@ server.listen(PORT, () => {
     console.log(`   GET  /                 - Serves the web interface`);
     console.log(`   GET  /api/sets         - Returns all Arena sets with metadata`);
     console.log(`   GET  /api/sets/:code   - Returns cards for a specific set`);
+    console.log(`   GET  /api/search/cards - Returns fuzzy card search results`);
     console.log(`\n✨ Open http://localhost:${PORT} in your browser`);
     console.log(`\nPress Ctrl+C to stop the server\n`);
 });

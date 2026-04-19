@@ -1,7 +1,9 @@
 import { defaultData } from "./common.js";
+import { normalizeSearchText, countAlphabeticLetters, isFuzzyMatch } from "./fuzzySearch.js";
 
 // Cache for Scryfall sets data
 let scryfallSetsCache = null;
+let allArenaCardsCache = null;
 
 /**
  * Fetches set metadata from Scryfall API
@@ -150,6 +152,243 @@ function getSetReleaseTimestamp(scryfallSets, code) {
 }
 
 /**
+ * Picks the collector number anchor for a name-group.
+ * If a preferred set is provided, it anchors on that set when available.
+ * @param {Array<{set: string, collector_number: string}>} group
+ * @param {string|null} preferredSetCode
+ * @returns {string}
+ */
+function getGroupCollectorAnchor(group, preferredSetCode = null) {
+    const preferredCards = preferredSetCode
+        ? group.filter((card) => card.set === preferredSetCode)
+        : [];
+
+    const source = preferredCards.length > 0 ? preferredCards : group;
+    if (source.length === 0) {
+        return "0";
+    }
+
+    let anchor = source[0].collector_number || "0";
+    for (let i = 1; i < source.length; i += 1) {
+        const candidate = source[i].collector_number || "0";
+        if (compareCollectorNumbers(candidate, anchor) < 0) {
+            anchor = candidate;
+        }
+    }
+
+    return anchor;
+}
+
+/**
+ * Sorts printings inside a name-group using the same rules as set browsing.
+ * @param {Array} group
+ * @param {Map<string, {released_at?: string}>} scryfallSets
+ * @param {string|null} preferredSetCode
+ * @returns {Array}
+ */
+function sortNameGroupPrintings(group, scryfallSets, preferredSetCode = null) {
+    const preferredPrintings = preferredSetCode
+        ? group
+              .filter((card) => card.set === preferredSetCode)
+              .sort((a, b) => compareCollectorNumbers(a.collector_number, b.collector_number))
+        : [];
+
+    const remainingPrintings = group
+        .filter((card) => !preferredSetCode || card.set !== preferredSetCode)
+        .sort((a, b) => {
+            const byRelease =
+                getSetReleaseTimestamp(scryfallSets, b.set) -
+                getSetReleaseTimestamp(scryfallSets, a.set);
+            if (byRelease !== 0) {
+                return byRelease;
+            }
+
+            const bySetCode = (a.set || "").localeCompare(b.set || "");
+            if (bySetCode !== 0) {
+                return bySetCode;
+            }
+
+            return compareCollectorNumbers(a.collector_number, b.collector_number);
+        });
+
+    return [...preferredPrintings, ...remainingPrintings];
+}
+
+/**
+ * Shared ordering for gallery cards and search cards.
+ * Groups by card name, orders groups by collector anchor, then expands printings.
+ * @param {Array} cards
+ * @param {Map<string, {released_at?: string}>} scryfallSets
+ * @param {string|null} preferredSetCode
+ * @returns {Array}
+ */
+function sortCardsWithSharedOrder(cards, scryfallSets, preferredSetCode = null) {
+    const cardsByName = new Map();
+    for (const card of cards) {
+        if (!cardsByName.has(card.name)) {
+            cardsByName.set(card.name, []);
+        }
+        cardsByName.get(card.name).push(card);
+    }
+
+    const orderedNames = [...cardsByName.keys()].sort((leftName, rightName) => {
+        const anchorLeft = getGroupCollectorAnchor(
+            cardsByName.get(leftName) || [],
+            preferredSetCode,
+        );
+        const anchorRight = getGroupCollectorAnchor(
+            cardsByName.get(rightName) || [],
+            preferredSetCode,
+        );
+        const byAnchor = compareCollectorNumbers(anchorLeft, anchorRight);
+        if (byAnchor !== 0) {
+            return byAnchor;
+        }
+        return leftName.localeCompare(rightName, undefined, { sensitivity: "base" });
+    });
+
+    const output = [];
+    for (const name of orderedNames) {
+        const group = cardsByName.get(name) || [];
+        output.push(...sortNameGroupPrintings(group, scryfallSets, preferredSetCode));
+    }
+
+    return output;
+}
+
+/**
+ * Builds and caches all Arena-searchable cards.
+ * @returns {Promise<Array>}
+ */
+export async function getAllArenaCards() {
+    if (allArenaCardsCache) {
+        return allArenaCardsCache;
+    }
+
+    const rawCards = defaultData();
+    const scryfallSets = await fetchScryfallSets();
+    const cards = [];
+
+    for (const card of rawCards) {
+        const cardSet = scryfallSets.get(card.set);
+        if (!cardSet || isTokenSet(cardSet)) {
+            continue;
+        }
+
+        if (!isArenaPrinting(card) || isBasicLand(card)) {
+            continue;
+        }
+
+        const imageUri = getFirstImageUri(card);
+        if (!imageUri) {
+            continue;
+        }
+
+        cards.push({
+            name: card.name,
+            set: card.set,
+            image_uri: imageUri,
+            rarity: card.rarity || "unknown",
+            collector_number: card.collector_number || "0",
+            scryfall_uri: card.scryfall_uri,
+            _normalized_name: normalizeSearchText(card.name),
+        });
+    }
+
+    allArenaCardsCache = cards;
+    return allArenaCardsCache;
+}
+
+/**
+ * Searches Arena cards using server-side fuzzy matching.
+ * @param {string} query
+ * @returns {Promise<{status: string, min_letters: number, letter_count: number, total_matches?: number, cards?: Array}>}
+ */
+export async function searchArenaCards({
+    query,
+    minLetters = 3,
+    threshold = 2,
+    maxVisibleResults = 35,
+}) {
+    const letterCount = countAlphabeticLetters(query);
+    if (letterCount < minLetters) {
+        return {
+            status: "inactive",
+            min_letters: minLetters,
+            letter_count: letterCount,
+            cards: [],
+        };
+    }
+
+    const normalizedQuery = normalizeSearchText(query);
+    if (!normalizedQuery) {
+        return {
+            status: "inactive",
+            min_letters: minLetters,
+            letter_count: letterCount,
+            cards: [],
+        };
+    }
+
+    const cards = await getAllArenaCards();
+    const matches = [];
+    const matchedNames = new Set();
+
+    for (const card of cards) {
+        if (!isFuzzyMatch(normalizedQuery, card._normalized_name, threshold)) {
+            continue;
+        }
+
+        matches.push(card);
+        matchedNames.add(card.name);
+    }
+
+    if (matchedNames.size > maxVisibleResults) {
+        return {
+            status: "too_many",
+            min_letters: minLetters,
+            letter_count: letterCount,
+            total_matches: matchedNames.size,
+            total_cards: matchedNames.size,
+            total_arts: matches.length,
+            cards: [],
+        };
+    }
+
+    if (matches.length === 0) {
+        return {
+            status: "no_results",
+            min_letters: minLetters,
+            letter_count: letterCount,
+            total_matches: 0,
+            total_cards: 0,
+            total_arts: 0,
+            cards: [],
+        };
+    }
+
+    const scryfallSets = await fetchScryfallSets();
+    const orderedMatches = sortCardsWithSharedOrder(matches, scryfallSets, null);
+
+    return {
+        status: "results",
+        min_letters: minLetters,
+        letter_count: letterCount,
+        total_matches: matchedNames.size,
+        total_cards: matchedNames.size,
+        total_arts: orderedMatches.length,
+        cards: orderedMatches.map((card) => ({
+            name: card.name,
+            set: card.set,
+            image_uri: card.image_uri,
+            rarity: card.rarity,
+            collector_number: card.collector_number,
+            scryfall_uri: card.scryfall_uri,
+        })),
+    };
+}
+
+/**
  * Builds Arena sets list with metadata
  * @returns {Promise<Array>} Array of sets with metadata and card counts
  */
@@ -274,64 +513,6 @@ export async function getCardsBySet(setCode) {
 
     const selectedNames = new Set(selectedSetCards.map((card) => card.name));
 
-    // Keep selected set card number as main ordering anchor per name.
-    const groupAnchorByName = new Map();
-    for (const card of selectedSetCards) {
-        const currentAnchor = groupAnchorByName.get(card.name);
-        if (!currentAnchor || compareCollectorNumbers(card.collector_number, currentAnchor) < 0) {
-            groupAnchorByName.set(card.name, card.collector_number);
-        }
-    }
-
-    const orderedNames = [...selectedNames].sort((leftName, rightName) => {
-        const anchorLeft = groupAnchorByName.get(leftName) || "0";
-        const anchorRight = groupAnchorByName.get(rightName) || "0";
-        const byAnchor = compareCollectorNumbers(anchorLeft, anchorRight);
-        if (byAnchor !== 0) {
-            return byAnchor;
-        }
-        return leftName.localeCompare(rightName, undefined, { sensitivity: "base" });
-    });
-
-    const cardsByName = new Map();
-    for (const card of allCandidateCards) {
-        if (!selectedNames.has(card.name)) {
-            continue;
-        }
-        if (!cardsByName.has(card.name)) {
-            cardsByName.set(card.name, []);
-        }
-        cardsByName.get(card.name).push(card);
-    }
-
-    const output = [];
-    for (const name of orderedNames) {
-        const group = cardsByName.get(name) || [];
-
-        const chosenSetPrintings = group
-            .filter((card) => card.set === setCode)
-            .sort((a, b) => compareCollectorNumbers(a.collector_number, b.collector_number));
-
-        const otherSetPrintings = group
-            .filter((card) => card.set !== setCode)
-            .sort((a, b) => {
-                const byRelease =
-                    getSetReleaseTimestamp(scryfallSets, b.set) -
-                    getSetReleaseTimestamp(scryfallSets, a.set);
-                if (byRelease !== 0) {
-                    return byRelease;
-                }
-
-                const bySetCode = (a.set || "").localeCompare(b.set || "");
-                if (bySetCode !== 0) {
-                    return bySetCode;
-                }
-
-                return compareCollectorNumbers(a.collector_number, b.collector_number);
-            });
-
-        output.push(...chosenSetPrintings, ...otherSetPrintings);
-    }
-
-    return output;
+    const candidateCards = allCandidateCards.filter((card) => selectedNames.has(card.name));
+    return sortCardsWithSharedOrder(candidateCards, scryfallSets, setCode);
 }
