@@ -141,3 +141,4 @@ data/generated/diff_*
 util.js
 data/generated/bin-oracle-cards.bin
 data/exampleCard.json
+bin/oracle-cards-*.json
