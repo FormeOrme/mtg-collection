@@ -1,4 +1,4 @@
-import * as common from "./common.js";
+import * as common from "./common";
 import sqlite3 from "sqlite3";
 
 // Configuration constants
@@ -7,7 +7,7 @@ const CARD_NAME_REPLACEMENTS = {
     "///": "//",
 };
 const SET_NAME_REPLACEMENTS = {
-    "ANA": "ANB",
+    ANA: "ANB",
 };
 
 export async function readCardDb() {
@@ -34,18 +34,14 @@ export async function readCardDb() {
             return;
         }
 
-        const cardDb = new sqlite3.Database(
-            dbName,
-            sqlite3.OPEN_READONLY,
-            (err) => {
-                if (err) {
-                    console.error("Database connection error:", err.message);
-                    reject(err);
-                    return;
-                }
-                console.log(`Connected to [${dbName}]`);
-            },
-        );
+        const cardDb = new sqlite3.Database(dbName, sqlite3.OPEN_READONLY, (err) => {
+            if (err) {
+                console.error("Database connection error:", err.message);
+                reject(err);
+                return;
+            }
+            console.log(`Connected to [${dbName}]`);
+        });
 
         const out = {};
 

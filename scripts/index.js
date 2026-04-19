@@ -1,6 +1,6 @@
-import { read, loadFile, writeToData, oracleDataMap, strip, OMENPATH_MAP } from "./common.js";
-import { formatYYYYMMDD, writeCsvFiles } from "./csvUtils.js";
-import { readCardDb, validateCards, enrichCardsWithDbData, processCardData } from "./dbUtils.js";
+import { read, loadFile, writeToData, oracleDataMap, strip, OMENPATH_MAP } from "./common";
+import { formatYYYYMMDD, writeCsvFiles } from "./csvUtils";
+import { readCardDb, validateCards, enrichCardsWithDbData, processCardData } from "./dbUtils";
 import axios from "axios";
 
 async function loadCollectionData() {

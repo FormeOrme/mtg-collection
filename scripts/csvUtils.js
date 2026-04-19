@@ -1,4 +1,4 @@
-import * as common from "./common.js";
+import * as common from "./common";
 
 export const CSV_HEADER = `"Name","Edition","Collector Number","Count"`;
 

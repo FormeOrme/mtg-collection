@@ -2,7 +2,7 @@ import axios from "axios";
 import oboe from "oboe";
 import path from "path";
 import cliProgress from "cli-progress";
-import { ensureDataDir, getDataFilePath } from "./common.js";
+import { ensureDataDir, getDataFilePath } from "./common";
 
 const avgSize = 4600;
 

@@ -8,8 +8,8 @@ import {
     sets,
     writeToData,
     cardDataMap,
-} from "./common.js";
-import { hashAndShortenUUID } from "./uuidUtils.js";
+} from "./common";
+import { hashAndShortenUUID } from "./uuidUtils";
 
 const rarities = { c: 0, u: 1, r: 2, m: 3 };
 

@@ -3,7 +3,7 @@
 
 import { createWriteStream } from "fs";
 import { encode } from "msgpack-lite";
-import { oracleData, writeToData, strip } from "./common.js";
+import { oracleData, writeToData, strip } from "./common";
 
 const binaryFilePath = "./data/bin-oracle-cards.bin";
 

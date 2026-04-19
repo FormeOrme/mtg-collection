@@ -1,0 +1,1 @@
+import { cardDataMap } from "./common";

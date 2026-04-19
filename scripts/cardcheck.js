@@ -1,4 +1,4 @@
-import { readDataFile } from "./common.js";
+import { readDataFile } from "./common";
 
 const oracleData = readDataFile("default-filtered.json");
 const found = oracleData.filter((c) => c.name.includes("Combat Th"));

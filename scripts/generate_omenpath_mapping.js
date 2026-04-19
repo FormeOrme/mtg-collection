@@ -1,4 +1,4 @@
-import { defaultData, writeToData } from "./common.js";
+import { defaultData, writeToData } from "./common";
 
 console.time("Generate omenpath mapping");
 
