@@ -301,3 +301,106 @@ export const writeToData = (data, filename) => {
     write(data, filePath);
     return filePath;
 };
+
+// Cache for Scryfall sets data
+let scryfallSetsCache = null;
+
+/**
+ * Fetches set metadata from Scryfall API
+ * @returns {Promise<Map<string, {code, name, icon_svg_uri, released_at, set_type}>>}
+ */
+async function fetchScryfallSets() {
+    if (scryfallSetsCache) {
+        return scryfallSetsCache;
+    }
+
+    const url = "https://api.scryfall.com/sets";
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Scryfall API error: ${response.statusText}`);
+    }
+    const data = await response.json();
+    const setsMap = new Map();
+    for (const set of data.data) {
+        setsMap.set(set.code, {
+            code: set.code,
+            name: set.name,
+            icon_svg_uri: set.icon_svg_uri,
+            released_at: set.released_at,
+            set_type: set.set_type,
+        });
+    }
+    scryfallSetsCache = setsMap;
+    return setsMap;
+}
+
+/**
+ * Builds Arena sets list with metadata
+ * @returns {Promise<Array>} Array of sets with metadata and card counts
+ */
+export async function buildArenaSets() {
+    const rawCards = defaultData();
+    const scryfallSets = await fetchScryfallSets();
+
+    const cardsBySet = {};
+    const setCodesWithCards = new Set();
+
+    // Filter and group Arena cards by set
+    for (const card of rawCards) {
+        const scryfallSet = scryfallSets.get(card.set);
+        if (!scryfallSet || isTokenSet(scryfallSet)) {
+            continue;
+        }
+
+        // Check if this specific printing is available on Arena
+        if (!isArenaPrinting(card)) {
+            continue;
+        }
+
+        // Skip basic lands
+        if (isBasicLand(card)) {
+            continue;
+        }
+
+        const imageUri = getFirstImageUri(card);
+        if (!imageUri) {
+            continue;
+        }
+
+        if (!cardsBySet[card.set]) {
+            cardsBySet[card.set] = [];
+        }
+
+        cardsBySet[card.set].push({
+            name: card.name,
+            image_uri: imageUri,
+            rarity: card.rarity || "unknown",
+        });
+
+        setCodesWithCards.add(card.set);
+    }
+
+    // Build sets array with metadata
+    const sets = [];
+    for (const setCode of setCodesWithCards) {
+        const scryfallSet = scryfallSets.get(setCode);
+        if (scryfallSet) {
+            sets.push({
+                code: setCode,
+                name: scryfallSet.name,
+                icon_svg_uri: scryfallSet.icon_svg_uri,
+                released_at: scryfallSet.released_at,
+                card_count: cardsBySet[setCode].length,
+            });
+        }
+    }
+
+    // Sort sets by released_at descending (most recent first)
+    sets.sort((a, b) => {
+        const dateA = new Date(a.released_at);
+        const dateB = new Date(b.released_at);
+        return dateB - dateA;
+    });
+
+    return sets;
+}

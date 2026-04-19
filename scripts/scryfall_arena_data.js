@@ -9,7 +9,6 @@ import {
     writeToData,
     cardDataMap,
 } from "./common";
-import { hashAndShortenUUID } from "./uuidUtils";
 
 const rarities = { c: 0, u: 1, r: 2, m: 3 };
 
@@ -50,7 +49,6 @@ async function mapCardData(card, additionalData = false) {
     }
 
     if (additionalData) {
-        // const { shortStr } = await hashAndShortenUUID(card.id);
         return {
             ...baseData,
             id: card.id,
