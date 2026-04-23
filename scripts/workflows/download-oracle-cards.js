@@ -187,11 +187,9 @@ async function streamAndFilterBulkJson(inputStream, outputStream, schema) {
         throw new Error("Unexpected end of Scryfall bulk stream while parsing JSON array.");
     }
 
-    outputStream.write("\n]\n");
-
     await new Promise((resolve, reject) => {
         outputStream.on("error", reject);
-        outputStream.end(resolve);
+        outputStream.end("\n]\n", resolve);
     });
 
     return { processedCards, writtenCards };
@@ -200,6 +198,7 @@ async function streamAndFilterBulkJson(inputStream, outputStream, schema) {
 async function downloadAndFilterBulk(entry, schema) {
     const destinationName = path.basename(new URL(entry.download_uri).pathname);
     const destinationPath = path.join(DATA_PATHS.SOURCES, destinationName);
+    const temporaryDestinationPath = `${destinationPath}.tmp`;
 
     console.log(`Downloading ${entry.type} (${entry.updated_at}) -> ${destinationName}`);
 
@@ -209,12 +208,22 @@ async function downloadAndFilterBulk(entry, schema) {
         timeout: 0,
     });
 
-    const outputStream = fs.createWriteStream(destinationPath);
-    const { processedCards, writtenCards } = await streamAndFilterBulkJson(
-        response.data,
-        outputStream,
-        schema,
-    );
+    const outputStream = fs.createWriteStream(temporaryDestinationPath);
+    let processedCards = 0;
+    let writtenCards = 0;
+
+    try {
+        const result = await streamAndFilterBulkJson(response.data, outputStream, schema);
+        processedCards = result.processedCards;
+        writtenCards = result.writtenCards;
+        fs.renameSync(temporaryDestinationPath, destinationPath);
+    } catch (error) {
+        outputStream.destroy();
+        if (fs.existsSync(temporaryDestinationPath)) {
+            fs.unlinkSync(temporaryDestinationPath);
+        }
+        throw error;
+    }
 
     console.log(
         `Finished ${entry.type}: processed ${processedCards} cards, wrote ${writtenCards} cards to ${destinationPath}`,
