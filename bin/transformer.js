@@ -49,11 +49,11 @@ const transformJsonToBin = (inputPath, outputDir) => {
         .map(([key, value]) => {
             // Create a new object with only the specified attributes
             const filteredValue = {};
-            attributesToKeep.forEach((attr) => {
+            for (const attr of attributesToKeep) {
                 if (value[attr] !== undefined) {
                     filteredValue[attr] = value[attr];
                 }
-            });
+            }
             return [strip(value.name), filteredValue];
         });
 
@@ -64,13 +64,14 @@ const transformJsonToBin = (inputPath, outputDir) => {
     const index = {};
 
     let offset = 0;
-    filteredEntries.forEach(([key, value]) => {
+    for (let i = 0; i < filteredEntries.length; i++) {
+        const [key, value] = filteredEntries[i];
         const buffer = Buffer.from(JSON.stringify(value));
         binaryData.push(buffer);
 
         index[key] = { offset, length: buffer.length };
         offset += buffer.length;
-    });
+    }
 
     // Write the binary file
     const binaryFilePath = path.join(outputDir, "data.bin");

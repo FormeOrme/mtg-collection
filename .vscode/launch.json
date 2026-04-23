@@ -2,35 +2,53 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "node",
+            "command": "npm run download:oracle-cards",
+            "name": "download:oracle-cards",
             "request": "launch",
-            "name": "scryfall_arena_data.js",
-            "program": "${workspaceFolder}/scripts/scryfall_arena_data.js"
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}"
         },
         {
-            "type": "node",
+            "command": "npm run build:scryfall-arena",
+            "name": "build:scryfall-arena",
             "request": "launch",
-            "name": "index.js",
-            "program": "${workspaceFolder}/scripts/index.js"
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}"
         },
         {
-            "type": "node",
+            "command": "npm run process:collection",
+            "name": "process:collection",
             "request": "launch",
-            "name": "check collisions",
-            "program": "${workspaceFolder}/scripts/checkCollisions.js"
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}"
         },
         {
-            "type": "node",
+            "command": "npm run check:hash-collisions",
+            "name": "check:hash-collisions",
             "request": "launch",
-            "name": "generate_omenpath_mapping.js",
-            "program": "${workspaceFolder}/scripts/generate_omenpath_mapping.js"
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}"
         },
         {
-            "type": "node",
+            "command": "npm run generate:omenpath-mapping",
+            "name": "generate:omenpath-mapping",
             "request": "launch",
-            "name": "Arena Card Art Server",
-            "program": "${workspaceFolder}/scripts/card_art_viewer.js",
-            "console": "integratedTerminal"
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "command": "npm run convert:oracle-binary",
+            "name": "convert:oracle-binary",
+            "request": "launch",
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "command": "npm run serve:art-viewer",
+            "name": "serve:art-viewer",
+            "request": "launch",
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

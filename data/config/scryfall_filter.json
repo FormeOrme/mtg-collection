@@ -1,0 +1,54 @@
+{
+    "metadata": {
+        "description": "Allowlist for filtering Scryfall bulk card objects",
+        "version": "1.0",
+        "updated_at": "2026-04-23"
+    },
+    "fields": {
+        "id": true,
+        "oracle_id": true,
+        "name": true,
+        "printed_name": true,
+        "mana_cost": true,
+        "type_line": true,
+        "oracle_text": true,
+        "colors": true,
+        "color_identity": true,
+        "keywords": true,
+        "legalities": true,
+        "games": true,
+        "image_uris": {
+            "normal": true,
+            "small": true,
+            "large": true,
+            "png": true,
+            "art_crop": true,
+            "border_crop": true
+        },
+        "card_faces": {
+            "name": true,
+            "printed_name": true,
+            "mana_cost": true,
+            "type_line": true,
+            "oracle_text": true,
+            "colors": true,
+            "power": true,
+            "toughness": true,
+            "loyalty": true,
+            "image_uris": {
+                "normal": true,
+                "small": true,
+                "large": true,
+                "png": true,
+                "art_crop": true,
+                "border_crop": true
+            }
+        },
+        "scryfall_uri": true,
+        "rarity": true,
+        "set": true,
+        "set_type": true,
+        "collector_number": true,
+        "arena_id": true
+    }
+}
