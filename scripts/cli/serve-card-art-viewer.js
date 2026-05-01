@@ -2,7 +2,12 @@ import http from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import { getCardsBySet, buildArenaSets, searchArenaCards } from "../lib/cardUtils.js";
+import {
+    getCardsBySet,
+    buildArenaSets,
+    searchArenaCards,
+    getCardsWithoutModernFrame,
+} from "../lib/cardUtils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -123,6 +128,29 @@ const server = http.createServer(async (req, res) => {
             const query = url.searchParams.get("q") || "";
             const searchResult = await searchArenaCards({ query });
             sendJson(res, searchResult);
+            return;
+        }
+
+        // Route: GET /api/cards/no-2015-frame
+        if (pathname === "/api/cards/no-2015-frame" && req.method === "GET") {
+            const page = parseInt(url.searchParams.get("page")) || 1;
+            const pageSize = 40;
+
+            const allCards = await getCardsWithoutModernFrame();
+            const totalItems = allCards.length;
+            const nonStandardCount = allCards.filter((c) => !c.is_modern).length;
+            const totalPages = Math.ceil(totalItems / pageSize);
+
+            const startIdx = (page - 1) * pageSize;
+            const paginatedCards = allCards.slice(startIdx, startIdx + pageSize);
+
+            sendJson(res, {
+                cards: paginatedCards,
+                total_cards: totalItems,
+                non_standard_count: nonStandardCount,
+                current_page: page,
+                total_pages: totalPages,
+            });
             return;
         }
 

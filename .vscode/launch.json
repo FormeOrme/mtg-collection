@@ -2,53 +2,74 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "command": "npm run download:oracle-cards",
             "name": "download:oracle-cards",
             "request": "launch",
-            "type": "node-terminal",
-            "cwd": "${workspaceFolder}"
+            "type": "node",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "download:oracle-cards"],
+            "console": "internalConsole",
+            "skipFiles": ["<node_internals>/**"]
         },
         {
-            "command": "npm run build:scryfall-arena",
             "name": "build:scryfall-arena",
             "request": "launch",
-            "type": "node-terminal",
-            "cwd": "${workspaceFolder}"
+            "type": "node",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "build:scryfall-arena"],
+            "console": "internalConsole",
+            "skipFiles": ["<node_internals>/**"]
         },
         {
-            "command": "npm run process:collection",
             "name": "process:collection",
             "request": "launch",
-            "type": "node-terminal",
-            "cwd": "${workspaceFolder}"
+            "type": "node",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "process:collection"],
+            "console": "internalConsole",
+            "skipFiles": ["<node_internals>/**"]
         },
         {
-            "command": "npm run check:hash-collisions",
             "name": "check:hash-collisions",
             "request": "launch",
-            "type": "node-terminal",
-            "cwd": "${workspaceFolder}"
+            "type": "node",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "check:hash-collisions"],
+            "console": "internalConsole",
+            "skipFiles": ["<node_internals>/**"]
         },
         {
-            "command": "npm run generate:omenpath-mapping",
             "name": "generate:omenpath-mapping",
             "request": "launch",
-            "type": "node-terminal",
-            "cwd": "${workspaceFolder}"
+            "type": "node",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "generate:omenpath-mapping"],
+            "console": "internalConsole",
+            "skipFiles": ["<node_internals>/**"]
         },
         {
-            "command": "npm run convert:oracle-binary",
             "name": "convert:oracle-binary",
             "request": "launch",
-            "type": "node-terminal",
-            "cwd": "${workspaceFolder}"
+            "type": "node",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "convert:oracle-binary"],
+            "console": "internalConsole",
+            "skipFiles": ["<node_internals>/**"]
         },
         {
-            "command": "npm run serve:art-viewer",
             "name": "serve:art-viewer",
             "request": "launch",
-            "type": "node-terminal",
-            "cwd": "${workspaceFolder}"
+            "type": "node",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "serve:art-viewer"],
+            "console": "internalConsole",
+            "skipFiles": ["<node_internals>/**"]
         }
     ]
 }

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Arena Non-Standard Frame Viewer</title>
+    <link rel="stylesheet" href="/art_view.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <h1>🖼️ Non-Standard Frame Cards</h1>
+                <a href="/"
+                    style="color: var(--color-blue-light); text-decoration: none; font-weight: bold; border: 1px solid var(--color-blue-light); padding: 0.2rem 0.6rem; border-radius: 4px;">&larr;
+                    Back to Main Viewer</a>
+            </div>
+            <div class="subtitle">Arena cards exclusively using non-standard frames</div>
+        </header>
+
+        <div class="page-description">
+            This page shows all printings for cards that <strong>never</strong> use the standard 2015 frame on MTG
+            Arena.
+        </div>
+
+        <div class="gallery-section" style="margin-top: 1rem;">
+            <div class="gallery-title" id="galleryTitle">Loading Cards...</div>
+            <div class="pagination-container" id="topPagination"></div>
+            <div class="gallery" id="gallery">
+                <div class="loading">Fetching non-standard frame cards...</div>
+            </div>
+            <div class="pagination-container" id="bottomPagination"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+
+        function createCardItem(card) {
+            const cardItem = card.scryfall_uri
+                ? document.createElement("a")
+                : document.createElement("div");
+
+            cardItem.className = "card-item";
+            cardItem.dataset.cardName = card.name;
+            cardItem.title = `${card.name} (${card.rarity})\nClick to view on Scryfall`;
+
+            if (card.scryfall_uri) {
+                cardItem.href = card.scryfall_uri;
+                cardItem.target = "_blank";
+                cardItem.rel = "noopener noreferrer";
+            }
+
+            const img = document.createElement("img");
+            img.src = card.image_uri;
+            img.alt = card.name;
+            img.className = "card-image";
+            img.loading = "lazy";
+
+            if (card.is_modern) {
+                img.classList.add("modern-fallback-highlight");
+            }
+
+            const nameOverlay = document.createElement("div");
+            nameOverlay.className = "card-name";
+            if (card.is_modern) {
+                nameOverlay.classList.add("modern-fallback-name");
+            }
+            nameOverlay.textContent = `${card.name} (${(card.set || '').toUpperCase()})`;
+
+            cardItem.appendChild(img);
+            cardItem.appendChild(nameOverlay);
+
+            return cardItem;
+        }
+
+        async function loadCards(page = 1) {
+            const gallery = document.getElementById("gallery");
+            const galleryTitle = document.getElementById("galleryTitle");
+
+            currentPage = page;
+            gallery.innerHTML = '<div class="loading">Fetching non-standard frame cards...</div>';
+
+            try {
+                const response = await fetch(`/api/cards/no-2015-frame?page=${page}`);
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                gallery.innerHTML = "";
+
+                if (!data.cards || data.cards.length === 0) {
+                    gallery.innerHTML = "<div class='empty-state'><div class='empty-state-text'>No qualifying cards found.</div></div>";
+                    galleryTitle.textContent = "0 Cards Found";
+                    updatePaginationControls(0, 0);
+                    return;
+                }
+
+                galleryTitle.textContent = `${data.non_standard_count} Non-Standard Frame Printings (Page ${data.current_page} of ${data.total_pages})`;
+
+                for (const card of data.cards) {
+                    gallery.appendChild(createCardItem(card));
+                }
+
+                updatePaginationControls(data.current_page, data.total_pages);
+            } catch (error) {
+                console.error("Error loading cards:", error);
+                gallery.innerHTML = `
+                    <div class="error" style="grid-column: 1/-1;">
+                        Error loading cards: ${error.message}
+                    </div>
+                `;
+                galleryTitle.textContent = "Error";
+                updatePaginationControls(0, 0);
+            }
+        }
+
+        function updatePaginationControls(currentPage, totalPages) {
+            const createControls = () => {
+                if (totalPages <= 1) return "";
+
+                return `
+                    <button class="pagination-btn" onclick="loadCards(${currentPage - 1})" ${currentPage <= 1 ? "disabled" : ""}>
+                        &laquo; Previous
+                    </button>
+                    <span>Page ${currentPage} of ${totalPages}</span>
+                    <button class="pagination-btn" onclick="loadCards(${currentPage + 1})" ${currentPage >= totalPages ? "disabled" : ""}>
+                        Next &raquo;
+                    </button>
+                `;
+            };
+
+            document.getElementById("topPagination").innerHTML = createControls();
+            document.getElementById("bottomPagination").innerHTML = createControls();
+        }
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", () => loadCards(1));
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "download:oracle-cards",
+            "type": "shell",
+            "command": "npm run download:oracle-cards",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "never",
+                "panel": "shared",
+                "clear": true,
+                "close": true
+            }
+        },
+        {
+            "label": "build:scryfall-arena",
+            "type": "shell",
+            "command": "npm run build:scryfall-arena",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "never",
+                "panel": "shared",
+                "clear": true,
+                "close": true
+            }
+        },
+        {
+            "label": "process:collection",
+            "type": "shell",
+            "command": "npm run process:collection",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "never",
+                "panel": "shared",
+                "clear": true,
+                "close": true
+            }
+        },
+        {
+            "label": "check:hash-collisions",
+            "type": "shell",
+            "command": "npm run check:hash-collisions",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "never",
+                "panel": "shared",
+                "clear": true,
+                "close": true
+            }
+        },
+        {
+            "label": "generate:omenpath-mapping",
+            "type": "shell",
+            "command": "npm run generate:omenpath-mapping",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "never",
+                "panel": "shared",
+                "clear": true,
+                "close": true
+            }
+        },
+        {
+            "label": "convert:oracle-binary",
+            "type": "shell",
+            "command": "npm run convert:oracle-binary",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "never",
+                "panel": "shared",
+                "clear": true,
+                "close": true
+            }
+        },
+        {
+            "label": "serve:art-viewer",
+            "type": "shell",
+            "command": "npm run serve:art-viewer",
+            "isBackground": true,
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true,
+                "close": false
+            }
+        }
+    ]
+}

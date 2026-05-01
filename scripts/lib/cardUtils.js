@@ -4,6 +4,25 @@ import { normalizeSearchText, countAlphabeticLetters, isFuzzyMatch } from "./fuz
 // Cache for Scryfall sets data
 let scryfallSetsCache = null;
 let allArenaCardsCache = null;
+let cardsWithoutModernFrameCache = null;
+
+// Sets to deprioritize when selecting fallback modern printings
+const AVOID_SETS = [
+    "pl23",
+    "sld",
+    "prm",
+    "ppro",
+    "who",
+    "pmei",
+    "wc03",
+    "40k",
+    "pz2",
+    "wmc",
+    "oc21",
+    "pip",
+    "v09",
+    "30a",
+];
 
 /**
  * Fetches set metadata from Scryfall API
@@ -61,6 +80,21 @@ function getFirstImageUri(card) {
         return card.image_uris.normal;
     }
     return null;
+}
+
+/**
+ * Extracts the primary illustration ID from a card
+ * @param {Object} card - The card object
+ * @returns {string|null} The illustration ID or null
+ */
+function getIllustrationId(card) {
+    if (card.card_faces && card.card_faces.length > 0) {
+        const firstFace = card.card_faces[0];
+        if (firstFace.illustration_id) {
+            return firstFace.illustration_id;
+        }
+    }
+    return card.illustration_id || null;
 }
 
 /**
@@ -254,6 +288,216 @@ function sortCardsWithSharedOrder(cards, scryfallSets, preferredSetCode = null) 
     }
 
     return output;
+}
+
+/**
+ * Gets Arena cards that exclusively use non-standard frames on Arena.
+ * A standard 2015 frame is frame === "2015" or frame === "2003" and border_color !== "borderless".
+ * @returns {Promise<Array>} Array of cards
+ */
+export async function getCardsWithoutModernFrame() {
+    if (cardsWithoutModernFrameCache) {
+        return cardsWithoutModernFrameCache;
+    }
+
+    const rawCards = defaultData();
+    const scryfallSets = await fetchScryfallSets();
+
+    // Group printings by oracle_id (or name if missing)
+    const cardsByOracleId = new Map();
+    // Track standard 2015 frame mapping printings per oracleId
+    const modernPrintingsByOracleId = new Map();
+    // Track oracle_ids that have at least one standard 2015 frame mapping on Arena
+    const hasStandard2015FrameArena = new Set();
+    // Track oracle_ids that have at least one standard 2015 frame anywhere
+    const hasStandard2015FrameAnywhere = new Set();
+
+    for (const card of rawCards) {
+        const cardSet = scryfallSets.get(card.set);
+        if (!cardSet || isTokenSet(cardSet)) {
+            continue;
+        }
+
+        if (isBasicLand(card)) {
+            continue;
+        }
+
+        const oracleId = card.oracle_id || card.name;
+
+        // Detail condition
+        const isStandard2015 =
+            (card.frame === "2015" || card.frame === "2003") && card.border_color !== "borderless";
+
+        if (isStandard2015) {
+            hasStandard2015FrameAnywhere.add(oracleId);
+            if (isArenaPrinting(card)) {
+                hasStandard2015FrameArena.add(oracleId);
+            }
+
+            const imageUri = getFirstImageUri(card);
+            if (imageUri) {
+                if (!modernPrintingsByOracleId.has(oracleId)) {
+                    modernPrintingsByOracleId.set(oracleId, []);
+                }
+                modernPrintingsByOracleId.get(oracleId).push({
+                    name: card.name,
+                    set: card.set,
+                    image_uri: imageUri,
+                    rarity: card.rarity || "unknown",
+                    collector_number: card.collector_number || "0",
+                    scryfall_uri: card.scryfall_uri,
+                    frame: card.frame,
+                    border_color: card.border_color,
+                    is_modern: true,
+                    illustration_id: getIllustrationId(card),
+                    _normalized_name: normalizeSearchText(card.name),
+                });
+            }
+        }
+
+        if (!isArenaPrinting(card)) {
+            continue;
+        }
+
+        const imageUri = getFirstImageUri(card);
+        if (!imageUri) {
+            continue;
+        }
+
+        if (!cardsByOracleId.has(oracleId)) {
+            cardsByOracleId.set(oracleId, []);
+        }
+
+        cardsByOracleId.get(oracleId).push({
+            name: card.name,
+            set: card.set,
+            image_uri: imageUri,
+            rarity: card.rarity || "unknown",
+            collector_number: card.collector_number || "0",
+            scryfall_uri: card.scryfall_uri,
+            frame: card.frame,
+            border_color: card.border_color,
+            illustration_id: getIllustrationId(card),
+            _normalized_name: normalizeSearchText(card.name),
+        });
+    }
+
+    const pairedOutputs = [];
+    for (const [oracleId, printings] of cardsByOracleId.entries()) {
+        if (
+            !hasStandard2015FrameArena.has(oracleId) &&
+            hasStandard2015FrameAnywhere.has(oracleId)
+        ) {
+            const modernPrintings = modernPrintingsByOracleId.get(oracleId) || [];
+            let fallbackCard = null;
+
+            if (modernPrintings.length > 0) {
+                // Get all illustration IDs used by the non-standard Arena printings across ALL sets
+                const arenaIllIds = new Set(
+                    printings.map((p) => p.illustration_id).filter(Boolean),
+                );
+
+                const sortedModern = [...modernPrintings].sort((a, b) => {
+                    // Give priority to matching illustrations
+                    const aMatchesIll = arenaIllIds.has(a.illustration_id) ? 1 : 0;
+                    const bMatchesIll = arenaIllIds.has(b.illustration_id) ? 1 : 0;
+                    if (aMatchesIll !== bMatchesIll) {
+                        return bMatchesIll - aMatchesIll; // Match first
+                    }
+
+                    // Avoid SLD and PRM sets if possible
+                    const aIsAvoided = AVOID_SETS.includes(a.set.toLowerCase()) ? 1 : 0;
+                    const bIsAvoided = AVOID_SETS.includes(b.set.toLowerCase()) ? 1 : 0;
+                    if (aIsAvoided !== bIsAvoided) {
+                        return aIsAvoided - bIsAvoided; // Non-avoided first
+                    }
+
+                    // Avoid white borders if possible
+                    const aIsWhiteBorder = a.border_color === "white" ? 1 : 0;
+                    const bIsWhiteBorder = b.border_color === "white" ? 1 : 0;
+                    if (aIsWhiteBorder !== bIsWhiteBorder) {
+                        return aIsWhiteBorder - bIsWhiteBorder; // Non-white first
+                    }
+
+                    // Avoid masterpiece sets if possible
+                    const aIsMasterpiece =
+                        scryfallSets.get(a.set)?.set_type === "masterpiece" ? 1 : 0;
+                    const bIsMasterpiece =
+                        scryfallSets.get(b.set)?.set_type === "masterpiece" ? 1 : 0;
+                    if (aIsMasterpiece !== bIsMasterpiece) {
+                        return aIsMasterpiece - bIsMasterpiece; // Non-masterpiece first
+                    }
+
+                    // Give priority to 2015 frame
+                    const aIs2015 = a.frame === "2015" ? 1 : 0;
+                    const bIs2015 = b.frame === "2015" ? 1 : 0;
+                    if (aIs2015 !== bIs2015) {
+                        return bIs2015 - aIs2015; // 2015 first
+                    }
+
+                    const byRelease =
+                        getSetReleaseTimestamp(scryfallSets, a.set) -
+                        getSetReleaseTimestamp(scryfallSets, b.set);
+                    if (byRelease !== 0) {
+                        return byRelease; // Oldest goes first
+                    }
+                    return compareCollectorNumbers(a.collector_number, b.collector_number);
+                });
+                fallbackCard = sortedModern[0];
+            }
+
+            // Group by set
+            const printingsBySet = new Map();
+            for (const p of printings) {
+                if (!printingsBySet.has(p.set)) {
+                    printingsBySet.set(p.set, []);
+                }
+                printingsBySet.get(p.set).push(p);
+            }
+
+            // For each set, pick the lowest collector number card
+            for (const setPrintings of printingsBySet.values()) {
+                setPrintings.sort((a, b) =>
+                    compareCollectorNumbers(a.collector_number, b.collector_number),
+                );
+                const primaryCard = setPrintings[0];
+
+                if (fallbackCard) {
+                    pairedOutputs.push({
+                        primaryCard,
+                        fallbackCard,
+                    });
+                }
+            }
+        }
+    }
+
+    pairedOutputs.sort((a, b) => {
+        const releaseA = getSetReleaseTimestamp(scryfallSets, a.primaryCard.set);
+        const releaseB = getSetReleaseTimestamp(scryfallSets, b.primaryCard.set);
+        if (releaseA !== releaseB) {
+            return releaseB - releaseA; // Newest first
+        }
+
+        const setA = a.primaryCard.set.toLowerCase();
+        const setB = b.primaryCard.set.toLowerCase();
+        if (setA !== setB) {
+            return setA.localeCompare(setB);
+        }
+
+        const nameA = a.primaryCard.name.toLowerCase();
+        const nameB = b.primaryCard.name.toLowerCase();
+        return nameA.localeCompare(nameB);
+    });
+
+    const output = [];
+    for (const pair of pairedOutputs) {
+        output.push(pair.primaryCard);
+        output.push(pair.fallbackCard);
+    }
+
+    cardsWithoutModernFrameCache = output;
+    return cardsWithoutModernFrameCache;
 }
 
 /**

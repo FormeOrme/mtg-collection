@@ -49,6 +49,9 @@
         "set": true,
         "set_type": true,
         "collector_number": true,
-        "arena_id": true
+        "arena_id": true,
+        "border_color": true,
+        "frame": true,
+        "illustration_id": true
     }
 }

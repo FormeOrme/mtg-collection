@@ -315,7 +315,7 @@ button.active {
 
 .gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 15px;
     padding: 15px;
     background: var(--color-bg-gallery);
@@ -454,4 +454,43 @@ button.active {
         width: calc(50% - 6px);
         flex: 0 0 calc(50% - 6px);
     }
+}
+/* Added from frame.html */
+.page-description {
+    margin-bottom: 2rem;
+    color: var(--color-gray-100);
+    font-size: 1.1rem;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.pagination-btn {
+    background: var(--color-blue-mid);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pagination-btn:disabled {
+    background: var(--color-gray-200);
+    cursor: not-allowed;
+    color: var(--color-gray-100);
+}
+
+.modern-fallback-highlight {
+    outline: 2px solid rgb(255, 69, 0);
+    outline-offset: -2px;
+    border-radius: 4.75% / 3.5%;
+}
+
+.modern-fallback-name {
+    background: linear-gradient(to top, rgba(255, 69, 0, 0.9) 0%, rgba(255, 69, 0, 0) 100%) !important;
 }
