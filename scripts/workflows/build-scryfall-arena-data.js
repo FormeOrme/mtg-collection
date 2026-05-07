@@ -1,14 +1,7 @@
-import {
-    oracleData,
-    legalCards,
-    strip,
-    onArena,
-    modernLegal,
-    colorIdentity,
-    sets,
-    writeToData,
-    cardDataMap,
-} from "../lib/common.js";
+import { oracleData, cardDataMap } from "../lib/loaders.js";
+import { legalCards, onArena, modernLegal, colorIdentity, sets } from "../lib/domain.js";
+import { strip } from "../lib/utils.js";
+import { writeToData } from "../lib/io.js";
 
 const rarities = { c: 0, u: 1, r: 2, m: 3 };
 
@@ -24,15 +17,15 @@ console.log(`Mapped to ${cardMap.size} unique cards.`);
 
 console.timeEnd("Loading oracle cards");
 
-async function mapCardData(card, additionalData = false) {
+function mapCardData(card, additionalData = false) {
     const n = strip(card.name);
 
     const baseData = {
         n,
         r: rarities[card.rarity[0]],
-        ...(modernLegal(card.legalities) && { m: 1 }),
+        ...(modernLegal(card) && { m: 1 }),
         ci: colorIdentity(card.color_identity),
-        ...(sets.straightToModern.includes(card.set) && { stm: true }),
+        ...(sets.straightToModern.has(card.set) && { stm: true }),
     };
 
     const scryFallCard = cardMap.get(n);
@@ -58,15 +51,15 @@ async function mapCardData(card, additionalData = false) {
 
 const excludeTypes = new Set(["legendary", "basic", "snow", "world", "kindred"]);
 
-function mainType(card) {
-    const { main } = getTypes(card);
+function mainType({ type_line }) {
+    const { main } = getTypes({ type_line });
     const filtered = main.filter((type) => !excludeTypes.has(type));
     if (filtered.includes("creature")) return "creature";
     return filtered[0];
 }
 
-function getTypes(card) {
-    const frontFaceTypeLine = card.type_line.split("/")[0].trim().toLowerCase();
+function getTypes({ type_line }) {
+    const frontFaceTypeLine = type_line.split("/")[0].trim().toLowerCase();
     const [mainTypePart, subTypePart] = frontFaceTypeLine
         .split("—")
         .map((part) => part?.trim().split(" "));
@@ -77,12 +70,10 @@ function getTypes(card) {
     };
 }
 
-function extractCardDetails(card) {
-    const hasFaces = card.card_faces?.length;
+function extractCardDetails({ card_faces, oracle_text }) {
+    const hasFaces = card_faces?.length;
     return {
-        oracle: hasFaces
-            ? card.card_faces.map((face) => face.oracle_text).join(" // ")
-            : card.oracle_text,
+        oracle: hasFaces ? card_faces.map((face) => face.oracle_text).join(" // ") : oracle_text,
     };
 }
 
@@ -110,21 +101,21 @@ function oracleMapper({ keep = [], map = [] }) {
 }
 
 const FILTERS = {
-    ALL: (c) => c,
-    MODERN: (c) => modernLegal(c.legalities),
-    ARENA: (c) => onArena(c),
+    ALL: () => true,
+    MODERN: modernLegal,
+    ARENA: onArena,
 };
 
 const OUTPUT_FILES = {
     SHRUNK: {
         fileName: "scryfall_arena_data.json",
         filter: FILTERS.ALL,
-        mapFunction: async (card) => await mapCardData(card),
+        mapFunction: (card) => mapCardData(card),
     },
     BAREBONE: {
         fileName: "scryfall_barebone.json",
         filter: FILTERS.ALL,
-        mapFunction: async (card) => await mapCardData(card, true),
+        mapFunction: (card) => mapCardData(card, true),
     },
     ORACLE: {
         fileName: "scryfall_oracle.json",

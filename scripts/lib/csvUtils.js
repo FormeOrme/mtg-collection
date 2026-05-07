@@ -1,4 +1,4 @@
-import * as common from "./common.js";
+import { loadFile, read, writeToData } from "./io.js";
 
 export const CSV_HEADER = `"Name","Edition","Collector Number","Count"`;
 
@@ -43,12 +43,12 @@ export function getDiff(lastCsv, newCsv) {
 
 export function generateCsvContent(cards) {
     console.time("creating csv");
-    let csvContent = CSV_HEADER;
+    const lines = [CSV_HEADER];
     for (const card of cards) {
-        csvContent += "\n" + getCsvLine(card);
+        lines.push(getCsvLine(card));
     }
     console.timeEnd("creating csv");
-    return csvContent;
+    return lines.join("\n");
 }
 
 export function generateDiffCsv(lastCsvContent, newCsvContent) {
@@ -66,9 +66,9 @@ export function writeCsvFiles(cards) {
 
     try {
         // Get the last CSV file for diff comparison
-        const lastCsv = common.loadFile("csvToImport_", "csv");
+        const lastCsv = loadFile("csvToImport_", "csv");
         console.log(`Creating diff from [${lastCsv}]`);
-        const lastCsvContent = common.read(lastCsv).toString();
+        const lastCsvContent = read(lastCsv).toString();
 
         // Generate diff and check if there are actual differences
         const diffContent = getDiff(lastCsvContent, newCsvContent);
@@ -77,7 +77,7 @@ export function writeCsvFiles(cards) {
         if (diffContent.trim()) {
             const diff = CSV_HEADER + "\n" + diffContent;
             console.time("writing diff");
-            common.writeToData(diff, `diff_${today}.csv`);
+            writeToData(diff, `diff_${today}.csv`);
             console.timeEnd("writing diff");
             result.diffPath = `diff_${today}.csv`;
         } else {
@@ -90,7 +90,7 @@ export function writeCsvFiles(cards) {
 
     // Write new CSV
     console.time("writing csv");
-    common.writeToData(newCsvContent, `csvToImport_${today}.csv`);
+    writeToData(newCsvContent, `csvToImport_${today}.csv`);
     console.timeEnd("writing csv");
 
     return result;

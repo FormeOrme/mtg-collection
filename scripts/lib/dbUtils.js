@@ -1,4 +1,4 @@
-import * as common from "./common.js";
+import { loadFile, read } from "./io.js";
 import sqlite3 from "sqlite3";
 
 // Configuration constants
@@ -17,11 +17,11 @@ export async function readCardDb() {
         let query;
 
         try {
-            dbName = common.loadFile("Raw_CardDatabase", "mtga", "Raw");
+            dbName = loadFile("Raw_CardDatabase", "mtga", "Raw");
             console.log("Using db", dbName);
 
-            queryPath = common.loadFile("cardDBQuery", "sql");
-            query = common.read(queryPath).toString();
+            queryPath = loadFile("cardDBQuery", "sql");
+            query = read(queryPath).toString();
 
             if (!query.trim()) {
                 console.error("SQL query is empty! Path:", queryPath);
@@ -81,7 +81,8 @@ export async function readCardDb() {
 }
 
 export function validateCards(cards, validGroupIds) {
-    const invalidCards = cards.filter((card) => !validGroupIds.includes(card.grpId));
+    const validSet = new Set(validGroupIds);
+    const invalidCards = cards.filter((card) => !validSet.has(card.grpId));
     console.warn("INVALID CARDS COUNT:", invalidCards.length);
 
     // Show first few invalid cards for debugging

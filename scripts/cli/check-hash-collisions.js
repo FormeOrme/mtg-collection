@@ -1,4 +1,4 @@
-import { readDataFile } from "../lib/common.js";
+import { readDataFile } from "../lib/io.js";
 
 function checkCollisions() {
     console.log("Loading data from resolver: scryfall_barebone.json");

@@ -1,6 +1,8 @@
 import { createWriteStream } from "fs";
 import { encode } from "msgpack-lite";
-import { oracleData, writeToData, strip, ensureDataDir, getDataFilePath } from "../lib/common.js";
+import { oracleData } from "../lib/loaders.js";
+import { writeToData, ensureDataDir, getDataFilePath } from "../lib/io.js";
+import { strip } from "../lib/utils.js";
 
 const binaryFilePath = getDataFilePath("bin-oracle-cards.bin");
 

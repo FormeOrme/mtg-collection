@@ -1,4 +1,6 @@
-import { read, loadFile, writeToData, oracleDataMap, strip, OMENPATH_MAP } from "../lib/common.js";
+import { read, loadFile, writeToData } from "../lib/io.js";
+import { oracleDataMap, OMENPATH_MAP } from "../lib/loaders.js";
+import { strip } from "../lib/utils.js";
 import { formatYYYYMMDD, writeCsvFiles } from "../lib/csvUtils.js";
 import {
     readCardDb,
@@ -80,7 +82,7 @@ const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
     const mappedCards = arenaCollection
         .filter((card) => OMENPATH_MAP.has(card.n))
         .map((card) => ({
-            n: OMENPATH_MAP.get(card.n).mtg_name,
+            n: OMENPATH_MAP.get(card.n).mtgName,
             o: card.o,
         }));
     console.log(`Added [${mappedCards.length}] omenpath cards to arena collection`);

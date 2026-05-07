@@ -1,4 +1,4 @@
-import { defaultData } from "./common.js";
+import { defaultData } from "./loaders.js";
 import { normalizeSearchText, countAlphabeticLetters, isFuzzyMatch } from "./fuzzySearch.js";
 
 // Cache for Scryfall sets data
@@ -551,7 +551,7 @@ export async function getAllArenaCards() {
 export async function searchArenaCards({
     query,
     minLetters = 3,
-    threshold = 2,
+    fraction = 1 / 4,
     maxVisibleResults = 35,
 }) {
     const letterCount = countAlphabeticLetters(query);
@@ -579,7 +579,7 @@ export async function searchArenaCards({
     const matchedNames = new Set();
 
     for (const card of cards) {
-        if (!isFuzzyMatch(normalizedQuery, card._normalized_name, threshold)) {
+        if (!isFuzzyMatch(normalizedQuery, card._normalized_name, fraction)) {
             continue;
         }
 

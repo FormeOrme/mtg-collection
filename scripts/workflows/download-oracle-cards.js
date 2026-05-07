@@ -1,7 +1,7 @@
 import axios from "axios";
 import fs from "fs";
 import path from "path";
-import { DATA_PATHS, ensureDataDir } from "../lib/common.js";
+import { DATA_PATHS, ensureDataDir } from "../lib/io.js";
 
 const SCRYFALL_BULK_URL = "https://api.scryfall.com/bulk-data";
 const FILTER_CONFIG_FILENAME = "scryfall_filter.json";

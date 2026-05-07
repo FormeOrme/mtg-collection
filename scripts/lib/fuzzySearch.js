@@ -85,10 +85,10 @@ export function levenshteinDistance(left, right, threshold) {
  * Handles double-faced card names separated by " // ".
  * @param {string} query - Already normalized query string.
  * @param {string} candidate - Already normalized candidate string.
- * @param {number} threshold
+ * @param {number} fraction
  * @returns {boolean}
  */
-export function isFuzzyMatch(query, candidate, threshold) {
+export function isFuzzyMatch(query, candidate, fraction) {
     if (!query || !candidate) {
         return false;
     }
@@ -98,6 +98,9 @@ export function isFuzzyMatch(query, candidate, threshold) {
     }
 
     const candidateParts = candidate.split(" // ");
+
+    const threshold = Math.ceil(candidate.length * fraction);
+
     for (const part of candidateParts) {
         if (part.includes(query)) {
             return true;
