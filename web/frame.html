@@ -124,17 +124,55 @@
         }
 
         function updatePaginationControls(currentPage, totalPages) {
+            function buildPageItems(current, total) {
+                if (total <= 9) {
+                    return Array.from({ length: total }, (_, i) => i + 1);
+                }
+
+                const pages = [1];
+                const start = Math.max(2, current - 3);
+                const end = Math.min(total - 1, current + 3);
+
+                if (start > 2) {
+                    pages.push("...");
+                }
+
+                for (let page = start; page <= end; page++) {
+                    pages.push(page);
+                }
+
+                if (end < total - 1) {
+                    pages.push("...");
+                }
+
+                pages.push(total);
+                return pages;
+            }
+
             const createControls = () => {
                 if (totalPages <= 1) return "";
 
+                const pageButtons = buildPageItems(currentPage, totalPages)
+                    .map((item) => {
+                        if (item === "...") {
+                            return '<span class="pagination-ellipsis" aria-hidden="true">...</span>';
+                        }
+
+                        const isActive = item === currentPage;
+                        return `
+                            <button
+                                class="pagination-btn"
+                                onclick="loadCards(${item})"
+                                ${isActive ? "disabled aria-current=\"page\"" : ""}
+                            >
+                                ${item}
+                            </button>
+                        `;
+                    })
+                    .join("");
+
                 return `
-                    <button class="pagination-btn" onclick="loadCards(${currentPage - 1})" ${currentPage <= 1 ? "disabled" : ""}>
-                        &laquo; Previous
-                    </button>
-                    <span>Page ${currentPage} of ${totalPages}</span>
-                    <button class="pagination-btn" onclick="loadCards(${currentPage + 1})" ${currentPage >= totalPages ? "disabled" : ""}>
-                        Next &raquo;
-                    </button>
+                    ${pageButtons}
                 `;
             };
 
