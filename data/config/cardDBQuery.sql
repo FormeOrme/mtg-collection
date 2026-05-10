@@ -1,10 +1,9 @@
 SELECT DISTINCT
-    C.GRPID AS 'grpId',
-    L.loc AS 'name',
-    C.EXPANSIONCODE AS 'set'
+    c.GrpId AS "grpId",
+    l.loc AS "name",
+    c.ExpansionCode AS "set"
 FROM
-    CARDS AS C
-    LEFT JOIN Localizations_enUS AS L
-        ON C.TITLEID = L.LOCID
+    Cards AS c
+    INNER JOIN Localizations_enUS AS l ON c.TitleId = l.LocId
 WHERE
-    L.loc NOT LIKE '%<%'
+    l.loc NOT LIKE '%<%'
