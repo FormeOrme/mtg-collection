@@ -455,6 +455,7 @@ button.active {
         flex: 0 0 calc(50% - 6px);
     }
 }
+
 /* Added from frame.html */
 .page-description {
     margin-bottom: 2rem;
@@ -493,4 +494,107 @@ button.active {
 
 .modern-fallback-name {
     background: linear-gradient(to top, rgba(255, 69, 0, 0.9) 0%, rgba(255, 69, 0, 0) 100%) !important;
+}
+
+.decklist-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    width: 100%;
+}
+
+.decklist-pane {
+    background: var(--color-bg-panel);
+    border: 1px solid var(--color-border-panel);
+    border-radius: var(--radius-lg);
+    padding: 14px;
+    width: 100%;
+}
+
+.decklist-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-text-accent);
+    font-weight: 600;
+}
+
+.decklist-textarea {
+    width: 100%;
+    min-height: 340px;
+    height: 44vh;
+    resize: vertical;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-input);
+    background: var(--color-bg-input);
+    color: var(--color-text-input);
+    font-size: 0.95em;
+    font-family: Consolas, Menlo, Monaco, "Courier New", monospace;
+    line-height: 1.4;
+    outline: none;
+    transition: height 0.25s ease, min-height 0.25s ease;
+}
+
+.decklist-textarea--collapsed {
+    min-height: 130px;
+    height: 18vh;
+}
+
+.decklist-textarea:focus {
+    border-color: var(--color-blue-mid);
+    box-shadow: var(--shadow-focus);
+}
+
+.decklist-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.decklist-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    min-height: 340px;
+    background: var(--color-bg-gallery);
+    border: 1px solid var(--color-border-panel);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    width: 100%;
+}
+
+.decklist-card-item {
+    position: relative;
+}
+
+.decklist-qty-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--color-text-white);
+    background: rgba(25, 118, 210, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.deck-card-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--color-text-muted);
+    font-size: 0.9em;
+    text-align: center;
+    padding: 6px;
 }

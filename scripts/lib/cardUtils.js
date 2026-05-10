@@ -22,6 +22,7 @@ const AVOID_SETS = [
     "pip",
     "v09",
     "30a",
+    "pz1",
 ];
 
 /**
@@ -412,11 +413,13 @@ export async function getCardsWithoutModernFrame() {
                         return aIsAvoided - bIsAvoided; // Non-avoided first
                     }
 
-                    // Avoid white borders if possible
-                    const aIsWhiteBorder = a.border_color === "white" ? 1 : 0;
-                    const bIsWhiteBorder = b.border_color === "white" ? 1 : 0;
-                    if (aIsWhiteBorder !== bIsWhiteBorder) {
-                        return aIsWhiteBorder - bIsWhiteBorder; // Non-white first
+                    // Avoid white/gold borders if possible
+                    const aHasAvoidedBorder =
+                        a.border_color === "white" || a.border_color === "gold" ? 1 : 0;
+                    const bHasAvoidedBorder =
+                        b.border_color === "white" || b.border_color === "gold" ? 1 : 0;
+                    if (aHasAvoidedBorder !== bHasAvoidedBorder) {
+                        return aHasAvoidedBorder - bHasAvoidedBorder; // Preferred borders first
                     }
 
                     // Avoid masterpiece sets if possible
@@ -629,6 +632,132 @@ export async function searchArenaCards({
             collector_number: card.collector_number,
             scryfall_uri: card.scryfall_uri,
         })),
+    };
+}
+
+/**
+ * Normalizes decklist/card names for tolerant comparisons.
+ * @param {string} value
+ * @returns {string}
+ */
+function normalizeDeckName(value) {
+    return String(value || "")
+        .replace(/[\u2018\u2019]/g, "'")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+}
+
+/**
+ * Parses lines in the Arena-style format:
+ * "4 Card Name (SET) 123"
+ * @param {string} line
+ * @returns {{quantity:number,input_name:string,set:string,collector_number:string}|null}
+ */
+function parseDecklistLine(line) {
+    const match = String(line || "")
+        .trim()
+        .match(/^(\d+)\s+(.+?)\s+\(([A-Za-z0-9]+)\)\s+([A-Za-z0-9]+)\s*$/);
+    if (!match) {
+        return null;
+    }
+
+    return {
+        quantity: parseInt(match[1], 10),
+        input_name: match[2].trim(),
+        set: match[3].toLowerCase(),
+        collector_number: match[4].toLowerCase(),
+    };
+}
+
+/**
+ * Parses a decklist text block and resolves each entry against local card data.
+ * @param {string} decklistText
+ * @returns {{total_lines:number,parsed_count:number,matched_count:number,cards:Array}}
+ */
+export function parseDecklistText(decklistText) {
+    const lines = String(decklistText || "").split(/\r?\n/);
+    const rawCards = defaultData();
+
+    const cardsBySetAndCollector = new Map();
+    for (const card of rawCards) {
+        const key = `${String(card.set || "").toLowerCase()}|${String(card.collector_number || "").toLowerCase()}`;
+        if (!cardsBySetAndCollector.has(key)) {
+            cardsBySetAndCollector.set(key, []);
+        }
+        cardsBySetAndCollector.get(key).push(card);
+    }
+
+    const outputCards = [];
+    let parsedCount = 0;
+    let matchedCount = 0;
+
+    for (let i = 0; i < lines.length; i += 1) {
+        const rawLine = lines[i];
+        const trimmed = rawLine.trim();
+        if (!trimmed) {
+            continue;
+        }
+
+        const parsed = parseDecklistLine(trimmed);
+        if (!parsed) {
+            outputCards.push({
+                line: i + 1,
+                raw_line: rawLine,
+                matched: false,
+                error: "unrecognized_format",
+            });
+            continue;
+        }
+
+        parsedCount += 1;
+        const key = `${parsed.set}|${parsed.collector_number}`;
+        const candidates = cardsBySetAndCollector.get(key) || [];
+        const normalizedInputName = normalizeDeckName(parsed.input_name);
+
+        let resolvedCard = candidates.find(
+            (card) => normalizeDeckName(card.name) === normalizedInputName,
+        );
+
+        if (!resolvedCard && candidates.length === 1) {
+            resolvedCard = candidates[0];
+        }
+
+        if (resolvedCard) {
+            matchedCount += 1;
+            outputCards.push({
+                line: i + 1,
+                raw_line: rawLine,
+                quantity: parsed.quantity,
+                input_name: parsed.input_name,
+                matched: true,
+                name: resolvedCard.name,
+                set: resolvedCard.set,
+                collector_number: resolvedCard.collector_number,
+                rarity: resolvedCard.rarity || "unknown",
+                image_uri: getFirstImageUri(resolvedCard),
+                scryfall_uri: resolvedCard.scryfall_uri || null,
+            });
+            continue;
+        }
+
+        outputCards.push({
+            line: i + 1,
+            raw_line: rawLine,
+            quantity: parsed.quantity,
+            input_name: parsed.input_name,
+            matched: false,
+            set: parsed.set,
+            collector_number: parsed.collector_number,
+            error: "card_not_found",
+        });
+    }
+
+    return {
+        total_lines: lines.length,
+        parsed_count: parsedCount,
+        matched_count: matchedCount,
+        cards: outputCards,
     };
 }
 

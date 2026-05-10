@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decklist Parser</title>
+    <link rel="stylesheet" href="/art_view.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div
+                style="display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap;">
+                <h1>Decklist Parser</h1>
+                <a href="/"
+                    style="color: var(--color-blue-light); text-decoration: none; font-weight: bold; border: 1px solid var(--color-blue-light); padding: 0.2rem 0.6rem; border-radius: 4px;">&larr;
+                    Back to Main Viewer</a>
+            </div>
+            <div class="subtitle">Paste an Arena-style decklist and resolve each line to local card data</div>
+        </header>
+
+        <section class="decklist-layout" aria-label="Decklist parser">
+            <div class="decklist-pane">
+                <label class="decklist-label" for="decklistInput">Decklist Input</label>
+                <textarea id="decklistInput" class="decklist-textarea" spellcheck="false"
+                    placeholder="4 Improvisation Capstone (SOS) 120&#10;1 Island (SOS) 275&#10;4 Bramble Familiar (WOE) 164"></textarea>
+                <div class="decklist-actions">
+                    <button id="parseBtn" type="button">Parse Decklist</button>
+                    <button id="clearBtn" type="button">Clear</button>
+                </div>
+                <div id="parseInfo"></div>
+            </div>
+
+            <div class="gallery-title" style="margin-bottom: 10px;">Parsed Decklist</div>
+            <div id="decklistResults" class="gallery decklist-results">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <div class="empty-state-text">No parsed cards yet</div>
+                    <div class="empty-state-hint">Paste your list and click Parse Decklist.</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const decklistInput = document.getElementById("decklistInput");
+        const parseBtn = document.getElementById("parseBtn");
+        const clearBtn = document.getElementById("clearBtn");
+        const parseInfo = document.getElementById("parseInfo");
+        const decklistResults = document.getElementById("decklistResults");
+
+        function escapeHtml(value) {
+            return String(value || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function renderResults(payload) {
+            const cards = Array.isArray(payload.cards) ? payload.cards : [];
+            const matchedCards = cards.filter((card) => card && card.matched);
+
+            if (matchedCards.length === 0) {
+                decklistResults.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔎</div>
+                        <div class="empty-state-text">No cards parsed</div>
+                        <div class="empty-state-hint">Check your decklist format and try again.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            decklistResults.innerHTML = matchedCards.map((card) => {
+                const qty = escapeHtml(card.quantity || "1");
+                const safeName = escapeHtml(card.name || card.input_name || "Card");
+                const imageMarkup = card.image_uri
+                    ? `<img class="card-image" src="${escapeHtml(card.image_uri)}" alt="${safeName}" loading="lazy">`
+                    : '<div class="deck-card-image-placeholder">No image</div>';
+
+                if (card.scryfall_uri) {
+                    return `
+                        <a class="card-item decklist-card-item" href="${escapeHtml(card.scryfall_uri)}" target="_blank" rel="noopener noreferrer" title="${safeName}">
+                            ${imageMarkup}
+                            <span class="decklist-qty-badge">${qty}</span>
+                        </a>
+                    `;
+                }
+
+                return `
+                    <div class="card-item decklist-card-item" title="${safeName}">
+                        ${imageMarkup}
+                        <span class="decklist-qty-badge">${qty}</span>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        async function parseDecklist() {
+            const decklist = decklistInput.value;
+            if (!decklist.trim()) {
+                parseInfo.innerHTML = `
+                    <div class="gallery-info search-info-warning">
+                        Paste a decklist before parsing.
+                    </div>
+                `;
+                return;
+            }
+
+            parseBtn.disabled = true;
+            parseBtn.textContent = "Parsing...";
+            parseInfo.innerHTML = '<div class="loading" style="padding: 8px 0;">Sending decklist to parser...</div>';
+
+            try {
+                const response = await fetch("/api/decklist/parse", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ decklist })
+                });
+
+                if (!response.ok) {
+                    const message = `API returned ${response.status}: ${response.statusText}`;
+                    throw new Error(message);
+                }
+
+                const payload = await response.json();
+                parseInfo.innerHTML = "";
+                renderResults(payload);
+                decklistInput.classList.add("decklist-textarea--collapsed");
+            } catch (error) {
+                console.error("Error parsing decklist:", error);
+                parseInfo.innerHTML = `
+                    <div class="error">
+                        Error parsing decklist: ${escapeHtml(error.message)}
+                    </div>
+                `;
+            } finally {
+                parseBtn.disabled = false;
+                parseBtn.textContent = "Parse Decklist";
+            }
+        }
+
+        function clearDecklist() {
+            decklistInput.value = "";
+            decklistInput.classList.remove("decklist-textarea--collapsed");
+            parseInfo.innerHTML = "";
+            decklistResults.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <div class="empty-state-text">No parsed cards yet</div>
+                    <div class="empty-state-hint">Paste your list and click Parse Decklist.</div>
+                </div>
+            `;
+            decklistInput.focus();
+        }
+
+        function init() {
+            parseBtn.addEventListener("click", parseDecklist);
+            clearBtn.addEventListener("click", clearDecklist);
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

@@ -7,6 +7,7 @@ import {
     buildArenaSets,
     searchArenaCards,
     getCardsWithoutModernFrame,
+    parseDecklistText,
 } from "../lib/cardUtils.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -71,12 +72,36 @@ function sendError(res, message, statusCode = 500) {
 }
 
 /**
+ * Reads and parses JSON request body.
+ * @param {import("http").IncomingMessage} req
+ * @returns {Promise<any>}
+ */
+async function readJsonBody(req) {
+    const chunks = [];
+    for await (const chunk of req) {
+        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+
+    const raw = Buffer.concat(chunks).toString("utf8").trim();
+    if (!raw) {
+        return {};
+    }
+
+    try {
+        return JSON.parse(raw);
+    } catch {
+        throw new Error("Invalid JSON body");
+    }
+}
+
+/**
  * Main HTTP server
  */
 const server = http.createServer(async (req, res) => {
     // Enable CORS
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Cache-Control", "no-cache");
 
     // Handle OPTIONS requests
@@ -154,6 +179,21 @@ const server = http.createServer(async (req, res) => {
             return;
         }
 
+        // Route: POST /api/decklist/parse
+        if (pathname === "/api/decklist/parse" && req.method === "POST") {
+            const body = await readJsonBody(req);
+            const decklistText = String(body.decklist || "");
+
+            if (!decklistText.trim()) {
+                sendError(res, "Missing decklist text", 400);
+                return;
+            }
+
+            const result = parseDecklistText(decklistText);
+            sendJson(res, result);
+            return;
+        }
+
         // Route: GET /api/set-icon/:setCode — proxies SVG from Scryfall to avoid CORS
         const setIconMatch = pathname.match(/^\/api\/set-icon\/([a-z0-9]+)$/);
         if (setIconMatch && req.method === "GET") {
@@ -198,6 +238,7 @@ server.listen(PORT, () => {
     console.log(`   GET  /api/sets         - Returns all Arena sets with metadata`);
     console.log(`   GET  /api/sets/:code   - Returns cards for a specific set`);
     console.log(`   GET  /api/search/cards - Returns fuzzy card search results`);
+    console.log(`   POST /api/decklist/parse - Parses a pasted decklist into card rows`);
     console.log(`\n✨ Open http://localhost:${PORT} in your browser`);
     console.log(`\nPress Ctrl+C to stop the server\n`);
 });
