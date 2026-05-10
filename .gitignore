@@ -136,6 +136,7 @@ data/generated/csvToImport_*
 data/generated/default-filtered*
 data/generated/found.json
 data/generated/diff_*
+data/generated/collection-*
 *.mtga
 /.idea
 util.js
