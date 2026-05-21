@@ -504,6 +504,81 @@ export async function getCardsWithoutModernFrame() {
 }
 
 /**
+ * Returns Arena cards whose oracle identity has both a high-rarity (mythic/rare)
+ * and a low-rarity (common/uncommon) printing on Arena.
+ * All matching Arena printings for each qualifying card are returned.
+ * @returns {Promise<Array>}
+ */
+export async function getMultiRarityCards() {
+    const rawCards = defaultData();
+    const scryfallSets = await fetchScryfallSets();
+
+    const HIGH_RARITY = new Set(["mythic", "rare"]);
+    const LOW_RARITY = new Set(["common", "uncommon"]);
+
+    // Group Arena printings by oracle_id
+    const printingsByOracleId = new Map();
+    const highRarityOracleIds = new Set();
+    const lowRarityOracleIds = new Set();
+
+    for (const card of rawCards) {
+        const cardSet = scryfallSets.get(card.set);
+        if (!cardSet || isTokenSet(cardSet)) {
+            continue;
+        }
+
+        if (!isArenaPrinting(card) || isBasicLand(card)) {
+            continue;
+        }
+
+        const imageUri = getFirstImageUri(card);
+        if (!imageUri) {
+            continue;
+        }
+
+        const oracleId = card.oracle_id || card.name;
+
+        if (!printingsByOracleId.has(oracleId)) {
+            printingsByOracleId.set(oracleId, []);
+        }
+        printingsByOracleId.get(oracleId).push({
+            name: card.name,
+            set: card.set,
+            image_uri: imageUri,
+            rarity: card.rarity || "unknown",
+            collector_number: card.collector_number || "0",
+            scryfall_uri: card.scryfall_uri,
+            _normalized_name: normalizeSearchText(card.name),
+        });
+
+        if (HIGH_RARITY.has(card.rarity)) {
+            highRarityOracleIds.add(oracleId);
+        }
+        if (LOW_RARITY.has(card.rarity)) {
+            lowRarityOracleIds.add(oracleId);
+        }
+    }
+
+    const qualifyingCards = [];
+    for (const [oracleId, printings] of printingsByOracleId.entries()) {
+        if (highRarityOracleIds.has(oracleId) && lowRarityOracleIds.has(oracleId)) {
+            qualifyingCards.push(...printings);
+        }
+    }
+
+    const orderedCards = sortCardsWithSharedOrder(qualifyingCards, scryfallSets, null);
+
+    return orderedCards.map((card) => ({
+        name: card.name,
+        set: card.set,
+        image_uri: card.image_uri,
+        rarity: card.rarity,
+        collector_number: card.collector_number,
+        scryfall_uri: card.scryfall_uri,
+    }));
+}
+
+/**
  * Builds and caches all Arena-searchable cards.
  * @returns {Promise<Array>}
  */

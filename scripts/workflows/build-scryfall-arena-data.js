@@ -102,7 +102,6 @@ function oracleMapper({ keep = [], map = [] }) {
 
 const FILTERS = {
     ALL: () => true,
-    MODERN: modernLegal,
     ARENA: onArena,
 };
 
@@ -135,7 +134,7 @@ const OUTPUT_FILES = {
 for (const [key, config] of Object.entries(OUTPUT_FILES)) {
     const timeId = `${key}_data`;
     console.time(timeId);
-    const mappedData = await Promise.all(filtered.map(config.mapFunction));
+    const mappedData = await Promise.all(filtered.filter(config.filter).map(config.mapFunction));
 
     const dataString = mappedData.map((item) => JSON.stringify(item)).join(",\n");
     writeToData(`[\n${dataString}\n]`, config.fileName);

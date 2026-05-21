@@ -7,6 +7,7 @@ import {
     buildArenaSets,
     searchArenaCards,
     getCardsWithoutModernFrame,
+    getMultiRarityCards,
     parseDecklistText,
 } from "../lib/cardUtils.js";
 
@@ -153,6 +154,13 @@ const server = http.createServer(async (req, res) => {
             const query = url.searchParams.get("q") || "";
             const searchResult = await searchArenaCards({ query });
             sendJson(res, searchResult);
+            return;
+        }
+
+        // Route: GET /api/cards/multi-rarity
+        if (pathname === "/api/cards/multi-rarity" && req.method === "GET") {
+            const cards = await getMultiRarityCards();
+            sendJson(res, { cards, total_cards: cards.length });
             return;
         }
 

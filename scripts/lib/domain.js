@@ -50,8 +50,11 @@ export function legalCards({ set_type, type_line, legalities }) {
     if (/Scheme|Conspiracy|Attraction|Token/.test(type_line)) {
         return false;
     }
-    // Exclude cards illegal in all formats
-    if (Object.values(legalities).every((value) => value === "not_legal")) {
+    // Exclude cards illegal in all formats except alchemy
+    if (
+        Object.values(legalities).every((value) => value === "not_legal") &&
+        set_type !== "alchemy"
+    ) {
         return false;
     }
     return true;

@@ -52,6 +52,7 @@
         "arena_id": true,
         "border_color": true,
         "frame": true,
-        "illustration_id": true
+        "illustration_id": true,
+        "released_at": true
     }
 }

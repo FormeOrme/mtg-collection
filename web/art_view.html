@@ -20,6 +20,9 @@
                     <a href="/frame.html"
                         style="color: var(--color-blue-light); text-decoration: none; font-weight: bold; border: 1px solid var(--color-blue-light); padding: 0.2rem 0.6rem; border-radius: 4px;">View
                         Non-Standard Frames &rarr;</a>
+                    <button id="multiRarityBtn"
+                        style="color: var(--color-blue-light); background: none; font-weight: bold; border: 1px solid var(--color-blue-light); padding: 0.2rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: inherit; font-family: inherit;">Multi-Rarity
+                        Cards</button>
                 </div>
             </div>
             <div class="subtitle">Browse all available card artworks by set</div>
@@ -358,6 +361,54 @@
         }
 
         /**
+         * Renders all cards that appear at both high (mythic/rare) and low (common/uncommon) rarity.
+         */
+        async function renderMultiRarityCards() {
+            const gallery = document.getElementById("gallery");
+            const galleryInfo = document.getElementById("galleryInfo");
+
+            selectedSet = null;
+            latestSearchToken += 1;
+            document.getElementById("searchInput").value = "";
+            renderSetBadges(setsList);
+            updateControls();
+
+            gallery.innerHTML = '<div class="loading">Loading multi-rarity cards...</div>';
+            galleryInfo.innerHTML = "";
+
+            try {
+                const response = await fetch("/api/cards/multi-rarity");
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const payload = await response.json();
+                const cards = payload.cards || [];
+
+                console.log([...new Set(cards.map(({ name, set, collector_number }) => `1 ${name.split(/\//)[0].trim()} (${set.toUpperCase()}) ${collector_number.match(/\d+/)[0]}`))].toSorted().join("\n"))
+
+                galleryInfo.innerHTML = `
+                    <div class="gallery-info">
+                        <strong>Multi-Rarity Cards</strong> — ${cards.length} art${cards.length !== 1 ? "s" : ""} across ${payload.total_cards} card${payload.total_cards !== 1 ? "s" : ""} that exist at both mythic/rare <em>and</em> common/uncommon rarity
+                    </div>
+                `;
+
+                if (cards.length === 0) {
+                    renderEmptyState("No multi-rarity cards found", "No cards have both a high-rarity and a low-rarity Arena printing.", "🔍");
+                    return;
+                }
+
+                renderCards(cards);
+            } catch (error) {
+                console.error("Error loading multi-rarity cards:", error);
+                gallery.innerHTML = `
+                    <div class="error" style="grid-column: 1/-1;">
+                        Error loading cards: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        /**
          * Clears all filters and returns to neutral state.
          */
         function clearSelection() {
@@ -467,6 +518,7 @@
         async function init() {
             document.getElementById("clearBtn").addEventListener("click", clearSelection);
             document.getElementById("toggleSetsBtn").addEventListener("click", toggleSetsSection);
+            document.getElementById("multiRarityBtn").addEventListener("click", renderMultiRarityCards);
             document.getElementById("searchInput").addEventListener("input", debounce(onSearchInput, 250));
             document.getElementById("gallery").addEventListener("mouseover", handleGalleryHighlight);
             document.getElementById("gallery").addEventListener("focusin", handleGalleryHighlight);
