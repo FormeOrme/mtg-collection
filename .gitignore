@@ -129,6 +129,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+data/sources/*
 data/sources/collection-*
 data/sources/default-cards-*
 data/sources/oracle-cards-*
