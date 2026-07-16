@@ -1,70 +1,67 @@
 import { read, loadFile, writeToData } from "../lib/io.js";
-import { oracleDataMap, OMENPATH_MAP } from "../lib/loaders.js";
 import { strip } from "../lib/utils.js";
 import { formatYYYYMMDD, writeCsvFiles } from "../lib/csvUtils.js";
-import {
-    readCardDb,
-    validateCards,
-    enrichCardsWithDbData,
-    processCardData,
-} from "../lib/dbUtils.js";
-import axios from "axios";
+import { processCardData } from "../lib/dbUtils.js";
 
-async function loadCollectionData() {
-    const url = "http://localhost:6842/cards";
-    try {
-        const { data: collection } = await axios.get(url);
-        console.log(`[${url}] online`);
-        writeToData(JSON.stringify(collection), `collection-${formatYYYYMMDD(new Date())}.json`);
-        return collection;
-    } catch {
-        // offline fallback
-        console.warn(`[${url}] offline, loading local collection`);
-        return JSON.parse(read(loadFile("collection", "json")));
-    }
+function parseCollectionText(rawCollectionText) {
+    return rawCollectionText
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .flatMap((line) => {
+            const match = line.match(/^(\d+)\s+(.+)$/);
+            if (!match) {
+                console.warn(`Skipping invalid line: ${line}`);
+                return [];
+            }
+
+            const parsedName = match[2].trim();
+            const normalizedName = strip(parsedName);
+            if (!normalizedName) {
+                console.warn(`Skipping invalid card name: ${line}`);
+                return [];
+            }
+
+            return [
+                {
+                    owned: Number.parseInt(match[1], 10),
+                    name: parsedName,
+                    normalizedName,
+                },
+            ];
+        });
+}
+
+function loadCollectionData() {
+    const collectionFilePath = loadFile("mtga_collection_", "txt", "sources");
+    const rawCollectionText = read(collectionFilePath).toString();
+    const cards = parseCollectionText(rawCollectionText);
+    console.log(`Loaded [${cards.length}] collection lines from [${collectionFilePath}]`);
+    return { cards };
 }
 
 const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
     .split(",")
     .flatMap((type) => [type, `Snow-Covered ${type}`]);
 
-// --- top-level await (ESM) ---
-
-const cardDb = await readCardDb();
-console.log(`Loaded [${Object.keys(cardDb).length}] cards from card database`);
-
-const allGroupIds = Object.keys(cardDb).map(Number);
 console.log("LOADING COLLECTION");
-const collectionData = await loadCollectionData();
+const collectionData = loadCollectionData();
 
-// Validate cards against database
-validateCards(collectionData.cards, allGroupIds);
-
-// Enrich cards with database data and process them
-collectionData.cards = enrichCardsWithDbData(collectionData.cards, cardDb);
 collectionData.cards = processCardData(collectionData.cards, BASIC);
 
 const arenaCollection = [
     ...collectionData.cards,
     ...BASIC.map((name) => ({ name, owned: 4 })),
-].reduce((map, { name, owned }) => {
-    const key = strip(name);
+].reduce((map, { name, normalizedName, owned }) => {
+    const key = normalizedName ?? strip(name);
+    const safeOwned = Number.isFinite(owned) ? Math.max(owned, 0) : 0;
     const currentOwned = map.get(key) ?? 0;
-    map.set(key, Math.min(currentOwned + owned, 4));
+    map.set(key, Math.min(currentOwned + safeOwned, 4));
     return map;
 }, new Map());
 
-const mappedCards = new Map(
-    [...arenaCollection].flatMap(([name, owned]) => {
-        const mapped = OMENPATH_MAP.get(name)?.mtgName;
-        return mapped ? [[mapped, owned]] : [];
-    }),
-);
-
-console.log(`Added [${mappedCards.size}] omenpath cards to arena collection`);
-
 writeToData(
-    `[\n${[...new Map([...arenaCollection, ...mappedCards])]
+    `[\n${[...arenaCollection]
         .toSorted(([a], [b]) => a.localeCompare(b))
         .map(([n, o]) => `["${n}", ${o}]`)
         .join(",\n")}\n]`,
