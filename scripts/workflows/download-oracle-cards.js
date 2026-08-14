@@ -1,11 +1,14 @@
 import axios from "axios";
 import fs from "fs";
 import path from "path";
+import readline from "readline";
+import zlib from "zlib";
 import { DATA_PATHS, ensureDataDir } from "../lib/io.js";
 
 const SCRYFALL_BULK_URL = "https://api.scryfall.com/bulk-data";
 const FILTER_CONFIG_FILENAME = "scryfall_filter.json";
 const REQUIRED_BULK_TYPES = ["oracle_cards", "default_cards"];
+const DOWNLOAD_URI_FIELD = "jsonl_download_uri";
 
 function loadFilterSchema() {
     const configPath = path.join(DATA_PATHS.CONFIG, FILTER_CONFIG_FILENAME);
@@ -27,9 +30,13 @@ async function fetchRequiredBulkEntries() {
     }
 
     const byType = new Map(payload.data.map((entry) => [entry.type, entry]));
-    const missingTypes = REQUIRED_BULK_TYPES.filter((type) => !byType.get(type)?.download_uri);
+    const missingTypes = REQUIRED_BULK_TYPES.filter(
+        (type) => !byType.get(type)?.[DOWNLOAD_URI_FIELD],
+    );
     if (missingTypes.length > 0) {
-        throw new Error(`Missing bulk entries with download_uri for: ${missingTypes.join(", ")}`);
+        throw new Error(
+            `Missing bulk entries with ${DOWNLOAD_URI_FIELD} for: ${missingTypes.join(", ")}`,
+        );
     }
 
     return REQUIRED_BULK_TYPES.map((type) => byType.get(type));
@@ -79,112 +86,29 @@ function filterBySchema(value, schema) {
 }
 
 async function streamAndFilterBulkJson(inputStream, outputStream, schema) {
-    const decoder = new TextDecoder("utf8");
-
-    let sawArrayStart = false;
-    let sawArrayEnd = false;
-    let depth = 0;
-    let inString = false;
-    let escaping = false;
-    let currentObject = "";
+    const lineReader = readline.createInterface({ input: inputStream, crlfDelay: Infinity });
 
     let processedCards = 0;
     let writtenCards = 0;
 
     outputStream.write("[\n");
 
-    for await (const chunk of inputStream) {
-        const text = decoder.decode(chunk, { stream: true });
-
-        for (const char of text) {
-            if (!sawArrayStart) {
-                if (/\s/.test(char)) {
-                    continue;
-                }
-                if (char !== "[") {
-                    throw new Error("Invalid Scryfall bulk payload: expected JSON array start.");
-                }
-                sawArrayStart = true;
-                continue;
-            }
-
-            if (sawArrayEnd) {
-                if (!/\s/.test(char)) {
-                    throw new Error(
-                        "Invalid Scryfall bulk payload: trailing data after array end.",
-                    );
-                }
-                continue;
-            }
-
-            if (depth === 0) {
-                if (/\s/.test(char) || char === ",") {
-                    continue;
-                }
-                if (char === "]") {
-                    sawArrayEnd = true;
-                    continue;
-                }
-                if (char !== "{") {
-                    throw new Error("Invalid Scryfall bulk payload: expected card object.");
-                }
-
-                depth = 1;
-                currentObject = "{";
-                inString = false;
-                escaping = false;
-                continue;
-            }
-
-            currentObject += char;
-
-            if (escaping) {
-                escaping = false;
-                continue;
-            }
-
-            if (char === "\\" && inString) {
-                escaping = true;
-                continue;
-            }
-
-            if (char === '"') {
-                inString = !inString;
-                continue;
-            }
-
-            if (!inString) {
-                if (char === "{") {
-                    depth += 1;
-                } else if (char === "}") {
-                    depth -= 1;
-                    if (depth === 0) {
-                        processedCards += 1;
-                        const parsedCard = JSON.parse(currentObject);
-                        const filteredCard = filterBySchema(parsedCard, schema);
-
-                        if (filteredCard && Object.keys(filteredCard).length > 0) {
-                            if (writtenCards > 0) {
-                                outputStream.write(",\n");
-                            }
-                            outputStream.write(JSON.stringify(filteredCard));
-                            writtenCards += 1;
-                        }
-
-                        currentObject = "";
-                    }
-                }
-            }
+    for await (const line of lineReader) {
+        if (!line.trim()) {
+            continue;
         }
-    }
 
-    const remaining = decoder.decode();
-    if (remaining.trim()) {
-        throw new Error("Invalid UTF-8 stream tail while reading Scryfall bulk file.");
-    }
+        processedCards += 1;
+        const parsedCard = JSON.parse(line);
+        const filteredCard = filterBySchema(parsedCard, schema);
 
-    if (!sawArrayStart || !sawArrayEnd || depth !== 0 || currentObject) {
-        throw new Error("Unexpected end of Scryfall bulk stream while parsing JSON array.");
+        if (filteredCard && Object.keys(filteredCard).length > 0) {
+            if (writtenCards > 0) {
+                outputStream.write(",\n");
+            }
+            outputStream.write(JSON.stringify(filteredCard));
+            writtenCards += 1;
+        }
     }
 
     await new Promise((resolve, reject) => {
@@ -196,29 +120,33 @@ async function streamAndFilterBulkJson(inputStream, outputStream, schema) {
 }
 
 async function downloadAndFilterBulk(entry, schema) {
-    const destinationName = path.basename(new URL(entry.download_uri).pathname);
+    // Bulk source is gzipped JSONL; downstream loaders still expect a plain <type>.json array file.
+    const sourceName = path.basename(new URL(entry[DOWNLOAD_URI_FIELD]).pathname);
+    const destinationName = sourceName.replace(/\.jsonl(\.gz)?$/, ".json");
     const destinationPath = path.join(DATA_PATHS.SOURCES, destinationName);
     const temporaryDestinationPath = `${destinationPath}.tmp`;
 
     console.log(`Downloading ${entry.type} (${entry.updated_at}) -> ${destinationName}`);
 
-    const response = await axios.get(entry.download_uri, {
+    const response = await axios.get(entry[DOWNLOAD_URI_FIELD], {
         responseType: "stream",
         maxBodyLength: Infinity,
         timeout: 0,
     });
 
     const outputStream = fs.createWriteStream(temporaryDestinationPath);
+    const gunzipStream = response.data.pipe(zlib.createGunzip());
     let processedCards = 0;
     let writtenCards = 0;
 
     try {
-        const result = await streamAndFilterBulkJson(response.data, outputStream, schema);
+        const result = await streamAndFilterBulkJson(gunzipStream, outputStream, schema);
         processedCards = result.processedCards;
         writtenCards = result.writtenCards;
         fs.renameSync(temporaryDestinationPath, destinationPath);
     } catch (error) {
         outputStream.destroy();
+        gunzipStream.destroy();
         if (fs.existsSync(temporaryDestinationPath)) {
             fs.unlinkSync(temporaryDestinationPath);
         }
