@@ -66,7 +66,7 @@ function getTypes({ type_line }) {
 
     return {
         main: mainTypePart,
-        sub: subTypePart ? subTypePart : [],
+        sub: subTypePart ? subTypePart : undefined,
     };
 }
 
@@ -83,20 +83,49 @@ function oracleMapper({ keep = [], map = [] }) {
 
         const out = {};
 
+        for (const [prop, mapper] of Object.entries(map)) {
+            if (!mapper) continue;
+            const mapped = mapper(card);
+            if (!mapped) continue;
+            out[prop] = mapped;
+        }
+
         for (const prop of keep) {
             if (!card[prop]) continue;
             out[prop] = card[prop];
         }
 
-        for (const [prop, mapper] of Object.entries(map)) {
-            if (!card[prop] || !mapper.with) continue;
-            const mapped = mapper.with(card[prop]);
-            if (!mapped) continue;
-            out[mapper.as] = mapped;
-        }
-
         const { oracle } = extractCardDetails(card);
         return { ...out, oracle };
+    };
+}
+
+function oracleArenaFaceMapper(card, face = card) {
+    const faceData = {
+        mana_cost: face.mana_cost ?? card.mana_cost,
+        colors: face.colors ?? card.colors,
+        color_identity: face.color_identity ?? card.color_identity,
+        keywords: (face.keywords ?? card.keywords)?.map((keyword) => keyword.toLowerCase()),
+        type: getTypes(face),
+        oracle: face.oracle_text?.toLowerCase(),
+    };
+
+    return Object.fromEntries(Object.entries(faceData).filter(([, value]) => !isNullish(value)));
+}
+
+function isNullish(value) {
+    if (Array.isArray(value)) return value.length === 0;
+    if (typeof value === "string") return value.trim() === "";
+    return value === null || value === undefined;
+}
+
+function oracleArenaMapper(card) {
+    const [front, back] = card.card_faces ?? [card];
+
+    return {
+        strip: strip(card.name),
+        front: oracleArenaFaceMapper(card, front),
+        ...(back && { back: oracleArenaFaceMapper(card, back) }),
     };
 }
 
@@ -124,10 +153,7 @@ const OUTPUT_FILES = {
     ORACLE_ARENA: {
         fileName: "scryfall_oracle_arena.json",
         filter: FILTERS.ARENA,
-        mapFunction: oracleMapper({
-            keep: ["id", "mana_cost", "type_line"],
-            map: { name: { as: "strip", with: (name) => strip(name) } },
-        }),
+        mapFunction: oracleArenaMapper,
     },
 };
 
