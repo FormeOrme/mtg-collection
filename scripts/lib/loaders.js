@@ -6,7 +6,17 @@ const rarityOrder = ["common", "uncommon", "rare", "mythic"];
 const rarityIndex = new Map(rarityOrder.map((r, i) => [r, i]));
 
 export const defaultData = () => JSON.parse(fs.readFileSync(loadFile("default-cards-", "json")));
-export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-cards-", "json")));
+export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-cards-", "json")))
+    .sort((a, b) => {
+    // Leverage falsy check for null/undefined
+    if (!a.released_at && !b.released_at) return a.name.localeCompare(b.name);
+    if (!a.released_at) return -1;
+    if (!b.released_at) return 1;
+
+    // Primary sort by date, secondary sort by name
+    return a.released_at.localeCompare(b.released_at) || a.name.localeCompare(b.name);
+    });
+
 const omenpathMapping = () => JSON.parse(fs.readFileSync(loadFile("omenpath_mapping", "json")));
 
 export const OMENPATH_MAP = omenpathMapping().reduce((map, obj) => {
