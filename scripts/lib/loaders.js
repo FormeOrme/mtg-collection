@@ -1,13 +1,20 @@
 import fs from "fs";
 import { loadFile } from "./io.js";
 import { strip } from "./utils.js";
+import { legalCards, BASIC } from "./domain.js";
 
 const rarityOrder = ["common", "uncommon", "rare", "mythic"];
 const rarityIndex = new Map(rarityOrder.map((r, i) => [r, i]));
 
-export const defaultData = () => JSON.parse(fs.readFileSync(loadFile("default-cards-", "json")));
+export const defaultData = () => JSON.parse(fs.readFileSync(loadFile("default-cards-", "json")))
+    .filter(legalCards)
+    .sort(byReleaseDate);
+
 export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-cards-", "json")))
-    .sort((a, b) => {
+    .filter(legalCards)
+    .sort(byReleaseDate);
+
+const byReleaseDate = (a, b) => {
     // Leverage falsy check for null/undefined
     if (!a.released_at && !b.released_at) return a.name.localeCompare(b.name);
     if (!a.released_at) return -1;
@@ -15,7 +22,7 @@ export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-card
 
     // Primary sort by date, secondary sort by name
     return a.released_at.localeCompare(b.released_at) || a.name.localeCompare(b.name);
-    });
+}
 
 const omenpathMapping = () => JSON.parse(fs.readFileSync(loadFile("omenpath_mapping", "json")));
 
@@ -33,24 +40,49 @@ export const OMENPATH_MAP = omenpathMapping().reduce((map, obj) => {
 }, new Map());
 
 class DefaultCard {
-    constructor({ name, set, games, rarity }) {
+    constructor({ name, set, set_type, games, rarity, released_at }) {
         Object.assign(this, {
             name,
-            sets: new Set([set]),
+            sets: {
+                [set_type]: [set],
+            },
             games: new Set(games),
         });
         this.rarity = new Set();
         this.setRarity(games, rarity);
+        this.firstReleased = released_at;
+        this.lastReleased = released_at;
+        this.isReprint = false;
     }
 
-    merge({ set, games, rarity }) {
-        this.sets.add(set);
+    merge({ set, set_type, games, rarity, released_at }) {
+
+        const setTypes = this.sets[set_type];
+        if (setTypes) {
+            if (!setTypes.includes(set)) {
+                setTypes.push(set);
+            }
+        } else {
+            this.sets[set_type] = [set];
+        }
+
         this.games = this.games.union(new Set(games));
         this.setRarity(games, rarity);
+        if (released_at < this.firstReleased) {
+            this.firstReleased = released_at;
+        }
+        if (released_at > this.lastReleased) {
+            this.lastReleased = released_at;
+            this.isReprint = true;
+        }
     }
 
     isArena() {
         return this.games.has("arena");
+    }
+
+    isBasic() {
+        return BASIC.some((basic) => basic.name === this.name);
     }
 
     lowestRarity() {

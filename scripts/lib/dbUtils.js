@@ -99,25 +99,3 @@ export function enrichCardsWithDbData(cards, cardDb) {
         ...cardDb[card.grpId],
     }));
 }
-
-export function processCardData(cards, basicCards) {
-    return cards
-        .filter((card) => !basicCards.includes(card.name))
-        .map((card) => {
-            // Apply name transformations
-            for (const [from, to] of Object.entries(CARD_NAME_REPLACEMENTS)) {
-                if (card.name) {
-                    card.name = card.name.replace(from, to);
-                }
-            }
-
-            // Apply set transformations
-            for (const [from, to] of Object.entries(SET_NAME_REPLACEMENTS)) {
-                if (card.set) {
-                    card.set = card.set.replace(from, to);
-                }
-            }
-
-            return card;
-        });
-}

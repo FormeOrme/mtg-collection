@@ -1,6 +1,7 @@
 import { read, loadFile, writeToData } from "../lib/io.js";
 import { strip } from "../lib/utils.js";
 import { formatYYYYMMDD, writeCsvFiles } from "../lib/csvUtils.js";
+import { BASIC } from "../lib/domain.js";
 
 function parseCollectionText(rawCollectionText) {
     return rawCollectionText
@@ -34,15 +35,6 @@ function parseCollectionText(rawCollectionText) {
         })
         .filter(Boolean);
 }
-
-const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
-    .split(",")
-    .flatMap((type) => [type, `Snow-Covered ${type}`])
-    .map((name) => ({
-        name, 
-        normalizedName: strip(name),
-        owned: 4,
-    }));
 
 function loadCollectionData() {
     const collectionFilePath = loadFile("mtga_collection_", "txt", "sources");

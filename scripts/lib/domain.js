@@ -1,3 +1,5 @@
+import { strip } from "./utils.js";
+
 const colors = "WUBGR".split("");
 
 export const SLASHES = {
@@ -20,6 +22,34 @@ const arenaFormats = new Set([
     "brawl",
     "alchemy",
 ]);
+
+const validFormats = new Set([
+    "standard",
+    "future",
+    "historic",
+    "timeless",
+    "gladiator",
+    "pioneer",
+    "modern",
+    "legacy",
+    "pauper",
+    "vintage",
+    "commander",
+    "oathbreaker",
+    "standardbrawl",
+    "brawl",
+    "competitivebrawl",
+    "duel",
+]);
+
+export const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
+    .split(",")
+    .flatMap((type) => [type, `Snow-Covered ${type}`])
+    .map((name) => ({
+        name, 
+        normalizedName: strip(name),
+        owned: 4,
+    }));
 
 const forcedSets = new Set(["tle"]);
 
@@ -50,11 +80,10 @@ export function legalCards({ set_type, type_line, legalities }) {
     if (/Scheme|Conspiracy|Attraction|Token/.test(type_line)) {
         return false;
     }
-    // Exclude cards illegal in all formats except alchemy
-    if (
-        Object.values(legalities).every((value) => value === "not_legal") &&
-        set_type !== "alchemy"
-    ) {
+    // Exclude cards illegal in all valid formats
+    if (Object.entries(legalities)
+        .filter(([format]) => validFormats.has(format))
+        .every(([, value]) => value === "not_legal" || value === "banned")) {
         return false;
     }
     return true;

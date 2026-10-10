@@ -9,9 +9,6 @@ console.time("Loading oracle cards");
 const oracleCards = oracleData();
 console.log(`Found ${oracleCards.length} oracle cards.`);
 
-const filtered = oracleCards.filter(legalCards);
-console.log(`Filtered to ${filtered.length} legal cards.`);
-
 const cardMap = cardDataMap();
 console.log(`Mapped to ${cardMap.size} unique cards.`);
 
@@ -39,10 +36,13 @@ function mapCardData(card, additionalData = false) {
     }
 
     if (additionalData) {
+        // if a card is basic, omit sets
+        const sets = scryFallCard.isBasic() ? [] : scryFallCard.sets;
         return {
             ...baseData,
             id: card.id,
             t: mainType(card),
+            sets,
         };
     }
 
@@ -160,7 +160,7 @@ const OUTPUT_FILES = {
 for (const [key, config] of Object.entries(OUTPUT_FILES)) {
     const timeId = `${key}_data`;
     console.time(timeId);
-    const mappedData = await Promise.all(filtered.filter(config.filter).map(config.mapFunction));
+    const mappedData = await Promise.all(oracleCards.filter(config.filter).map(config.mapFunction));
 
     const dataString = mappedData.map((item) => JSON.stringify(item)).join(",\n");
     writeToData(`[\n${dataString}\n]`, config.fileName);
