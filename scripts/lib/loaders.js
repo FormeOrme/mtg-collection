@@ -130,19 +130,3 @@ export function cardDataMap() {
     }
     return cardMap;
 }
-
-const cardName = (name) => {
-    const strippedName = strip(name);
-    return OMENPATH_MAP.get(strippedName)?.omenName ?? strippedName;
-};
-
-export const oracleDataMap = () => {
-    const data = oracleData();
-    if (!data || !Array.isArray(data)) {
-        throw new Error("Invalid oracle data format");
-    }
-    return data.reduce((map, card) => {
-        map.set(cardName(card.name), card);
-        return map;
-    }, new Map());
-};

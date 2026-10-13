@@ -46,9 +46,10 @@ export const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
     .split(",")
     .flatMap((type) => [type, `Snow-Covered ${type}`])
     .map((name) => ({
-        name, 
-        normalizedName: strip(name),
+        name,
+        id: strip(name),
         owned: 4,
+        released_at: "1995-06-03",
     }));
 
 const forcedSets = new Set(["tle"]);

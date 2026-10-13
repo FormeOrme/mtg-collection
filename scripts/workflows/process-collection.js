@@ -2,6 +2,9 @@ import { read, loadFile, writeToData } from "../lib/io.js";
 import { strip } from "../lib/utils.js";
 import { formatYYYYMMDD, writeCsvFiles } from "../lib/csvUtils.js";
 import { BASIC } from "../lib/domain.js";
+import { oracleData } from "../lib/loaders.js";
+
+const oracleMap = Object.fromEntries(oracleData().map((card) => [strip(card.name), card]));
 
 function parseCollectionText(rawCollectionText) {
     return rawCollectionText
@@ -17,8 +20,8 @@ function parseCollectionText(rawCollectionText) {
                 return;
             }
             const parsedName = match[2].trim();
-            const normalizedName = strip(parsedName);
-            if (!normalizedName) {
+            const id = strip(parsedName);
+            if (!id) {
                 console.warn(`Skipping invalid card name: ${line}`);
                 return;
             }
@@ -30,7 +33,8 @@ function parseCollectionText(rawCollectionText) {
             return {
                 owned: Math.min(Number.parseInt(match[1], 10), 4),
                 name: parsedName,
-                normalizedName,
+                id,
+                card: oracleMap[id],
             };
         })
         .filter(Boolean);
@@ -47,13 +51,23 @@ function loadCollectionData() {
     ];
 }
 
-console.log("LOADING COLLECTION");
+const WRITE_TIME = "WRITING COLLECTION";
+const LOAD_TIME = "LOADING COLLECTION";
+console.time(LOAD_TIME);
 const collectionData = loadCollectionData();
+console.timeEnd(LOAD_TIME);
 
+console.time(WRITE_TIME);
 writeToData(
     `[\n${collectionData
-        .toSorted((a, b) => a.normalizedName.localeCompare(b.normalizedName))
-        .map((card) => `["${card.normalizedName}", ${card.owned}]`)
+        .toSorted((a,b) => {
+            const releaseCompare = (a.card?.released_at?.localeCompare(b.card?.released_at) || 0);
+            if (releaseCompare !== 0) return releaseCompare;
+            return a.id.localeCompare(b.id);
+        })
+        .map((card) => `["${card.id}", ${card.owned}]`)
         .join(",\n")}\n]`,
     "arena_collection.json",
 );
+console.timeEnd(WRITE_TIME);
+
