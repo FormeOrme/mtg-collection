@@ -37,7 +37,7 @@ function mapCardData(card, additionalData = false) {
         // if a card is basic, omit sets
         return {
             ...baseData,
-            // id: card.id,
+            id: card.id,
             // ...(sets.straightToModern.has(card.set) && { stm: true }),
             // ...(modernLegal(card) && { m: 1 }),
             // t: mainType(card),
@@ -188,17 +188,15 @@ const OUTPUT_FILES = {
     },
 };
 
-for (const [key, {
+for (const [, {
     filter = FILTERS.ALL,
     mapFunction,
     fileName,
     renderFunction = JSON.stringify
 }] of Object.entries(OUTPUT_FILES)) {
-    const timeId = `${key}_data`;
-    console.time(timeId);
+    console.time(fileName);
     const mappedData = await Promise.all(oracleCards.filter(filter).map(mapFunction));
-
     const dataString = mappedData.map((card) => renderFunction(card)).join(",\n");
     writeToData(`[\n${dataString}\n]`, fileName);
-    console.timeEnd(timeId);
+    console.timeEnd(fileName);
 }
