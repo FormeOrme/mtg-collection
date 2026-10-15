@@ -1,7 +1,7 @@
 import fs from "fs";
-import { loadFile } from "./io.js";
-import { strip } from "./utils.js";
-import { legalCards, BASIC } from "./domain.js";
+import {loadFile} from "./io.js";
+import {strip} from "./utils.js";
+import {BASIC, legalCards} from "./domain.js";
 
 const rarityOrder = ["common", "uncommon", "rare", "mythic"];
 const rarityIndex = new Map(rarityOrder.map((r, i) => [r, i]));
@@ -40,12 +40,13 @@ export const OMENPATH_MAP = omenpathMapping().reduce((map, obj) => {
 }, new Map());
 
 class DefaultCard {
-    constructor({ name, set, set_type, games, rarity, released_at }) {
+    constructor({name, set, set_type, games, rarity, released_at}) {
         Object.assign(this, {
             name,
-            sets: {
+            setMap: {
                 [set_type]: [set],
             },
+            setList: new Set([set]),
             games: new Set(games),
         });
         this.rarity = new Set();
@@ -55,17 +56,18 @@ class DefaultCard {
         this.isReprint = false;
     }
 
-    merge({ set, set_type, games, rarity, released_at }) {
+    merge({set, set_type, games, rarity, released_at}) {
 
-        const setTypes = this.sets[set_type];
+        const setTypes = this.setMap[set_type];
         if (setTypes) {
             if (!setTypes.includes(set)) {
                 setTypes.push(set);
             }
         } else {
-            this.sets[set_type] = [set];
+            this.setMap[set_type] = [set];
         }
 
+        this.setList.add(set);
         this.games = this.games.union(new Set(games));
         this.setRarity(games, rarity);
         if (released_at < this.firstReleased) {

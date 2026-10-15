@@ -1,9 +1,9 @@
-import { oracleData, cardDataMap } from "../lib/loaders.js";
-import { legalCards, onArena, modernLegal, colorIdentity, sets } from "../lib/domain.js";
-import { strip } from "../lib/utils.js";
-import { writeToData } from "../lib/io.js";
+import {cardDataMap, oracleData} from "../lib/loaders.js";
+import {colorIdentity, onArena} from "../lib/domain.js";
+import {strip} from "../lib/utils.js";
+import {writeToData} from "../lib/io.js";
 
-const rarities = { c: 0, u: 1, r: 2, m: 3 };
+const rarities = {c: 0, u: 1, r: 2, m: 3};
 
 console.time("Loading oracle cards");
 const oracleCards = oracleData();
@@ -20,16 +20,14 @@ function mapCardData(card, additionalData = false) {
     const baseData = {
         n,
         r: rarities[card.rarity[0]],
-        ...(modernLegal(card) && { m: 1 }),
         ci: colorIdentity(card.color_identity),
-        ...(sets.straightToModern.has(card.set) && { stm: true }),
     };
 
-    const scryFallCard = cardMap.get(n);
-    if (scryFallCard?.isArena()) {
+    const scryfallCard = cardMap.get(n);
+    if (scryfallCard?.isArena()) {
         baseData.a = 1;
 
-        const newRarity = scryFallCard.lowestRarity();
+        const newRarity = scryfallCard.lowestRarity();
         if (newRarity) {
             baseData.r = rarities[newRarity[0]];
         }
@@ -37,28 +35,63 @@ function mapCardData(card, additionalData = false) {
 
     if (additionalData) {
         // if a card is basic, omit sets
-        const sets = scryFallCard.isBasic() ? [] : scryFallCard.sets;
         return {
             ...baseData,
-            id: card.id,
-            t: mainType(card),
-            sets,
+            // id: card.id,
+            // ...(sets.straightToModern.has(card.set) && { stm: true }),
+            // ...(modernLegal(card) && { m: 1 }),
+            // t: mainType(card),
+            std: standardValue(scryfallCard)
         };
     }
 
     return baseData;
 }
 
+const STANDARD_VALUE = {
+    old: new Set(['woe', 'lci', 'mkm', 'otj', 'big', 'blb', 'dsk']),
+    next: new Set(['dft', 'tdm', 'fin', 'eoe', 'spm', 'om1', 'tla', 'fdn', 'ecl', 'tmt', 'sos', 'msh', 'hob', 'fra'])
+}
+
+/**
+ * @param card
+ * @return
+ *  * 0 if the card is not in standard
+ *  * 1 if the card is in standard
+ *  * 2 if the card will leave standard in the next rotation
+ */
+function standardValue(card) {
+    const inNext = hasAnyIn(STANDARD_VALUE.next, card.setList);
+    const inOld = hasAnyIn(STANDARD_VALUE.old, card.setList);
+    if (inNext) {
+        return 2;
+    }
+    if (inOld) {
+        return 1;
+    }
+    return 0;
+}
+
+function hasAnyIn(a, b) {
+    if (a == null || b == null) {
+        return false;
+    }
+    for (const item of a) {
+        if (b.has(item)) return true;
+    }
+    return false;
+}
+
 const excludeTypes = new Set(["legendary", "basic", "snow", "world", "kindred"]);
 
-function mainType({ type_line }) {
-    const { main } = getTypes({ type_line });
+function mainType({type_line}) {
+    const {main} = getTypes({type_line});
     const filtered = main.filter((type) => !excludeTypes.has(type));
     if (filtered.includes("creature")) return "creature";
     return filtered[0];
 }
 
-function getTypes({ type_line }) {
+function getTypes({type_line}) {
     const frontFaceTypeLine = type_line.split("/")[0].trim().toLowerCase();
     const [mainTypePart, subTypePart] = frontFaceTypeLine
         .split("—")
@@ -70,14 +103,14 @@ function getTypes({ type_line }) {
     };
 }
 
-function extractCardDetails({ card_faces, oracle_text }) {
+function extractCardDetails({card_faces, oracle_text}) {
     const hasFaces = card_faces?.length;
     return {
         oracle: hasFaces ? card_faces.map((face) => face.oracle_text).join(" // ") : oracle_text,
     };
 }
 
-function oracleMapper({ keep = [], map = [] }) {
+function oracleMapper({keep = [], map = []}) {
     return (card) => {
         if (!card) return null;
 
@@ -95,8 +128,8 @@ function oracleMapper({ keep = [], map = [] }) {
             out[prop] = card[prop];
         }
 
-        const { oracle } = extractCardDetails(card);
-        return { ...out, oracle };
+        const {oracle} = extractCardDetails(card);
+        return {...out, oracle};
     };
 }
 
@@ -125,7 +158,7 @@ function oracleArenaMapper(card) {
     return {
         strip: strip(card.name),
         front: oracleArenaFaceMapper(card, front),
-        ...(back && { back: oracleArenaFaceMapper(card, back) }),
+        ...(back && {back: oracleArenaFaceMapper(card, back)}),
     };
 }
 
@@ -137,18 +170,16 @@ const FILTERS = {
 const OUTPUT_FILES = {
     SHRUNK: {
         fileName: "scryfall_arena_data.json",
-        filter: FILTERS.ALL,
         mapFunction: (card) => mapCardData(card),
     },
     BAREBONE: {
         fileName: "scryfall_barebone.json",
-        filter: FILTERS.ALL,
         mapFunction: (card) => mapCardData(card, true),
+        renderFunction: ({n, ...rest}) => JSON.stringify([n, rest])
     },
     ORACLE: {
         fileName: "scryfall_oracle.json",
-        filter: FILTERS.ALL,
-        mapFunction: oracleMapper({ keep: ["id", "mana_cost", "type_line"] }),
+        mapFunction: oracleMapper({keep: ["id", "mana_cost", "type_line"]}),
     },
     ORACLE_ARENA: {
         fileName: "scryfall_oracle_arena.json",
@@ -157,12 +188,17 @@ const OUTPUT_FILES = {
     },
 };
 
-for (const [key, config] of Object.entries(OUTPUT_FILES)) {
+for (const [key, {
+    filter = FILTERS.ALL,
+    mapFunction,
+    fileName,
+    renderFunction = JSON.stringify
+}] of Object.entries(OUTPUT_FILES)) {
     const timeId = `${key}_data`;
     console.time(timeId);
-    const mappedData = await Promise.all(oracleCards.filter(config.filter).map(config.mapFunction));
+    const mappedData = await Promise.all(oracleCards.filter(filter).map(mapFunction));
 
-    const dataString = mappedData.map((item) => JSON.stringify(item)).join(",\n");
-    writeToData(`[\n${dataString}\n]`, config.fileName);
+    const dataString = mappedData.map((card) => renderFunction(card)).join(",\n");
+    writeToData(`[\n${dataString}\n]`, fileName);
     console.timeEnd(timeId);
 }

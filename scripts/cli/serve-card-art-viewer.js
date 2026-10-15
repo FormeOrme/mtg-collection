@@ -1,14 +1,14 @@
 import http from "http";
 import path from "path";
-import { fileURLToPath } from "url";
+import {fileURLToPath} from "url";
 import fs from "fs";
 import {
-    getCardsBySet,
     buildArenaSets,
-    searchArenaCards,
+    getCardsBySet,
     getCardsWithoutModernFrame,
     getMultiRarityCards,
     parseDecklistText,
+    searchArenaCards,
 } from "../lib/cardUtils.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,7 +24,7 @@ async function getSets() {
         setsCache = await buildArenaSets();
         setsByCode = new Map(setsCache.map((s) => [s.code, s]));
     }
-    return { sets: setsCache, byCode: setsByCode };
+    return {setMap: setsCache, byCode: setsByCode};
 }
 
 /**
@@ -45,13 +45,13 @@ function serveFile(filePath, res) {
 
     fs.readFile(filePath, (err, data) => {
         if (err) {
-            res.writeHead(404, { "Content-Type": "text/plain" });
+            res.writeHead(404, {"Content-Type": "text/plain"});
             res.end("404 Not Found");
             return;
         }
 
         const mimeType = mimeTypes[ext] || "application/octet-stream";
-        res.writeHead(200, { "Content-Type": mimeType });
+        res.writeHead(200, {"Content-Type": mimeType});
         res.end(data);
     });
 }
@@ -60,7 +60,7 @@ function serveFile(filePath, res) {
  * Sends JSON response
  */
 function sendJson(res, data, statusCode = 200) {
-    res.writeHead(statusCode, { "Content-Type": "application/json" });
+    res.writeHead(statusCode, {"Content-Type": "application/json"});
     res.end(JSON.stringify(data));
 }
 
@@ -68,8 +68,8 @@ function sendJson(res, data, statusCode = 200) {
  * Sends error response
  */
 function sendError(res, message, statusCode = 500) {
-    res.writeHead(statusCode, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: message }));
+    res.writeHead(statusCode, {"Content-Type": "application/json"});
+    res.end(JSON.stringify({error: message}));
 }
 
 /**
@@ -135,7 +135,7 @@ const server = http.createServer(async (req, res) => {
 
         // Route: GET /api/sets
         if (pathname === "/api/sets" && req.method === "GET") {
-            const { sets } = await getSets();
+            const {sets} = await getSets();
             sendJson(res, sets);
             return;
         }
@@ -152,7 +152,7 @@ const server = http.createServer(async (req, res) => {
         // Route: GET /api/search/cards?q=<query>
         if (pathname === "/api/search/cards" && req.method === "GET") {
             const query = url.searchParams.get("q") || "";
-            const searchResult = await searchArenaCards({ query });
+            const searchResult = await searchArenaCards({query});
             sendJson(res, searchResult);
             return;
         }
@@ -160,7 +160,7 @@ const server = http.createServer(async (req, res) => {
         // Route: GET /api/cards/multi-rarity
         if (pathname === "/api/cards/multi-rarity" && req.method === "GET") {
             const cards = await getMultiRarityCards();
-            sendJson(res, { cards, total_cards: cards.length });
+            sendJson(res, {cards, total_cards: cards.length});
             return;
         }
 
@@ -206,7 +206,7 @@ const server = http.createServer(async (req, res) => {
         const setIconMatch = pathname.match(/^\/api\/set-icon\/([a-z0-9]+)$/);
         if (setIconMatch && req.method === "GET") {
             const setCode = setIconMatch[1];
-            const { byCode } = await getSets();
+            const {byCode} = await getSets();
             const svgUrl = byCode.get(setCode)?.icon_svg_uri;
             if (!svgUrl) {
                 sendError(res, "Icon not found", 404);

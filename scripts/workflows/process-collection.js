@@ -1,8 +1,7 @@
-import { read, loadFile, writeToData } from "../lib/io.js";
-import { strip } from "../lib/utils.js";
-import { formatYYYYMMDD, writeCsvFiles } from "../lib/csvUtils.js";
-import { BASIC } from "../lib/domain.js";
-import { oracleData } from "../lib/loaders.js";
+import {loadFile, read, writeToData} from "../lib/io.js";
+import {strip} from "../lib/utils.js";
+import {BASIC} from "../lib/domain.js";
+import {oracleData} from "../lib/loaders.js";
 
 const oracleMap = Object.fromEntries(oracleData().map((card) => [strip(card.name), card]));
 
@@ -26,7 +25,7 @@ function parseCollectionText(rawCollectionText) {
                 return;
             }
 
-            if(BASIC.some((basic) => basic.name === parsedName)) {
+            if (BASIC.some((basic) => basic.name === parsedName)) {
                 return;
             }
 
@@ -60,7 +59,7 @@ console.timeEnd(LOAD_TIME);
 console.time(WRITE_TIME);
 writeToData(
     `[\n${collectionData
-        .toSorted((a,b) => {
+        .toSorted((a, b) => {
             const releaseCompare = (a.card?.released_at?.localeCompare(b.card?.released_at) || 0);
             if (releaseCompare !== 0) return releaseCompare;
             return a.id.localeCompare(b.id);
