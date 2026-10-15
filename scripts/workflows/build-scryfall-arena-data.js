@@ -41,7 +41,8 @@ function mapCardData(card, additionalData = false) {
             // ...(sets.straightToModern.has(card.set) && { stm: true }),
             // ...(modernLegal(card) && { m: 1 }),
             // t: mainType(card),
-            std: standardValue(scryfallCard)
+            sets: scryfallCard.isBasic() ? undefined : [...scryfallCard.setList],
+            // std: standardValue(scryfallCard)
         };
     }
 
