@@ -36,12 +36,12 @@ function mapCardData(card, additionalData = false) {
     if (additionalData) {
         // if a card is basic, omit sets
         return {
-            ...baseData,
             id: card.id,
             // ...(sets.straightToModern.has(card.set) && { stm: true }),
             // ...(modernLegal(card) && { m: 1 }),
-            // t: mainType(card),
+            t: mainType(card),
             sets: scryfallCard.isBasic() ? undefined : [...scryfallCard.setList],
+            ...baseData,
             // std: standardValue(scryfallCard)
         };
     }
@@ -64,11 +64,11 @@ const STANDARD_VALUE = {
 function standardValue(card) {
     const inNext = hasAnyIn(STANDARD_VALUE.next, card.setList);
     const inOld = hasAnyIn(STANDARD_VALUE.old, card.setList);
-    if (inNext) {
+    if (inNext) { // IS IN STANDARD AND WILL STILL BE IN STANDARD IN NEXT ROTATION
         return 2;
     }
     if (inOld) {
-        return 1;
+        return 1; // WILL LEAVE STANDARD ON NEXT ROTATION
     }
     return 0;
 }
@@ -169,24 +169,24 @@ const FILTERS = {
 };
 
 const OUTPUT_FILES = {
-    SHRUNK: {
-        fileName: "scryfall_arena_data.json",
-        mapFunction: (card) => mapCardData(card),
-    },
+    // SHRUNK: {
+    //     fileName: "scryfall_arena_data.json",
+    //     mapFunction: (card) => mapCardData(card),
+    // },
     BAREBONE: {
         fileName: "scryfall_barebone.json",
         mapFunction: (card) => mapCardData(card, true),
         renderFunction: ({n, ...rest}) => JSON.stringify([n, rest])
     },
-    ORACLE: {
-        fileName: "scryfall_oracle.json",
-        mapFunction: oracleMapper({keep: ["id", "mana_cost", "type_line"]}),
-    },
-    ORACLE_ARENA: {
-        fileName: "scryfall_oracle_arena.json",
-        filter: FILTERS.ARENA,
-        mapFunction: oracleArenaMapper,
-    },
+    // ORACLE: {
+    //     fileName: "scryfall_oracle.json",
+    //     mapFunction: oracleMapper({keep: ["id", "mana_cost", "type_line"]}),
+    // },
+    // ORACLE_ARENA: {
+    //     fileName: "scryfall_oracle_arena.json",
+    //     filter: FILTERS.ARENA,
+    //     mapFunction: oracleArenaMapper,
+    // },
 };
 
 for (const [, {
