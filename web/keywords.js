@@ -33,6 +33,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             galleryTitle.textContent = `${data.keywords.length} Keywords, ${allCards.size} Cards`;
 
+            // Dedicated expand/collapse functions
+            function expandSection(header, content) {
+                content.classList.remove("collapsed");
+                header.querySelector(".accordion-icon").textContent = "▼";
+            }
+
+            function collapseSection(header, content) {
+                content.classList.add("collapsed");
+                header.querySelector(".accordion-icon").textContent = "▶";
+            }
+
             // Build keyword index buttons
             for (const group of data.keywords) {
                 const btn = document.createElement("button");
@@ -41,12 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 btn.addEventListener("click", () => {
                     const section = document.getElementById("section-" + group.keyword.replace(/\s+/g, "-"));
                     if (section) {
-                        // Expand the section if collapsed
+                        const header = section.querySelector(".keyword-section-header");
                         const content = section.querySelector(".keyword-section-content");
-                        if (content) {
-                            content.classList.remove("collapsed");
+                        if (header && content) {
+                            expandSection(header, content);
                         }
-                        // Scroll into view
                         section.scrollIntoView({ behavior: "smooth", block: "start" });
                     }
                 });
@@ -65,13 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Clickable header
                 const header = document.createElement("div");
                 header.className = "keyword-section-header";
-                header.innerHTML = `<span class="accordion-icon">▼</span> ${group.keyword} <span class="card-count">(${group.count} cards)</span>`;
-                header.addEventListener("click", () => {
-                    content.classList.toggle("collapsed");
-                    const icon = header.querySelector(".accordion-icon");
-                    icon.textContent = content.classList.contains("collapsed") ? "▶" : "▼";
-                });
-                section.appendChild(header);
+                header.innerHTML = `<span class="accordion-icon">▶</span> ${group.keyword} <span class="card-count">(${group.count} cards)</span>`;
 
                 // Collapsible content container
                 const content = document.createElement("div");
@@ -87,28 +91,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 content.appendChild(grid);
+
+                header.addEventListener("click", () => {
+                    if (content.classList.contains("collapsed")) {
+                        expandSection(header, content);
+                    } else {
+                        collapseSection(header, content);
+                    }
+                });
+
+                section.appendChild(header);
                 section.appendChild(content);
                 gallery.appendChild(section);
             }
 
             // Expand All button
             expandAllBtn.addEventListener("click", () => {
-                document.querySelectorAll(".keyword-section-content").forEach(el => {
-                    el.classList.remove("collapsed");
-                });
-                document.querySelectorAll(".accordion-icon").forEach(el => {
-                    el.textContent = "▼";
-                });
+                for (const section of document.querySelectorAll(".keyword-section")) {
+                    const header = section.querySelector(".keyword-section-header");
+                    const content = section.querySelector(".keyword-section-content");
+                    expandSection(header, content);
+                }
             });
 
             // Collapse All button
             collapseAllBtn.addEventListener("click", () => {
-                document.querySelectorAll(".keyword-section-content").forEach(el => {
-                    el.classList.add("collapsed");
-                });
-                document.querySelectorAll(".accordion-icon").forEach(el => {
-                    el.textContent = "▶";
-                });
+                for (const section of document.querySelectorAll(".keyword-section")) {
+                    const header = section.querySelector(".keyword-section-header");
+                    const content = section.querySelector(".keyword-section-content");
+                    collapseSection(header, content);
+                }
             });
 
         } catch (error) {
