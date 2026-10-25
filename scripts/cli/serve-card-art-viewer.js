@@ -6,6 +6,7 @@ import {
     buildArenaSets,
     getCardsBySet,
     getCardsWithoutModernFrame,
+    getCardsWithNonArenaKeywords,
     getMultiRarityCards,
     parseDecklistText,
     searchArenaCards,
@@ -135,8 +136,8 @@ const server = http.createServer(async (req, res) => {
 
         // Route: GET /api/sets
         if (pathname === "/api/sets" && req.method === "GET") {
-            const {sets} = await getSets();
-            sendJson(res, sets);
+            const {setMap} = await getSets();
+            sendJson(res, setMap);
             return;
         }
 
@@ -184,6 +185,13 @@ const server = http.createServer(async (req, res) => {
                 current_page: page,
                 total_pages: totalPages,
             });
+            return;
+        }
+
+        // Route: GET /api/cards/keywords-not-in-arena
+        if (pathname === "/api/cards/keywords-not-in-arena" && req.method === "GET") {
+            const result = await getCardsWithNonArenaKeywords();
+            sendJson(res, result);
             return;
         }
 
@@ -246,6 +254,7 @@ server.listen(PORT, () => {
     console.log(`   GET  /api/sets         - Returns all Arena sets with metadata`);
     console.log(`   GET  /api/sets/:code   - Returns cards for a specific set`);
     console.log(`   GET  /api/search/cards - Returns fuzzy card search results`);
+    console.log(`   GET  /api/cards/keywords-not-in-arena - Returns cards with keywords not in Arena`);
     console.log(`   POST /api/decklist/parse - Parses a pasted decklist into card rows`);
     console.log(`\n✨ Open http://localhost:${PORT} in your browser`);
     console.log(`\nPress Ctrl+C to stop the server\n`);

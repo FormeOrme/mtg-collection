@@ -2,6 +2,7 @@ import fs from "fs";
 import {loadFile} from "./io.js";
 import {strip} from "./utils.js";
 import {BASIC, legalCards} from "./domain.js";
+import {OracleCard} from "./OracleCard.js";
 
 const rarityOrder = ["common", "uncommon", "rare", "mythic"];
 const rarityIndex = new Map(rarityOrder.map((r, i) => [r, i]));
@@ -14,6 +15,26 @@ export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-card
     .filter(legalCards)
     .sort(byReleaseDate);
 
+/** @type {Array|null} In-memory cache for enriched oracle cards */
+let enrichedOracleCache = null;
+
+/**
+ * Loads enriched oracle card data with Arena presence from default printings.
+ * Builds the data once on first call and keeps it in memory.
+ * @returns {Array} Array of enriched oracle card objects
+ */
+export function enrichedOracleCards() {
+    if (enrichedOracleCache !== null) {
+        return enrichedOracleCache;
+    }
+
+    const enrichedCards = enrichedOracleData();
+    const filteredCards = enrichedCards.filter(legalCards);
+    filteredCards.sort(byReleaseDate);
+    enrichedOracleCache = filteredCards;
+    return filteredCards;
+}
+
 const byReleaseDate = (a, b) => {
     // Leverage falsy check for null/undefined
     if (!a.released_at && !b.released_at) return a.name.localeCompare(b.name);
@@ -24,22 +45,8 @@ const byReleaseDate = (a, b) => {
     return a.released_at.localeCompare(b.released_at) || a.name.localeCompare(b.name);
 }
 
-const omenpathMapping = () => JSON.parse(fs.readFileSync(loadFile("omenpath_mapping", "json")));
-
-export const OMENPATH_MAP = omenpathMapping().reduce((map, obj) => {
-    const omenName = strip(obj.printed_name);
-    const mtgName = strip(obj.name);
-    const mapping = {
-        ...obj,
-        omenName,
-        mtgName,
-    };
-    map.set(mtgName, mapping);
-    map.set(omenName, mapping);
-    return map;
-}, new Map());
-
 class DefaultCard {
+    isReprint = false;
     constructor({name, set, set_type, games, rarity, released_at}) {
         Object.assign(this, {
             name,
@@ -53,7 +60,6 @@ class DefaultCard {
         this.setRarity(games, rarity);
         this.firstReleased = released_at;
         this.lastReleased = released_at;
-        this.isReprint = false;
     }
 
     merge({set, set_type, games, rarity, released_at}) {
@@ -95,7 +101,7 @@ class DefaultCard {
     }
 
     setRarity(games, rarity) {
-        if (rarity == "special") {
+        if (rarity === "special") {
             return;
         }
         if (!games.includes("arena")) {
@@ -131,4 +137,18 @@ export function cardDataMap() {
         }
     }
     return cardMap;
+}
+
+/**
+ * Creates an array of OracleCard instances enriched with data from default printings.
+ * @returns {OracleCard[]}
+ */
+export function enrichedOracleData() {
+    const cardMap = cardDataMap();
+    const oracleCards = oracleData();
+    return oracleCards.map((card) => {
+        const id = strip(card.name);
+        const defaultCard = cardMap.get(id) ?? null;
+        return new OracleCard(card, defaultCard);
+    });
 }

@@ -5,9 +5,7 @@
     "build:scryfall-arena": "node scripts/workflows/build-scryfall-arena-data.js",
     "download:oracle-cards": "node scripts/workflows/download-oracle-cards.js",
     "convert:oracle-binary": "node scripts/workflows/convert-oracle-binary.js",
-    "serve:art-viewer": "node scripts/cli/serve-card-art-viewer.js",
-    "check:hash-collisions": "node scripts/cli/check-hash-collisions.js",
-    "generate:omenpath-mapping": "node scripts/tools/generate-omenpath-mapping.js"
+    "serve:art-viewer": "node scripts/cli/serve-card-art-viewer.js"
   },
   "dependencies": {
     "axios": "1.20.0",

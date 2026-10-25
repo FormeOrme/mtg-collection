@@ -1,5 +1,5 @@
-import { defaultData } from "./loaders.js";
-import { normalizeSearchText, countAlphabeticLetters, isFuzzyMatch } from "./fuzzySearch.js";
+import {defaultData, enrichedOracleCards} from "./loaders.js";
+import {countAlphabeticLetters, isFuzzyMatch, normalizeSearchText} from "./fuzzySearch.js";
 
 // Cache for Scryfall sets data
 let scryfallSetsCache = null;
@@ -7,23 +7,7 @@ let allArenaCardsCache = null;
 let cardsWithoutModernFrameCache = null;
 
 // Sets to deprioritize when selecting fallback modern printings
-const AVOID_SETS = [
-    "pl23",
-    "sld",
-    "prm",
-    "ppro",
-    "who",
-    "pmei",
-    "wc03",
-    "40k",
-    "pz2",
-    "wmc",
-    "oc21",
-    "pip",
-    "v09",
-    "30a",
-    "pz1",
-];
+const AVOID_SETS = ["pl23", "sld", "prm", "ppro", "who", "pmei", "wc03", "40k", "pz2", "wmc", "oc21", "pip", "v09", "30a", "pz1", "mb2", "slz"];
 
 /**
  * Fetches set metadata from Scryfall API
@@ -35,7 +19,11 @@ async function fetchScryfallSets() {
     }
 
     const url = "https://api.scryfall.com/sets";
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        headers: {
+            "User-Agent": "MTGCollection/1.0",
+        },
+    });
     if (!response.ok) {
         throw new Error(`Scryfall API error: ${response.statusText}`);
     }
@@ -431,6 +419,13 @@ export async function getCardsWithoutModernFrame() {
                         return aIsMasterpiece - bIsMasterpiece; // Non-masterpiece first
                     }
 
+                    // Avoid extendedart in frame_effects if possible
+                    const aIsExtendedArt = a.frame_effects?.includes("extended_art") ? 0 : 1;
+                    const bIsExtendedArt = b.frame_effects?.includes("extended_art") ? 0 : 1;
+                    if (aIsExtendedArt !== bIsExtendedArt) {
+                        return aIsExtendedArt - bIsExtendedArt;
+                    }
+
                     // Give priority to 2015 frame
                     const aIs2015 = a.frame === "2015" ? 1 : 0;
                     const bIs2015 = b.frame === "2015" ? 1 : 0;
@@ -624,6 +619,9 @@ export async function getAllArenaCards() {
 /**
  * Searches Arena cards using server-side fuzzy matching.
  * @param {string} query
+ * @param minLetters
+ * @param fraction
+ * @param maxVisibleResults
  * @returns {Promise<{status: string, min_letters: number, letter_count: number, total_matches?: number, cards?: Array}>}
  */
 export async function searchArenaCards({
@@ -905,6 +903,82 @@ export async function buildArenaSets() {
     });
 
     return sets;
+}
+
+/**
+ * Gets enriched oracle cards with keywords not found on any Arena card, grouped by keyword.
+ * @returns {Promise<Object>} Object with keywords array containing grouped cards
+ */
+export async function getCardsWithNonArenaKeywords() {
+    const rawCards = enrichedOracleCards();
+    const excludedSets = new Set(["sunf", "unf"]);
+
+    // Step 1: Collect all keywords from Arena cards (using inArena flag)
+    const arenaKeywords = new Set();
+    for (const card of rawCards) {
+        if (!card.inArena) continue;
+        if (isBasicLand(card)) continue;
+        if (card.keywords) {
+            for (const kw of card.keywords) {
+                arenaKeywords.add(kw);
+            }
+        }
+    }
+
+    // Step 2: Find non-Arena cards with keywords not in Arena
+    const keywordMap = new Map();
+    for (const card of rawCards) {
+        if (card.inArena) continue;
+        if (isBasicLand(card)) continue;
+        if (card.set && excludedSets.has(card.set.toLowerCase())) continue;
+
+        const imageUri = getFirstImageUri(card);
+        if (!imageUri) continue;
+
+        if (!card.keywords || card.keywords.length === 0) continue;
+
+        const nonArenaKws = card.keywords.filter((kw) => !arenaKeywords.has(kw));
+        if (nonArenaKws.length === 0) continue;
+
+        const cardObj = {
+            name: card.name,
+            set: card.set,
+            image_uri: imageUri,
+            rarity: card.rarity || "unknown",
+            scryfall_uri: card.scryfall_uri,
+            released_at: card.released_at,
+        };
+
+        // Add this card to each non-Arena keyword group
+        for (const kw of nonArenaKws) {
+            if (!keywordMap.has(kw)) {
+                keywordMap.set(kw, []);
+            }
+            keywordMap.get(kw).push(cardObj);
+        }
+    }
+
+    // Step 3: Build grouped result, filtering to keywords used more than once
+    const keywords = [];
+    for (const [keyword, cards] of keywordMap) {
+        if (cards.length < 2) continue;
+
+        cards.sort((a, b) => {
+            const dateA = a.released_at ? Date.parse(a.released_at) : 0;
+            const dateB = b.released_at ? Date.parse(b.released_at) : 0;
+            return dateB - dateA;
+        });
+        keywords.push({
+            keyword,
+            cards,
+            count: cards.length,
+        });
+    }
+
+    // Sort keywords alphabetically
+    keywords.sort((a, b) => a.keyword.localeCompare(b.keyword));
+
+    return {keywords};
 }
 
 /**

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Arena - Keywords Not in Arena</title>
+    <link rel="stylesheet" href="/art_view.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <h1>🔑 Keywords Not in Arena</h1>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
+                    <a href="/decklist.html"
+                        style="color: var(--color-blue-light); text-decoration: none; font-weight: bold; border: 1px solid var(--color-blue-light); padding: 0.2rem 0.6rem; border-radius: 4px;">Decklist
+                        Parser</a>
+                    <a href="/"
+                        style="color: var(--color-blue-light); text-decoration: none; font-weight: bold; border: 1px solid var(--color-blue-light); padding: 0.2rem 0.6rem; border-radius: 4px;">&larr;
+                        Back to Main Viewer</a>
+                </div>
+            </div>
+            <div class="subtitle">Cards with keywords not found on any Arena card</div>
+        </header>
+
+        <div class="page-description">
+            This page shows cards that have <strong>keywords not present</strong> on any card currently in MTG Arena.
+            These are legacy or non-Arena mechanics you won't find in the game.
+        </div>
+
+        <div class="gallery-section" style="margin-top: 1rem;">
+            <div class="gallery-title" id="galleryTitle">Loading Cards...</div>
+
+            <div class="keyword-controls">
+                <button id="expandAllBtn" class="control-btn" title="Expand all keyword sections">Expand All</button>
+                <button id="collapseAllBtn" class="control-btn" title="Collapse all keyword sections">Collapse All</button>
+            </div>
+
+            <div id="keywordIndex" class="keyword-index"></div>
+
+            <div class="gallery" id="gallery">
+                <div class="loading">Fetching cards with non-Arena keywords...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/common.js"></script>
+    <script src="/keywords.js"></script>
+</body>
+
+</html>
