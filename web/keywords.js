@@ -44,8 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 header.querySelector(".accordion-icon").textContent = "▶";
             }
 
-            // Build keyword index buttons
-            for (const group of data.keywords) {
+            // Build keyword index buttons - sorted alphabetically
+            const sortedAlphabetically = [...data.keywords].sort((a, b) => a.keyword.localeCompare(b.keyword));
+            for (const group of sortedAlphabetically) {
                 const btn = document.createElement("button");
                 btn.className = "keyword-index-btn";
                 btn.textContent = `${group.keyword} (${group.count})`;
@@ -63,8 +64,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 keywordIndex.appendChild(btn);
             }
 
-            // Render each keyword group as a collapsible accordion
-            for (const group of data.keywords) {
+            // Render each keyword group as a collapsible accordion - sorted by release date (newest first)
+            const sortedByDate = [...data.keywords].sort((a, b) => {
+                const dateA = a.latestReleaseDate ? Date.parse(a.latestReleaseDate) : 0;
+                const dateB = b.latestReleaseDate ? Date.parse(b.latestReleaseDate) : 0;
+                return dateB - dateA;
+            });
+            for (const group of sortedByDate) {
                 const sectionId = "section-" + group.keyword.replace(/\s+/g, "-");
 
                 // Keyword section

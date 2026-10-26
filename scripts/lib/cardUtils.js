@@ -968,10 +968,12 @@ export async function getCardsWithNonArenaKeywords() {
             const dateB = b.released_at ? Date.parse(b.released_at) : 0;
             return dateB - dateA;
         });
+        const latestReleaseDate = cards[0] && cards[0].released_at ? cards[0].released_at : "";
         keywords.push({
             keyword,
             cards,
             count: cards.length,
+            latestReleaseDate,
         });
     }
 

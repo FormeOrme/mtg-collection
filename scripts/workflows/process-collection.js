@@ -18,7 +18,14 @@ function parseCollectionText(rawCollectionText) {
                 console.warn(`Skipping invalid line: ${line}`);
                 return;
             }
-            const parsedName = match[2].trim();
+            const [, qty, name] = match;
+
+            if (name.match(/^A-/)) {
+                // ignore alchemy names
+                return;
+            }
+
+            const parsedName = name.trim();
             const id = strip(parsedName);
             if (!id) {
                 console.warn(`Skipping invalid card name: ${line}`);
@@ -26,11 +33,12 @@ function parseCollectionText(rawCollectionText) {
             }
 
             if (BASIC.some((basic) => basic.name === parsedName)) {
+                // ignore basic lands
                 return;
             }
 
             return {
-                owned: Math.min(Number.parseInt(match[1], 10), 4),
+                owned: Math.min(Number.parseInt(qty, 10), 4),
                 name: parsedName,
                 id,
                 card: oracleMap[id],
@@ -40,7 +48,7 @@ function parseCollectionText(rawCollectionText) {
 }
 
 function loadCollectionData() {
-    const collectionFilePath = loadFile("mtga_collection_", "txt", "sources");
+    const collectionFilePath = loadFile("MTGA-Collection-Names", "txt", "sources");
     const rawCollectionText = read(collectionFilePath).toString();
     const cards = parseCollectionText(rawCollectionText);
     console.log(`Loaded [${cards.length}] collection lines from [${collectionFilePath}]`);

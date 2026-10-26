@@ -8,12 +8,13 @@
     "serve:art-viewer": "node scripts/cli/serve-card-art-viewer.js"
   },
   "dependencies": {
+    "@hono/node-server": "^2.1.5",
     "axios": "1.20.0",
-    "msgpack-lite": "^0.1.26",
+    "hono": "^4.13.14",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "eslint": "^9.39.2"
+    "eslint": "^10.13.0"
   }
 }
 
