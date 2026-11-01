@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Decklist Parser</title>
-    <link rel="icon" href="data:,">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-6 -6 112 112'>
+    <text x='50' y='85' font-size='100' text-anchor='middle'>📋</text>
+</svg>">
     <script src="./js/tailwind-theme.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1"></script>
     <script type="module" src="./js/decklist.js"></script>
@@ -34,10 +36,10 @@
                     class="h-[44vh] min-h-[320px] w-full resize-y rounded-xl border border-line-input bg-input-bg p-4 font-mono text-[13px] leading-relaxed text-input outline-none transition placeholder:text-placeholder focus:border-accent-mid/70 focus:ring-4 focus:ring-accent-mid/10"></textarea>
                 <div class="mt-3 flex flex-wrap gap-2">
                     <button id="parseBtn" type="button"
-                        class="inline-flex items-center justify-center rounded-lg bg-accent-dark px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-mid active:translate-y-px disabled:cursor-wait disabled:opacity-60">Parse
+                        class="inline-flex cursor-pointer items-center justify-center rounded-lg bg-accent-dark px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-mid active:translate-y-px disabled:cursor-wait disabled:opacity-60">Parse
                         decklist</button>
                     <button id="clearBtn" type="button"
-                        class="inline-flex items-center justify-center rounded-lg border border-line bg-white/[0.03] px-4 py-2 text-sm font-medium text-muted transition hover:border-line-strong hover:bg-white/[0.06] hover:text-white">Clear</button>
+                        class="inline-flex cursor-pointer items-center justify-center rounded-lg border border-line bg-white/[0.03] px-4 py-2 text-sm font-medium text-muted transition hover:border-line-strong hover:bg-white/[0.06] hover:text-white">Clear</button>
                 </div>
                 <div id="parseInfo" class="mt-3"></div>
             </div>

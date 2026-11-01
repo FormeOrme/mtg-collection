@@ -8,11 +8,11 @@ const expandAllBtn = document.getElementById("expandAllBtn");
 const collapseAllBtn = document.getElementById("collapseAllBtn");
 
 const CONTROL_BUTTON_CLASS =
-    "inline-flex items-center justify-center rounded-lg border border-line bg-white/[0.03] px-3 py-1.5 " +
+    "inline-flex cursor-pointer items-center justify-center rounded-lg border border-line bg-white/[0.03] px-3 py-1.5 " +
     "text-xs font-medium text-muted transition hover:border-line-strong hover:bg-white/[0.06] hover:text-white";
 
 const INDEX_BUTTON_CLASS =
-    "rounded-full border border-line bg-white/[0.03] px-2.5 py-1 text-xs font-medium text-muted " +
+    "cursor-pointer rounded-full border border-line bg-white/[0.03] px-2.5 py-1 text-xs font-medium text-muted " +
     "transition hover:border-accent-mid/50 hover:bg-accent-mid/10 hover:text-white";
 
 const SECTION_CLASS = "scroll-mt-20 overflow-hidden rounded-2xl border border-line bg-panel";

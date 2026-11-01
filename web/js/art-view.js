@@ -24,7 +24,6 @@ const setsContainer = document.getElementById("setsContainer");
 const searchInput = document.getElementById("searchInput");
 const clearBtn = document.getElementById("clearBtn");
 const toggleSetsBtn = document.getElementById("toggleSetsBtn");
-const multiRarityBtn = document.getElementById("multiRarityBtn");
 
 let selectedSet = null;
 let setsMetadata = {};
@@ -248,43 +247,6 @@ function selectSet(setCode) {
 }
 
 /**
- * Renders cards that exist at both high and low rarity.
- */
-async function renderMultiRarityCards() {
-    selectedSet = null;
-    latestSearchToken += 1;
-    searchInput.value = "";
-    renderSetBadges(setsList);
-    updateControls();
-    galleryInfo.innerHTML = "";
-    renderLoading(gallery, "Loading multi-rarity cards...");
-
-    try {
-        const payload = await fetchJson("/api/cards/multi-rarity");
-        const cards = payload.cards ?? [];
-
-        setInfo(
-            `Multi-Rarity Cards — ${cards.length} art${cards.length !== 1 ? "s" : ""} across ` +
-            `${payload.total_cards} card${payload.total_cards !== 1 ? "s" : ""} that exist at both ` +
-            "mythic/rare and common/uncommon rarity",
-        );
-
-        if (cards.length === 0) {
-            renderEmptyState(gallery, {
-                title: "No multi-rarity cards found",
-                hint: "No cards have both a high-rarity and a low-rarity Arena printing.",
-            });
-            return;
-        }
-
-        renderCards(cards);
-    } catch (error) {
-        console.error("Error loading multi-rarity cards:", error);
-        renderError(gallery, `Error loading cards: ${error.message}`);
-    }
-}
-
-/**
  * Clears all filters and returns to the neutral state.
  */
 function clearSelection() {
@@ -385,7 +347,6 @@ renderNav();
 
 clearBtn.addEventListener("click", clearSelection);
 toggleSetsBtn.addEventListener("click", toggleSetsSection);
-multiRarityBtn.addEventListener("click", renderMultiRarityCards);
 searchInput.addEventListener("input", debounce(onSearchInput, SEARCH_DEBOUNCE_MS));
 enableRelatedHighlight(gallery);
 updateControls();

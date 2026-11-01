@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Rarity Cards</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-6 -6 112 112'>
+    <text x='50' y='85' font-size='100' text-anchor='middle'>💠</text>
+</svg>">
+    <script src="./js/tailwind-theme.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1"></script>
+    <script type="module" src="./js/multi-rarity.js"></script>
+</head>
+
+<body data-nav="multi-rarity" class="relative min-h-screen overflow-x-hidden bg-canvas font-sans text-body antialiased">
+    <div aria-hidden="true"
+        class="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(60%_100%_at_50%_0%,rgba(99,102,241,0.20),rgba(10,11,16,0))]">
+    </div>
+
+    <header id="nav"></header>
+
+    <main class="mx-auto w-full max-w-[1440px] px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+        <div>
+            <h1 class="text-2xl font-semibold tracking-tight text-white sm:text-[2rem]">Multi-Rarity Cards</h1>
+            <p class="mt-1.5 max-w-3xl text-sm text-muted">Every Arena printing of cards that exist at both high
+                (mythic/rare) and low (common/uncommon) rarity.</p>
+        </div>
+
+        <section class="mt-8">
+            <div class="mb-3 flex flex-wrap items-center gap-3">
+                <h2 id="galleryTitle" class="text-sm font-medium text-body">Loading cards...</h2>
+                <span class="h-px flex-1 bg-line"></span>
+            </div>
+            <div id="gallery" class="grid grid-cols-[repeat(auto-fill,minmax(148px,1fr))] gap-3 sm:gap-4">
+                <div
+                    class="col-span-full rounded-2xl border border-dashed border-line bg-gallery-bg px-6 py-20 text-center">
+                    <p class="text-sm font-medium text-muted">Fetching multi-rarity cards...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

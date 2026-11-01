@@ -148,6 +148,7 @@ console.log(`🎴 MTG Arena Card Art Viewer Server`);
 console.log(`📡 Server running at http://localhost:${PORT}`);
 console.log(`\n📄 Pages:`);
 console.log(`   GET  /                 - Card art viewer`);
+console.log(`   GET  /multi-rarity.html - Multi-rarity cards`);
 console.log(`   GET  /decklist.html    - Decklist parser`);
 console.log(`   GET  /keywords.html    - Keywords not in Arena`);
 console.log(`   GET  /frame.html       - Non-standard frame cards`);

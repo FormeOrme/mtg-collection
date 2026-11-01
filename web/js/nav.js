@@ -5,6 +5,7 @@
 
 const PAGES = [
     {id: "index", href: "./", label: "Card Art"},
+    {id: "multi-rarity", href: "./multi-rarity.html", label: "Multi-Rarity"},
     {id: "decklist", href: "./decklist.html", label: "Decklist"},
     {id: "keywords", href: "./keywords.html", label: "Keywords"},
     {id: "frame", href: "./frame.html", label: "Frames"},
