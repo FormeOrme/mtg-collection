@@ -1,22 +1,26 @@
 import fs from "fs";
 import {loadFile} from "./io.js";
-import {strip} from "./utils.js";
+import {slugify} from "./utils.js";
 import {BASIC, legalCards} from "./domain.js";
 import {OracleCard} from "./OracleCard.js";
 
 const rarityOrder = ["common", "uncommon", "rare", "mythic"];
 const rarityIndex = new Map(rarityOrder.map((r, i) => [r, i]));
 
-export const defaultData = () => JSON.parse(fs.readFileSync(loadFile("default-cards-", "json")))
+export const defaultData = () => JSON.parse(fs.readFileSync(loadFile("default-cards", "json")))
     .filter(legalCards)
     .sort(byReleaseDate);
 
-export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-cards-", "json")))
+export const oracleData = () => JSON.parse(fs.readFileSync(loadFile("oracle-cards", "json")))
     .filter(legalCards)
     .sort(byReleaseDate);
 
 /** @type {Array|null} In-memory cache for enriched oracle cards */
 let enrichedOracleCache = null;
+
+const exclude_set_type = [
+    "treasure_chest", "masters", "box", "promo"
+]
 
 /**
  * Loads enriched oracle card data with Arena presence from default printings.
@@ -50,10 +54,15 @@ class DefaultCard {
     constructor({name, set, set_type, games, rarity, released_at}) {
         Object.assign(this, {
             name,
-            setMap: {
-                [set_type]: [set],
-            },
-            setList: new Set([set]),
+            ...(exclude_set_type.includes(set_type) ? {
+                setMap: {},
+                setList: new Set()
+            } : {
+                setMap: {
+                    [set_type]: [set],
+                },
+                setList: new Set([set]),
+            }),
             games: new Set(games),
         });
         this.rarity = new Set();
@@ -64,16 +73,17 @@ class DefaultCard {
 
     merge({set, set_type, games, rarity, released_at}) {
 
-        const setTypes = this.setMap[set_type];
-        if (setTypes) {
-            if (!setTypes.includes(set)) {
-                setTypes.push(set);
+        if (!exclude_set_type.includes(set_type)) {
+            const setTypes = this.setMap[set_type];
+            if (setTypes) {
+                if (!setTypes.includes(set)) {
+                    setTypes.push(set);
+                }
+            } else {
+                this.setMap[set_type] = [set];
             }
-        } else {
-            this.setMap[set_type] = [set];
+            this.setList.add(set);
         }
-
-        this.setList.add(set);
         this.games = this.games.union(new Set(games));
         this.setRarity(games, rarity);
         if (released_at < this.firstReleased) {
@@ -128,7 +138,7 @@ export function cardDataMap() {
     const data = defaultData();
     const cardMap = new Map();
     for (const card of data) {
-        const id = strip(card.name);
+        const id = slugify(card.name);
         const defaultCard = new DefaultCard(card);
         if (cardMap.has(id)) {
             cardMap.get(id).merge(card);
@@ -147,7 +157,7 @@ export function enrichedOracleData() {
     const cardMap = cardDataMap();
     const oracleCards = oracleData();
     return oracleCards.map((card) => {
-        const id = strip(card.name);
+        const id = slugify(card.name);
         const defaultCard = cardMap.get(id) ?? null;
         return new OracleCard(card, defaultCard);
     });

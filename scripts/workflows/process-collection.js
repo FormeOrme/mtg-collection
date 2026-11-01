@@ -1,9 +1,9 @@
 import {loadFile, read, writeToData} from "../lib/io.js";
-import {strip} from "../lib/utils.js";
+import {slugify} from "../lib/utils.js";
 import {BASIC} from "../lib/domain.js";
 import {oracleData} from "../lib/loaders.js";
 
-const oracleMap = Object.fromEntries(oracleData().map((card) => [strip(card.name), card]));
+const oracleMap = Object.fromEntries(oracleData().map((card) => [slugify(card.name), card]));
 
 function parseCollectionText(rawCollectionText) {
     return rawCollectionText
@@ -26,7 +26,7 @@ function parseCollectionText(rawCollectionText) {
             }
 
             const parsedName = name.trim();
-            const id = strip(parsedName);
+            const id = slugify(parsedName);
             if (!id) {
                 console.warn(`Skipping invalid card name: ${line}`);
                 return;

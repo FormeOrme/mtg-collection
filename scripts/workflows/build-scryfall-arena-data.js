@@ -1,6 +1,6 @@
 import {cardDataMap, oracleData} from "../lib/loaders.js";
-import {colorIdentity, onArena} from "../lib/domain.js";
-import {strip} from "../lib/utils.js";
+import {colorIdentity} from "../lib/domain.js";
+import {slugify} from "../lib/utils.js";
 import {writeToData} from "../lib/io.js";
 
 const rarities = {c: 0, u: 1, r: 2, m: 3};
@@ -15,7 +15,7 @@ console.log(`Mapped to ${cardMap.size} unique cards.`);
 console.timeEnd("Loading oracle cards");
 
 function mapCardData(card, additionalData = false) {
-    const n = strip(card.name);
+    const n = slugify(card.name);
 
     const baseData = {
         n,
@@ -37,50 +37,13 @@ function mapCardData(card, additionalData = false) {
         // if a card is basic, omit sets
         return {
             id: card.id,
-            // ...(sets.straightToModern.has(card.set) && { stm: true }),
-            // ...(modernLegal(card) && { m: 1 }),
             t: mainType(card),
             sets: scryfallCard.isBasic() ? undefined : [...scryfallCard.setList],
             ...baseData,
-            // std: standardValue(scryfallCard)
         };
     }
 
     return baseData;
-}
-
-const STANDARD_VALUE = {
-    old: new Set(['woe', 'lci', 'mkm', 'otj', 'big', 'blb', 'dsk']),
-    next: new Set(['dft', 'tdm', 'fin', 'eoe', 'spm', 'om1', 'tla', 'fdn', 'ecl', 'tmt', 'sos', 'msh', 'hob', 'fra'])
-}
-
-/**
- * @param card
- * @return
- *  * 0 if the card is not in standard
- *  * 1 if the card is in standard
- *  * 2 if the card will leave standard in the next rotation
- */
-function standardValue(card) {
-    const inNext = hasAnyIn(STANDARD_VALUE.next, card.setList);
-    const inOld = hasAnyIn(STANDARD_VALUE.old, card.setList);
-    if (inNext) { // IS IN STANDARD AND WILL STILL BE IN STANDARD IN NEXT ROTATION
-        return 2;
-    }
-    if (inOld) {
-        return 1; // WILL LEAVE STANDARD ON NEXT ROTATION
-    }
-    return 0;
-}
-
-function hasAnyIn(a, b) {
-    if (a == null || b == null) {
-        return false;
-    }
-    for (const item of a) {
-        if (b.has(item)) return true;
-    }
-    return false;
 }
 
 const excludeTypes = new Set(["legendary", "basic", "snow", "world", "kindred"]);
@@ -104,93 +67,16 @@ function getTypes({type_line}) {
     };
 }
 
-function extractCardDetails({card_faces, oracle_text}) {
-    const hasFaces = card_faces?.length;
-    return {
-        oracle: hasFaces ? card_faces.map((face) => face.oracle_text).join(" // ") : oracle_text,
-    };
-}
-
-function oracleMapper({keep = [], map = []}) {
-    return (card) => {
-        if (!card) return null;
-
-        const out = {};
-
-        for (const [prop, mapper] of Object.entries(map)) {
-            if (!mapper) continue;
-            const mapped = mapper(card);
-            if (!mapped) continue;
-            out[prop] = mapped;
-        }
-
-        for (const prop of keep) {
-            if (!card[prop]) continue;
-            out[prop] = card[prop];
-        }
-
-        const {oracle} = extractCardDetails(card);
-        return {...out, oracle};
-    };
-}
-
-function oracleArenaFaceMapper(card, face = card) {
-    const faceData = {
-        mana_cost: face.mana_cost ?? card.mana_cost,
-        colors: face.colors ?? card.colors,
-        color_identity: face.color_identity ?? card.color_identity,
-        keywords: (face.keywords ?? card.keywords)?.map((keyword) => keyword.toLowerCase()),
-        type: getTypes(face),
-        oracle: face.oracle_text?.toLowerCase(),
-    };
-
-    return Object.fromEntries(Object.entries(faceData).filter(([, value]) => !isNullish(value)));
-}
-
-function isNullish(value) {
-    if (Array.isArray(value)) return value.length === 0;
-    if (typeof value === "string") return value.trim() === "";
-    return value === null || value === undefined;
-}
-
-function oracleArenaMapper(card) {
-    const [front, back] = card.card_faces ?? [card];
-
-    return {
-        strip: strip(card.name),
-        front: oracleArenaFaceMapper(card, front),
-        ...(back && {back: oracleArenaFaceMapper(card, back)}),
-    };
-}
-
-const FILTERS = {
-    ALL: () => true,
-    ARENA: onArena,
-};
-
 const OUTPUT_FILES = {
-    // SHRUNK: {
-    //     fileName: "scryfall_arena_data.json",
-    //     mapFunction: (card) => mapCardData(card),
-    // },
     BAREBONE: {
         fileName: "scryfall_barebone.json",
         mapFunction: (card) => mapCardData(card, true),
         renderFunction: ({n, ...rest}) => JSON.stringify([n, rest])
     },
-    // ORACLE: {
-    //     fileName: "scryfall_oracle.json",
-    //     mapFunction: oracleMapper({keep: ["id", "mana_cost", "type_line"]}),
-    // },
-    // ORACLE_ARENA: {
-    //     fileName: "scryfall_oracle_arena.json",
-    //     filter: FILTERS.ARENA,
-    //     mapFunction: oracleArenaMapper,
-    // },
 };
 
 for (const [, {
-    filter = FILTERS.ALL,
+    filter = () => true,
     mapFunction,
     fileName,
     renderFunction = JSON.stringify

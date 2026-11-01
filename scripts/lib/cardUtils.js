@@ -52,23 +52,41 @@ function isTokenSet(setMeta) {
 }
 
 /**
- * Extracts the first image URI from a card
+ * Rewrites a Scryfall card image URL to the compact grid WebP variant.
+ * `https://cards.scryfall.io/normal/front/a/b/<id>.jpg?v` → `.../grid/front/a/b/<id>.webp?v`
+ * Non-Scryfall or already-converted URLs are returned untouched.
+ * @param {string|null|undefined} uri
+ * @returns {string|null}
+ */
+function toGridWebp(uri) {
+    if (typeof uri !== "string" || uri.length === 0) {
+        return null;
+    }
+    if (!uri.startsWith("https://cards.scryfall.io/")) {
+        return uri;
+    }
+    return uri
+        .replace(/\/(?:small|normal|large)\//, "/grid/")
+        .replace(/\.jpg(\?|$)/, ".webp$1");
+}
+
+/**
+ * Extracts the first image URI from a card, in the grid WebP size.
+ *
+ * The bulk snapshot only exposes JPG keys (`small`/`normal`/`large`), so the
+ * `normal` URL is rewritten by {@link toGridWebp}. Sources that already ship a
+ * `grid` key (the live API does) are used as-is.
  * @param {Object} card - The card object
  * @returns {string|null} The image URI or null if not found
  */
 function getFirstImageUri(card) {
     // If card has card_faces (multi-face card), use first face
-    if (card.card_faces && card.card_faces.length > 0) {
-        const firstFace = card.card_faces[0];
-        if (firstFace.image_uris?.normal) {
-            return firstFace.image_uris.normal;
-        }
+    const faceUris = card.card_faces?.[0]?.image_uris;
+    const uris = faceUris?.normal || faceUris?.grid ? faceUris : card.image_uris;
+    if (!uris) {
+        return null;
     }
-    // Otherwise use the card's image_uris
-    if (card.image_uris?.normal) {
-        return card.image_uris.normal;
-    }
-    return null;
+    return uris.grid ?? toGridWebp(uris.normal);
 }
 
 /**

@@ -1,47 +1,27 @@
 {
     "metadata": {
-        "description": "Allowlist for filtering Scryfall bulk card objects",
-        "version": "1.0",
-        "updated_at": "2026-04-23"
+        "description": "Allowlist for filtering Scryfall bulk card objects. Only fields the app actually reads are kept.",
+        "version": "2.0",
+        "updated_at": "2026-11-01"
     },
     "fields": {
         "id": true,
         "oracle_id": true,
         "name": true,
-        "printed_name": true,
-        "mana_cost": true,
         "type_line": true,
-        "oracle_text": true,
-        "colors": true,
-        "color_identity": true,
         "keywords": true,
         "legalities": true,
         "games": true,
+        "color_identity": true,
         "image_uris": {
             "normal": true,
-            "small": true,
-            "large": true,
-            "png": true,
-            "art_crop": true,
-            "border_crop": true
+            "grid": true
         },
         "card_faces": {
-            "name": true,
-            "printed_name": true,
-            "mana_cost": true,
-            "type_line": true,
-            "oracle_text": true,
-            "colors": true,
-            "power": true,
-            "toughness": true,
-            "loyalty": true,
+            "illustration_id": true,
             "image_uris": {
                 "normal": true,
-                "small": true,
-                "large": true,
-                "png": true,
-                "art_crop": true,
-                "border_crop": true
+                "grid": true
             }
         },
         "scryfall_uri": true,
@@ -49,9 +29,9 @@
         "set": true,
         "set_type": true,
         "collector_number": true,
-        "arena_id": true,
         "border_color": true,
         "frame": true,
+        "frame_effects": true,
         "illustration_id": true,
         "released_at": true
     }

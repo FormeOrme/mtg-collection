@@ -120,9 +120,10 @@ async function streamAndFilterBulkJson(inputStream, outputStream, schema) {
 }
 
 async function downloadAndFilterBulk(entry, schema) {
-    // Bulk source is gzipped JSONL; downstream loaders still expect a plain <type>.json array file.
-    const sourceName = path.basename(new URL(entry[DOWNLOAD_URI_FIELD]).pathname);
-    const destinationName = sourceName.replace(/\.jsonl(\.gz)?$/, ".json");
+    // Bulk source is gzipped JSONL; downstream loaders expect a plain <type>.json array file.
+    // The filename is intentionally undated (e.g. default-cards.json) so there is one
+    // stable snapshot per bulk type; the bulk `updated_at` is logged above.
+    const destinationName = `${entry.type.replaceAll("_", "-")}.json`;
     const destinationPath = path.join(DATA_PATHS.SOURCES, destinationName);
     const temporaryDestinationPath = `${destinationPath}.tmp`;
 

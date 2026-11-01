@@ -14,14 +14,6 @@ export const DATA_PATHS = {
     MAPPINGS: path.join(dataRootDir, "mappings"),
 };
 
-const READ_SEARCH_DIRS = [
-    DATA_PATHS.SOURCES,
-    DATA_PATHS.CONFIG,
-    DATA_PATHS.MAPPINGS,
-    DATA_PATHS.GENERATED,
-    DATA_PATHS.ROOT,
-];
-
 function ensureDirectory(dirPath) {
     if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true });
@@ -35,34 +27,25 @@ export function ensureDataDir() {
     ensureDirectory(DATA_PATHS.MAPPINGS);
 }
 
-export function loadFile(startName, extension, dir = "") {
-    let targetDirs;
-    if (dir === "Raw") {
-        targetDirs = [path.join(scriptDir, "../../Raw")];
-    } else if (dir) {
-        targetDirs = [path.join(DATA_PATHS.ROOT, dir)];
-    } else {
-        targetDirs = READ_SEARCH_DIRS;
+/**
+ * Resolves an exact data file by name and extension. There is no prefix or
+ * date fallback: snapshot filenames are stable (`default-cards.json`,
+ * `oracle-cards.json`), and a missing file should fail loudly instead of
+ * silently loading a stale one.
+ * @param {string} name - File name without extension, e.g. `default-cards`
+ * @param {string} extension - Extension without the dot, e.g. `json`
+ * @param {string} [dir] - Subdirectory of `data/`, e.g. `sources`
+ * @returns {string} Absolute path to the file
+ */
+export function loadFile(name, extension, dir = "sources") {
+    const filePath = path.join(DATA_PATHS.ROOT, dir, `${name}.${extension}`);
+    if (!fs.existsSync(filePath)) {
+        const hint = /cards$/.test(name)
+            ? " Run `npm run download:oracle-cards` to download the Scryfall snapshots."
+            : "";
+        throw new Error(`Missing data file: ${filePath}.${hint}`);
     }
-
-    for (const targetDir of targetDirs) {
-        if (!fs.existsSync(targetDir)) {
-            continue;
-        }
-        const files = fs.readdirSync(targetDir).reverse();
-        const found = files.find(
-            (file) =>
-                path.parse(file).name.startsWith(startName) &&
-                path.parse(file).ext.slice(1) === extension,
-        );
-        if (found) {
-            return path.join(targetDir, found);
-        }
-    }
-
-    throw new Error(
-        `No file found for startName='${startName}', extension='${extension}' in '${targetDirs.join("', '")}'`,
-    );
+    return filePath;
 }
 
 export function read(filePath) {

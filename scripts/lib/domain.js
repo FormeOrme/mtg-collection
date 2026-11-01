@@ -1,4 +1,4 @@
-import { strip } from "./utils.js";
+import { slugify } from "./utils.js";
 
 const colors = "WUBGR".split("");
 
@@ -47,7 +47,7 @@ export const BASIC = "Plains,Island,Swamp,Mountain,Forest,Wastes"
     .flatMap((type) => [type, `Snow-Covered ${type}`])
     .map((name) => ({
         name,
-        id: strip(name),
+        id: slugify(name),
         owned: 4,
         released_at: "1995-06-03",
     }));

@@ -5,7 +5,8 @@
     "build:scryfall-arena": "node scripts/workflows/build-scryfall-arena-data.js",
     "download:oracle-cards": "node scripts/workflows/download-oracle-cards.js",
     "convert:oracle-binary": "node scripts/workflows/convert-oracle-binary.js",
-    "serve:art-viewer": "node scripts/cli/serve-card-art-viewer.js"
+    "serve:art-viewer": "node scripts/cli/serve-card-art-viewer.js",
+    "verify:web": "node scripts/cli/smoke-web.js"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.5",

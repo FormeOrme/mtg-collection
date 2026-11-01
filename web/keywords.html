@@ -4,50 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MTG Arena - Keywords Not in Arena</title>
-    <link rel="stylesheet" href="/art_view.css">
+    <title>Keywords Not in Arena</title>
+    <link rel="icon" href="data:,">
+    <script src="./js/tailwind-theme.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1"></script>
+    <script type="module" src="./js/keywords.js"></script>
 </head>
 
-<body>
-    <div class="container">
-        <header>
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                <h1>🔑 Keywords Not in Arena</h1>
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
-                    <a href="/decklist.html"
-                        style="color: var(--color-blue-light); text-decoration: none; font-weight: bold; border: 1px solid var(--color-blue-light); padding: 0.2rem 0.6rem; border-radius: 4px;">Decklist
-                        Parser</a>
-                    <a href="/"
-                        style="color: var(--color-blue-light); text-decoration: none; font-weight: bold; border: 1px solid var(--color-blue-light); padding: 0.2rem 0.6rem; border-radius: 4px;">&larr;
-                        Back to Main Viewer</a>
-                </div>
-            </div>
-            <div class="subtitle">Cards with keywords not found on any Arena card</div>
-        </header>
-
-        <div class="page-description">
-            This page shows cards that have <strong>keywords not present</strong> on any card currently in MTG Arena.
-            These are legacy or non-Arena mechanics you won't find in the game.
-        </div>
-
-        <div class="gallery-section" style="margin-top: 1rem;">
-            <div class="gallery-title" id="galleryTitle">Loading Cards...</div>
-
-            <div class="keyword-controls">
-                <button id="expandAllBtn" class="control-btn" title="Expand all keyword sections">Expand All</button>
-                <button id="collapseAllBtn" class="control-btn" title="Collapse all keyword sections">Collapse All</button>
-            </div>
-
-            <div id="keywordIndex" class="keyword-index"></div>
-
-            <div class="gallery" id="gallery">
-                <div class="loading">Fetching cards with non-Arena keywords...</div>
-            </div>
-        </div>
+<body data-nav="keywords" class="relative min-h-screen overflow-x-hidden bg-canvas font-sans text-body antialiased">
+    <div aria-hidden="true"
+        class="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(60%_100%_at_50%_0%,rgba(99,102,241,0.20),rgba(10,11,16,0))]">
     </div>
 
-    <script src="/common.js"></script>
-    <script src="/keywords.js"></script>
+    <header id="nav"></header>
+
+    <main class="mx-auto w-full max-w-[1440px] px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+        <div>
+            <h1 class="text-2xl font-semibold tracking-tight text-white sm:text-[2rem]">Keywords Not in Arena</h1>
+            <p class="mt-1.5 max-w-3xl text-sm text-muted">Cards whose rules text contains keywords that never appear on
+                any MTG Arena card.</p>
+        </div>
+
+        <section class="mt-8">
+            <div class="mb-3 flex flex-wrap items-center gap-3">
+                <h2 id="galleryTitle" class="text-sm font-medium text-body">Loading keywords...</h2>
+                <span class="h-px flex-1 bg-line"></span>
+                <div class="flex flex-wrap gap-2">
+                    <button id="expandAllBtn" type="button">Expand all</button>
+                    <button id="collapseAllBtn" type="button">Collapse all</button>
+                </div>
+            </div>
+
+            <div id="keywordIndex" class="mb-6 flex flex-wrap gap-1.5"></div>
+
+            <div id="gallery" class="flex flex-col gap-2">
+                <div class="rounded-2xl border border-dashed border-line bg-gallery-bg px-6 py-20 text-center">
+                    <p class="text-sm font-medium text-muted">Fetching cards with non-Arena keywords...</p>
+                </div>
+            </div>
+        </section>
+    </main>
 </body>
 
 </html>

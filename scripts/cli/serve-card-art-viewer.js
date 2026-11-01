@@ -1,10 +1,9 @@
 import {Hono} from "hono";
 import {cors} from "hono/cors";
-import {serveStatic} from "hono/serve-static";
 import {serve} from "@hono/node-server";
+import {serveStatic} from "@hono/node-server/serve-static";
 import path from "path";
 import {fileURLToPath} from "url";
-import fs from "fs/promises";
 import {
     buildArenaSets,
     getCardsBySet,
@@ -129,21 +128,9 @@ app.use("/*", async (c, next) => {
     }
 });
 
-// Serve art_view.html for root path
-app.get("/", async (c) => {
-    try {
-        const content = await fs.readFile(path.join(webDir, "art_view.html"));
-        return c.body(content, 200, { "Content-Type": "text/html" });
-    } catch {
-        return c.json({error: "Not Found"}, 404);
-    }
-});
-
-// Static file serving for the web/ directory (non-API paths only)
-app.get("/static/*", serveStatic({
-    root: webDir,
-    getContent: async (filePath) => await fs.readFile(filePath),
-}));
+// Serve the web/ directory: pages, js modules and any other assets.
+// The root path "/" resolves to web/index.html via serveStatic's index handling.
+app.get("/*", serveStatic({root: webDir, index: "index.html"}));
 
 // Error handling
 app.notFound((c) => c.json({error: "Not Found"}, 404));
@@ -159,12 +146,19 @@ const server = serve({
 
 console.log(`🎴 MTG Arena Card Art Viewer Server`);
 console.log(`📡 Server running at http://localhost:${PORT}`);
-console.log(`\n📋 Available endpoints:`);
-console.log(`   GET  /                 - Serves the web interface`);
+console.log(`\n📄 Pages:`);
+console.log(`   GET  /                 - Card art viewer`);
+console.log(`   GET  /decklist.html    - Decklist parser`);
+console.log(`   GET  /keywords.html    - Keywords not in Arena`);
+console.log(`   GET  /frame.html       - Non-standard frame cards`);
+console.log(`\n📋 API endpoints:`);
 console.log(`   GET  /api/sets         - Returns all Arena sets with metadata`);
 console.log(`   GET  /api/sets/:code   - Returns cards for a specific set`);
 console.log(`   GET  /api/search/cards - Returns fuzzy card search results`);
+console.log(`   GET  /api/cards/multi-rarity - Returns cards printed at both high and low rarity`);
+console.log(`   GET  /api/cards/no-2015-frame - Returns non-standard frame printings (paginated)`);
 console.log(`   GET  /api/cards/keywords-not-in-arena - Returns cards with keywords not in Arena`);
+console.log(`   GET  /api/set-icon/:code - Proxies the Scryfall set icon SVG`);
 console.log(`   POST /api/decklist/parse - Parses a pasted decklist into card rows`);
 console.log(`\n✨ Open http://localhost:${PORT} in your browser`);
 console.log(`\nPress Ctrl+C to stop the server\n`);
