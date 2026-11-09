@@ -11,23 +11,23 @@ export const CARD_ITEM_CLASS =
 export const CARD_IMAGE_CLASS = "block h-full w-full";
 
 export const CARD_NAME_CLASS =
-    "absolute inset-x-0 bottom-0 truncate px-2.5 pb-2 pt-7 text-[0.78rem] font-medium leading-tight text-white";
+    "absolute inset-x-0 bottom-0 truncate px-2.5 pb-2 pt-7 text-[0.78rem] font-medium leading-tight text-stone-50";
 
 export const CARD_NAME_BG_CLASS =
-    "bg-[linear-gradient(180deg,transparent,rgba(8,9,14,0.92))]";
+    "bg-[linear-gradient(180deg,transparent,rgba(12,10,9,0.92))]";
 
 export const CARD_NAME_BG_RELATED_CLASS =
-    "bg-[linear-gradient(180deg,transparent,rgba(79,70,229,0.85))]";
+    "bg-[linear-gradient(180deg,transparent,rgba(180,83,9,0.85))]";
 
 export const CARD_NAME_BG_MODERN_CLASS =
     "bg-[linear-gradient(180deg,transparent,rgba(180,83,9,0.92))]";
 
 export const MODERN_CARD_CLASS =
-    "rounded-[4.75%_/_3.5%] outline outline-2 -outline-offset-2 outline-amber-400/90";
+    "rounded-[4.75%_/_3.5%] outline outline-2 -outline-offset-2 outline-accent/90";
 
 export const QTY_BADGE_CLASS =
     "absolute top-2 right-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full " +
-    "bg-accent-dark/95 px-1.5 text-[0.72rem] font-semibold text-white ring-1 ring-white/20 " +
+    "bg-accent-dark/95 px-1.5 text-[0.72rem] font-semibold text-stone-950 ring-1 ring-stone-950/20 " +
     "shadow-[0_4px_12px_rgba(0,0,0,0.55)]";
 
 export const SET_BADGE_CLASS =

@@ -68,7 +68,7 @@ function renderResults(payload) {
         if (!card.image_uri) {
             const placeholder = document.createElement("div");
             placeholder.className =
-                "flex h-full w-full items-center justify-center bg-white/[0.03] p-3 text-center text-xs text-subtle";
+                "flex h-full w-full items-center justify-center bg-stone-50/[0.03] p-3 text-center text-xs text-subtle";
             placeholder.textContent = "No image";
             item.prepend(placeholder);
         }

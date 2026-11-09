@@ -15,22 +15,22 @@ const LAYOUT_CLASS =
     "mx-auto flex h-14 w-full max-w-[1440px] items-center gap-4 px-4 sm:px-6 lg:px-8";
 
 const BRAND_CLASS =
-    "flex shrink-0 items-center gap-2.5 text-sm font-semibold tracking-tight text-white no-underline";
+    "flex shrink-0 items-center gap-2.5 text-sm font-semibold tracking-tight text-stone-50 no-underline";
 
 const MARK_CLASS =
     "inline-flex h-7 w-7 items-center justify-center rounded-lg " +
     "bg-[linear-gradient(135deg,var(--color-accent-dark),var(--color-accent-2))] " +
-    "text-[11px] font-bold text-white shadow-btn-hover";
+    "text-[11px] font-bold text-stone-950 shadow-btn-hover";
 
 const NAV_CLASS =
     "flex min-w-0 flex-1 items-center gap-1 overflow-x-auto [scrollbar-width:none]";
 
 const LINK_CLASS =
     "shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] font-medium text-muted " +
-    "no-underline transition hover:bg-white/5 hover:text-white";
+    "no-underline transition hover:bg-stone-50/5 hover:text-stone-50";
 
 const CURRENT_LINK_CLASS =
-    "shrink-0 whitespace-nowrap rounded-lg bg-white/10 px-3 py-1.5 text-[13px] font-medium text-white no-underline";
+    "shrink-0 whitespace-nowrap rounded-lg bg-stone-50/10 px-3 py-1.5 text-[13px] font-medium text-stone-50 no-underline";
 
 /**
  * Builds the brand link.

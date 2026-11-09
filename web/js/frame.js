@@ -7,9 +7,9 @@ const topPagination = document.getElementById("topPagination");
 const bottomPagination = document.getElementById("bottomPagination");
 
 const PAGE_BUTTON_CLASS =
-    "inline-flex h-9 min-w-9 cursor-pointer items-center justify-center rounded-lg border border-line bg-white/[0.03] px-2.5 " +
-    "text-[13px] font-medium text-muted transition hover:border-line-strong hover:bg-white/[0.07] hover:text-white " +
-    "disabled:cursor-default disabled:border-transparent disabled:bg-accent-dark disabled:text-white";
+    "inline-flex h-9 min-w-9 cursor-pointer items-center justify-center rounded-lg border border-line bg-stone-50/[0.03] px-2.5 " +
+    "text-[13px] font-medium text-muted transition hover:border-line-strong hover:bg-stone-50/[0.07] hover:text-stone-50 " +
+    "disabled:cursor-default disabled:border-transparent disabled:bg-accent-dark disabled:text-stone-950";
 
 renderNav();
 

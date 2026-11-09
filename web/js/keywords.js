@@ -8,18 +8,18 @@ const expandAllBtn = document.getElementById("expandAllBtn");
 const collapseAllBtn = document.getElementById("collapseAllBtn");
 
 const CONTROL_BUTTON_CLASS =
-    "inline-flex cursor-pointer items-center justify-center rounded-lg border border-line bg-white/[0.03] px-3 py-1.5 " +
-    "text-xs font-medium text-muted transition hover:border-line-strong hover:bg-white/[0.06] hover:text-white";
+    "inline-flex cursor-pointer items-center justify-center rounded-lg border border-line bg-stone-50/[0.03] px-3 py-1.5 " +
+    "text-xs font-medium text-muted transition hover:border-line-strong hover:bg-stone-50/[0.06] hover:text-stone-50";
 
 const INDEX_BUTTON_CLASS =
-    "cursor-pointer rounded-full border border-line bg-white/[0.03] px-2.5 py-1 text-xs font-medium text-muted " +
-    "transition hover:border-accent-mid/50 hover:bg-accent-mid/10 hover:text-white";
+    "cursor-pointer rounded-full border border-line bg-stone-50/[0.03] px-2.5 py-1 text-xs font-medium text-muted " +
+    "transition hover:border-accent-mid/50 hover:bg-accent-mid/10 hover:text-stone-50";
 
 const SECTION_CLASS = "scroll-mt-20 overflow-hidden rounded-2xl border border-line bg-panel";
 
 const SECTION_HEADER_CLASS =
     "flex w-full cursor-pointer items-center gap-2.5 px-4 py-3 text-left " +
-    "text-sm font-semibold text-body transition hover:bg-white/[0.04]";
+    "text-sm font-semibold text-body transition hover:bg-stone-50/[0.04]";
 
 const SECTION_CONTENT_BASE_CLASS = "overflow-hidden transition-all duration-300";
 const SECTION_CONTENT_EXPANDED = ["max-h-[6000px]", "opacity-100"];

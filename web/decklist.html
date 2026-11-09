@@ -15,14 +15,14 @@
 
 <body data-nav="decklist" class="relative min-h-screen overflow-x-hidden bg-canvas font-sans text-body antialiased">
     <div aria-hidden="true"
-        class="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(60%_100%_at_50%_0%,rgba(99,102,241,0.20),rgba(10,11,16,0))]">
+        class="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(60%_100%_at_50%_0%,rgba(245,158,11,0.20),rgba(12,10,9,0))]">
     </div>
 
     <header id="nav"></header>
 
     <main class="mx-auto w-full max-w-[1440px] px-4 pb-24 pt-10 sm:px-6 lg:px-8">
         <div>
-            <h1 class="text-2xl font-semibold tracking-tight text-white sm:text-[2rem]">Decklist Parser</h1>
+            <h1 class="text-2xl font-semibold tracking-tight text-stone-50 sm:text-[2rem]">Decklist Parser</h1>
             <p class="mt-1.5 text-sm text-muted">Paste an Arena-style decklist and resolve each line to local card data.
             </p>
         </div>
@@ -36,10 +36,10 @@
                     class="h-[44vh] min-h-[320px] w-full resize-y rounded-xl border border-line-input bg-input-bg p-4 font-mono text-[13px] leading-relaxed text-input outline-none transition placeholder:text-placeholder focus:border-accent-mid/70 focus:ring-4 focus:ring-accent-mid/10"></textarea>
                 <div class="mt-3 flex flex-wrap gap-2">
                     <button id="parseBtn" type="button"
-                        class="inline-flex cursor-pointer items-center justify-center rounded-lg bg-accent-dark px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-mid active:translate-y-px disabled:cursor-wait disabled:opacity-60">Parse
+                        class="inline-flex cursor-pointer items-center justify-center rounded-lg bg-accent-dark px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-accent-mid active:translate-y-px disabled:cursor-wait disabled:opacity-60">Parse
                         decklist</button>
                     <button id="clearBtn" type="button"
-                        class="inline-flex cursor-pointer items-center justify-center rounded-lg border border-line bg-white/[0.03] px-4 py-2 text-sm font-medium text-muted transition hover:border-line-strong hover:bg-white/[0.06] hover:text-white">Clear</button>
+                        class="inline-flex cursor-pointer items-center justify-center rounded-lg border border-line bg-stone-50/[0.03] px-4 py-2 text-sm font-medium text-muted transition hover:border-line-strong hover:bg-stone-50/[0.06] hover:text-stone-50">Clear</button>
                 </div>
                 <div id="parseInfo" class="mt-3"></div>
             </div>
