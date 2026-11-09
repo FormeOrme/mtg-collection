@@ -15,15 +15,15 @@ console.log(`Mapped to ${cardMap.size} unique cards.`);
 console.timeEnd("Loading oracle cards");
 
 function mapCardData(card, additionalData = false) {
-    const n = slugify(card.name);
+    const slug = slugify(card.name);
 
     const baseData = {
-        n,
+        slug,
         r: rarities[card.rarity[0]],
         ci: colorIdentity(card.color_identity),
     };
 
-    const scryfallCard = cardMap.get(n);
+    const scryfallCard = cardMap.get(slug);
     if (scryfallCard?.isArena()) {
         baseData.a = 1;
 
@@ -37,6 +37,7 @@ function mapCardData(card, additionalData = false) {
         // if a card is basic, omit sets
         return {
             id: card.id,
+            name: card.name,
             t: mainType(card),
             sets: scryfallCard.isBasic() ? undefined : [...scryfallCard.setList],
             ...baseData,
