@@ -72,7 +72,7 @@ const OUTPUT_FILES = {
     BAREBONE: {
         fileName: "scryfall_barebone.json",
         mapFunction: (card) => mapCardData(card, true),
-        renderFunction: ({n, ...rest}) => JSON.stringify([n, rest])
+        renderFunction: ({slug, ...rest}) => JSON.stringify([slug, rest])
     },
 };
 
